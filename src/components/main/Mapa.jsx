@@ -2,7 +2,7 @@ import React, { useState, Fragment, useRef, useEffect } from 'react'
 import * as d3 from "d3";
 import readXlsxFile from 'read-excel-file';
 import Papa from 'papaparse';
-function PiauiMapa({ onCidadeSelecionada }) {
+function PiauiMapa({ onCidadeSelecionada, onCsvData}) {
     const [csvData, setCsvData] = useState([]);
     const [cidadeSelecionada, setCidade] = useState(null)
 
@@ -38,6 +38,7 @@ function PiauiMapa({ onCidadeSelecionada }) {
 
     useEffect(() => {
         if (csvData.length === 0) return;
+        onCsvData(csvData)
 
         const svg = d3.select(svgRef.current);
 

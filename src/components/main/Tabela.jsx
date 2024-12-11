@@ -33,10 +33,8 @@ function Tabela(props) {
 </TableBody>
 </Table>
 
-            
             }
                 
-
             </div>
         </Fragment>
     )
