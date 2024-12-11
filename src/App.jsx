@@ -1,18 +1,15 @@
-import { useState, Fragment } from 'react'
-// import './App.css'
-import { RadioSVGMap } from "react-svg-map";
-import "react-svg-map/lib/index.css";
-import Map from './assets/imgs/map.svg'
-function App() {
-  const [count, setCount] = useState(0)
+import React, { useState, Fragment } from 'react'
+import PiauiMapa from './components/main/Mapa'
+import "./App.css"
 
+function BrazilMap() {
   return (
     <Fragment>
-      <div id="map-container">
-      <Map/>
-      </div>
-      </Fragment>
+    <div className="main">
+      <PiauiMapa></PiauiMapa>
+    </div>
+    </Fragment>
   )
 }
 
-export default App
+export default BrazilMap  
