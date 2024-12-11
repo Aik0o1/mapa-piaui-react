@@ -1,5 +1,5 @@
 #root {
-  max-width: 1280px;
+  width: 100%;
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
@@ -46,4 +46,12 @@
 
 .highlight {
   fill: rgb(183, 7, 7);
+  width: 2rem;
+  position: relative;
+  top: 20px;
+  
+}
+
+.selected {
+  fill: orange
 }

@@ -2,8 +2,10 @@ import React, { useState, Fragment, useRef, useEffect } from 'react'
 import * as d3 from "d3";
 import readXlsxFile from 'read-excel-file';
 import Papa from 'papaparse';
-function PiauiMapa() {
+function PiauiMapa({ onCidadeSelecionada }) {
     const [csvData, setCsvData] = useState([]);
+    const [cidadeSelecionada, setCidade] = useState(null)
+
     const svgRef = useRef(null);
     
     const tooltip = d3.select("body")
@@ -23,10 +25,16 @@ function PiauiMapa() {
                     complete: (dados) => {
                         setCsvData(dados.data);
                     },
-                    header: true, // Considera a primeira linha como cabeçalhos
+                    header: true, 
                 });
             });
     }, []);
+
+    useEffect(() => {
+        if (cidadeSelecionada) {
+            console.log(`Cidade selecionada no estado: ${cidadeSelecionada}`);
+        }
+    }, [cidadeSelecionada]);
 
     useEffect(() => {
         if (csvData.length === 0) return;
@@ -54,19 +62,22 @@ function PiauiMapa() {
                     svg.selectAll(".city").classed("selected", false);
                     d3.select(this).classed("selected", true);
                     console.log(`Cidade selecionada: ${city.ID.replace(/-/g, " ")}`);
+                    setCidade(city)
+                    onCidadeSelecionada(city)
+                    window.location.hash = city.ID
                 });
         });
 
         return () => {
             tooltip.remove();
         };
-    }, [csvData]);
+    }, [csvData, onCidadeSelecionada]);
 
 
 
     return (
-        <Fragment>
-            <div id="map-container" className="w-full max-w-4xl mx-auto">
+        <Fragment >
+            <div id="map-container" className="w-1/3  mx-auto">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 145500 194500"
