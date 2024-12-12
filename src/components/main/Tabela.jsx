@@ -1,4 +1,4 @@
-import React, { useState, Fragment } from 'react'
+import React from 'react'
 import {
     Table,
     TableBody,
@@ -9,35 +9,54 @@ import {
     TableRow,
 } from "@/components/ui/table"
 
-
 function Tabela(props) {
-    return (
-        <Fragment>
-            <div className="tabela">
-            {props.dadosCidade &&
+    const { dadosCidade } = props;
 
-<Table>
-<TableCaption>{props.dadosCidade.ID}</TableCaption>
-<TableHeader>
-    <TableRow>
-        <TableHead>Município</TableHead>
-        <TableHead>População</TableHead>
-        <TableHead className="text-right">Amount</TableHead>
-    </TableRow>
-</TableHeader>
-<TableBody>
-    <TableRow>
-        <TableCell>{props.dadosCidade.Município}</TableCell>
-        <TableCell className="text-right">{props.dadosCidade.Populacao}</TableCell>
-    </TableRow>
-</TableBody>
-</Table>
-
-            }
-                
+    if (!dadosCidade) {
+        return (
+            <div className="text-center text-gray-500 p-4">
+                Selecione uma cidade para ver detalhes
             </div>
-        </Fragment>
+        );
+    }
+
+    return (
+        <div className="w-full max-w-md mx-auto shadow-lg rounded-lg overflow-hidden">
+            <Table>
+                <TableCaption>Informações de {dadosCidade.Município}</TableCaption>
+                <TableHeader className="bg-gray-100">
+                    <TableRow>
+                        <TableHead className="w-1/2">Detalhes</TableHead>
+                        <TableHead className="text-right w-1/2">Valor</TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    <TableRow>
+                        <TableCell>Município</TableCell>
+                        <TableCell className="text-right">{dadosCidade.Município}</TableCell>
+                    </TableRow>
+                    <TableRow>
+                        <TableCell>População</TableCell>
+                        <TableCell className="text-right">
+                            {parseInt(dadosCidade.Populacao).toLocaleString()}
+                        </TableCell>
+                    </TableRow>
+                    {/* Adicione mais linhas conforme os dados disponíveis */}
+                    {Object.entries(dadosCidade)
+                        .filter(([key]) => !['Município', 'Populacao', 'ID'].includes(key))
+                        .map(([key, value]) => (
+                            <TableRow key={key}>
+                                <TableCell>{key}</TableCell>
+                                <TableCell className="text-right">
+                                    {typeof value === 'number' ? value.toLocaleString() : value}
+                                </TableCell>
+                            </TableRow>
+                        ))
+                    }
+                </TableBody>
+            </Table>
+        </div>
     )
 }
 
-export default Tabela  
+export default Tabela

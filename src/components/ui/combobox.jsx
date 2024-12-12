@@ -19,62 +19,74 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 
-
-export function ComboboxDemo({ dadosCsv }) {
-
-    const cidades = dadosCsv
-    console.log(cidades)
-
+export function ComboboxCidades({ dadosCsv, onCidadeSelecionada, selectedCity }) {
   const [open, setOpen] = React.useState(false)
   const [value, setValue] = React.useState("")
 
-  return (
-    cidades &&
-    <React.Fragment>
+  // Efeito para atualizar o valor quando uma cidade é selecionada no mapa
+  React.useEffect(() => {
+    if (selectedCity) {
+      setValue(selectedCity.Município)
+    }
+  }, [selectedCity])
 
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          role="combobox"
-          aria-expanded={open}
-          className="w-[200px] justify-between"
+  const handleSelect = (currentValue) => {
+    setValue(currentValue === value ? "" : currentValue)
+    setOpen(false)
+    
+    // Encontrar o objeto da cidade completo
+    const cidadeSelecionada = dadosCsv.find(
+      (cidade) => cidade.Município === currentValue
+    )
+    
+    // Chamar a função de callback para passar a cidade selecionada
+    if (cidadeSelecionada && onCidadeSelecionada) {
+      onCidadeSelecionada(cidadeSelecionada)
+    }
+  }
+
+  return (
+    dadosCsv && (
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <Button
+            variant="outline"
+            role="combobox"
+            aria-expanded={open}
+            className="w-[250px] justify-between"
           >
-          {value
-            ? cidades.find((cidade) => cidade.Município === value)?.label
-            : "Select cidade..."}
-          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0">
-        <Command>
-          <CommandInput placeholder="Search cidade..." />
-          <CommandList>
-            <CommandEmpty>No cidade found.</CommandEmpty>
-            <CommandGroup>
-              {cidades.map((cidade) => (
+            {value
+              ? value
+              : "Selecione uma cidade..."}
+            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-[250px] p-0">
+          <Command>
+            <CommandInput placeholder="Buscar cidade..." />
+            <CommandList>
+              <CommandEmpty>Cidade não encontrada.</CommandEmpty>
+              <CommandGroup>
+                {dadosCsv.map((cidade) => (
                   <CommandItem
-                  key={cidade.Município}
-                  value={cidade.Município}
-                  onSelect={(currentValue) => {
-                      setValue(currentValue === value ? "" : currentValue)
-                      setOpen(false)
-                    }}
-                    >
-                  <Check
-                    className={cn(
+                    key={cidade.Município}
+                    value={cidade.Município}
+                    onSelect={handleSelect}
+                  >
+                    <Check
+                      className={cn(
                         "mr-2 h-4 w-4",
                         value === cidade.Município ? "opacity-100" : "opacity-0"
-                    )}
+                      )}
                     />
-                  {cidade.Município}
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          </CommandList>
-        </Command>
-      </PopoverContent>
-    </Popover>
-              </React.Fragment>
+                    {cidade.Município}
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            </CommandList>
+          </Command>
+        </PopoverContent>
+      </Popover>
+    )
   )
 }
