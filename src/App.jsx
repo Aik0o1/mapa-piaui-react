@@ -1,34 +1,51 @@
 import React, { useState, Fragment } from 'react'
 import PiauiMapa from './components/main/Mapa'
 import TabelaCidade from './components/main/Tabela'
-import { ComboboxCidades } from './components/ui/combobox'
 import "./App.css"
+import Header from './components/main/Header'
+import Lista from './components/main/Lista'
+import Filtros from './components/main/Filtros'
 
 function MainContent() {
-  const [cidadeSelecionada, setCidadeSelecionada] = useState(null);
+  const [cidade, setCidade] = useState(null);
   const [csvData, setCsvData] = useState(null)
+  const [mes, setMes] = useState(['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'])
+  const [ano, setAno] = useState()
 
-  // Função para atualizar a cidade em todos os componentes
-  const handleCidadeSelecionada = (cidade) => {
-    setCidadeSelecionada(cidade);
-    // Atualiza o hash para o mapa
-    window.location.hash = cidade.ID
+  // gerencia estado quando nova cidade é clicada
+  const handleCidade = (cidade) => {
+    setCidade(cidade);
+  }
+
+  // gerencia estado quando mês é selecionado
+  const handleMes = (mes) => {
+    setMes(mes)
+    console.log(mes);
+  }
+
+  // gerencia estado quando ano é selecionado
+  const handleAnoSelecionado = (ano) => {
+    setAno(ano)
   }
 
   return (
-    <div className="main flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-4 p-4">
-      <div className="flex flex-col space-y-4 w-full md:w-1/3">
-        <ComboboxCidades 
-          dadosCsv={csvData} 
-          onCidadeSelecionada={handleCidadeSelecionada}
-          selectedCity={cidadeSelecionada}
+    <div className="">
+
+      <Header />
+
+      <Filtros dadosCsv={csvData} onCidadeSelecionada={handleCidade}
+        selectedCity={cidade} meses={mes} onMesSelecionado={handleMes} selectedMonth={mes} />
+
+      <div className="conteudo">
+        <PiauiMapa
+          onCidadeSelecionada={handleCidade}
+          onCsvData={setCsvData}
         />
-        <TabelaCidade dadosCidade={cidadeSelecionada} />
+
+        {/* <TabelaCidade dadosCidade={cidade} mesSelecionado={mes} anoSelecionado={ano} /> */}
+
+        <Lista />
       </div>
-      <PiauiMapa 
-        onCidadeSelecionada={handleCidadeSelecionada} 
-        onCsvData={setCsvData} 
-      />
     </div>
   )
 }

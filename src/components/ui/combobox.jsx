@@ -33,12 +33,12 @@ export function ComboboxCidades({ dadosCsv, onCidadeSelecionada, selectedCity })
   const handleSelect = (currentValue) => {
     setValue(currentValue === value ? "" : currentValue)
     setOpen(false)
-    
+
     // Encontrar o objeto da cidade completo
     const cidadeSelecionada = dadosCsv.find(
       (cidade) => cidade.Município === currentValue
     )
-    
+
     // Chamar a função de callback para passar a cidade selecionada
     if (cidadeSelecionada && onCidadeSelecionada) {
       onCidadeSelecionada(cidadeSelecionada)
@@ -53,7 +53,6 @@ export function ComboboxCidades({ dadosCsv, onCidadeSelecionada, selectedCity })
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className="w-[250px] justify-between"
           >
             {value
               ? value
@@ -61,7 +60,7 @@ export function ComboboxCidades({ dadosCsv, onCidadeSelecionada, selectedCity })
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-[250px] p-0">
+        <PopoverContent>
           <Command>
             <CommandInput placeholder="Buscar cidade..." />
             <CommandList>
