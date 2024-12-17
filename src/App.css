@@ -47,8 +47,8 @@
 }
 
 .filtros {
-  border-top: 1px solid #c2c2c3;
-  border-bottom: 1px solid #c2c2c3;
+  border-top: 1px solid #e4e4e4;
+  border-bottom: 1px solid #e4e4e4;
   padding: 1rem;
 
   p {
@@ -78,15 +78,10 @@
 
 /* mapa e tabela */
 .conteudo {
-  width: 100vw;
-  display: flex;
-  /* justify-content: space-around; */
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
   padding: 3rem 0;
-}
-
-.informacoes-municipais {
-  display: flex;
-  width: 50%;
+  font-size: 0.875rem;
 }
 
 .label {
@@ -97,16 +92,6 @@
 .indicador {
   display: flex;
   padding: 1rem;
-  border-top: 1px solid #c2c2c3;
+  border-bottom: 1px solid #e4e4e4;
   justify-content: space-between;
-}
-
-/* @media screen and (max-width: 1250px) {
-  #map-container {
-    display: block;
-  }
-} */
-
-#map-container {
-  border: 1px solid #c2c2c3;
 }

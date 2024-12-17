@@ -1,6 +1,5 @@
-import React, { useState, Fragment } from 'react'
+import React, { useState } from 'react'
 import PiauiMapa from './components/main/Mapa'
-import TabelaCidade from './components/main/Tabela'
 import "./App.css"
 import Header from './components/main/Header'
 import Lista from './components/main/Lista'
@@ -41,8 +40,6 @@ function MainContent() {
           onCidadeSelecionada={handleCidade}
           onCsvData={setCsvData}
         />
-
-        {/* <TabelaCidade dadosCidade={cidade} mesSelecionado={mes} anoSelecionado={ano} /> */}
 
         <Lista />
       </div>
