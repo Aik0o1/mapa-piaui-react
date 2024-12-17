@@ -11,7 +11,7 @@ export default function Filtros(props) {
 
     return (
         <div className="filtros">
-            <p>Filtros</p>
+            <p>Selecione um municipio ou período</p>
             <div className="selecao">
                 <ComboboxCidades className="municipio"
                     dadosCsv={props.dadosCsv}
@@ -21,7 +21,7 @@ export default function Filtros(props) {
                 <Select className="mes" onMesSelecionado={props.handleMesSelecionado}
                     selectedMonth={props.mes}>
                     <SelectTrigger>
-                        <SelectValue placeholder="Selecione um mês:" />
+                        <SelectValue placeholder="Selecione um mês" />
                     </SelectTrigger>
                     <SelectContent>
                         {(props.meses).map((mes, index) => (
@@ -34,7 +34,7 @@ export default function Filtros(props) {
 
                 <Select className="ano">
                     <SelectTrigger>
-                        <SelectValue placeholder="Selecione um ano:" />
+                        <SelectValue placeholder="Selecione um ano" />
                     </SelectTrigger>
                     <SelectContent>
                         <SelectItem value="2024">2024</SelectItem>

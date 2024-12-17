@@ -1,19 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { MapPin, Building2, LandPlot, Clock2 } from "lucide-react";
 import * as d3 from "d3";
+import TemposAnalise from "./TemposAnalise";
+import GraficoNatureza from "./GraficoPorte";
 
 export default function Lista() {
     const [dados, setDados] = useState(null);
 
     useEffect(() => {
+        // Carrega o JSON usando D3 e salva no estado
         d3.json("teresina.json").then((data) => {
-            setDados(data);
+            setDados(data); // Salva os dados no estado
         });
     }, []);
 
-    // if (!dados) {
-    //     return <p>Carregando...</p>;
-    // }
+    if (!dados) {
+        return <p>Carregando...</p>;
+    }
 
     const municipio = dados.municipio;
     const tempoResposta = dados["Tempo de resposta"][0].tempo_resposta || "N/A";
@@ -42,7 +45,7 @@ export default function Lista() {
                         <p className="valor">{municipio}</p>
                     </div>
                 </li>
-                {tempos}
+                {/* {tempos} */}
                 <li>
                     <div className="indicador">
                         <div className="label">
@@ -52,6 +55,10 @@ export default function Lista() {
                         <p className="valor">{tempoResposta}</p>
                     </div>
                 </li>
+
+                <TemposAnalise />
+                <GraficoNatureza />
+
             </ul>
         </div>
     );

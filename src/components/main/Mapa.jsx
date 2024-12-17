@@ -91,7 +91,7 @@ function PiauiMapa({ onCidadeSelecionada, onCsvData}) {
 
     return (
         <Fragment >
-            <div id="map-container" className="w-1/3  mx-auto">
+            <div id="map-container" className="">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 145500 194500"
