@@ -8,27 +8,34 @@ export default function Lista() {
     const [dados, setDados] = useState(null);
 
     useEffect(() => {
-        // Carrega o JSON usando D3 e salva no estado
-        d3.json("teresina.json").then((data) => {
-            setDados(data); // Salva os dados no estado
-        });
+        const fetchData = async () => {
+            try {
+                const response = await fetch("http://127.0.0.1:5000/dados");
+                const data = await response.json();
+                setDados(data);
+            } catch (error) {
+                console.error("Erro ao buscar dados do CouchDB:", error);
+            }
+        };
+
+        fetchData();
     }, []);
 
     if (!dados) {
         return <p>Carregando...</p>;
     }
 
-    const municipio = dados.municipio;
-    const tempoResposta = dados["Tempo de resposta"][0].tempo_resposta || "N/A";
+    const municipio = dados[0].nome;
+    const tempo_res = dados[0].tempo_resposta || "N/A";
 
-    let tempos = dados["Tempo de Analise"].map((item, index) => (
+    let tempos_analise = dados[0].tempo_analise.map((item, index) => (
         <li key={index}>
             <div className="indicador">
                 <div className="label">
                     <Clock2 />
-                    <p>{item.Tipo || "N/A"}</p>
+                    <p>{item['tipo'] || "N/A"}</p>
                 </div>
-                <p className="valor">{item.tempo_analise || "N/A"}</p>
+                <p className="valor">{item['valor'] || "N/A"}</p>
             </div>
         </li>
     ));
@@ -45,19 +52,19 @@ export default function Lista() {
                         <p className="valor">{municipio}</p>
                     </div>
                 </li>
-                {/* {tempos} */}
+                {tempos_analise}
                 <li>
                     <div className="indicador">
                         <div className="label">
                             <Building2 />
                             <p>Tempo de Resposta</p>
                         </div>
-                        <p className="valor">{tempoResposta}</p>
+                        {/* <p className="valor">{tempo_res}</p> */}
                     </div>
                 </li>
 
                 <TemposAnalise />
-                <GraficoNatureza />
+                {/* <GraficoNatureza /> */}
 
             </ul>
         </div>

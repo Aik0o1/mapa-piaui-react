@@ -1,4 +1,5 @@
 import { ComboboxCidades } from '../ui/combobox'
+import React, { useState, useEffect } from 'react'
 import {
     Select,
     SelectContent,
@@ -8,18 +9,13 @@ import {
 } from "@/components/ui/select"
 
 export default function Filtros(props) {
-
     return (
         <div className="filtros">
             <p>Selecione um municipio ou período</p>
             <div className="selecao">
                 <ComboboxCidades className="municipio"
-                    dadosCsv={props.dadosCsv}
-                    onCidadeSelecionada={props.handleCidadeSelecionada}
-                    selectedCity={props.cidadeSelecionada}
                 />
-                <Select className="mes" onMesSelecionado={props.handleMesSelecionado}
-                    selectedMonth={props.mes}>
+                <Select className="mes">
                     <SelectTrigger>
                         <SelectValue placeholder="Selecione um mês" />
                     </SelectTrigger>
