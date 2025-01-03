@@ -11,7 +11,8 @@ import {
 
 function Tabela(props) {
     const { dadosCidade } = props;
-
+    
+    console.log(props.mesSelecionado);
     if (!dadosCidade) {
         return (
             <div className="text-center text-gray-500 p-4">
@@ -19,7 +20,7 @@ function Tabela(props) {
             </div>
         );
     }
-
+    
     return (
         <div className="w-full max-w-md mx-auto shadow-lg rounded-lg overflow-hidden">
             <Table>
@@ -34,6 +35,30 @@ function Tabela(props) {
                     <TableRow>
                         <TableCell>Município</TableCell>
                         <TableCell className="text-right">{dadosCidade.Município}</TableCell>
+                    </TableRow>
+                    <TableRow>
+                        <TableCell>População</TableCell>
+                        <TableCell className="text-right">
+                            {parseInt(dadosCidade.Populacao).toLocaleString()}
+                        </TableCell>
+                    </TableRow>
+                    <TableRow>
+                        <TableCell>Quantidade de empresas ativas por porte</TableCell>
+                        <TableCell className="text-right">
+                            0
+                        </TableCell>
+                    </TableRow>
+                    <TableRow>
+                        <TableCell>População</TableCell>
+                        <TableCell className="text-right">
+                            {parseInt(dadosCidade.Populacao).toLocaleString()}
+                        </TableCell>
+                    </TableRow>
+                    <TableRow>
+                        <TableCell>População</TableCell>
+                        <TableCell className="text-right">
+                            {parseInt(dadosCidade.Populacao).toLocaleString()}
+                        </TableCell>
                     </TableRow>
                     <TableRow>
                         <TableCell>População</TableCell>
@@ -56,6 +81,7 @@ function Tabela(props) {
                 </TableBody>
             </Table>
         </div>
+        
     )
 }
 
