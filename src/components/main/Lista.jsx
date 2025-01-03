@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { MapPin, Building2, LandPlot, Clock2 } from "lucide-react";
+import { MapPin, Building2, LandPlot, Clock2, FileChartPie } from "lucide-react";
 import TemposAnalise from './TemposAnalise';
 import TreeMap from "../graphs/treeMap";
 import PieCharts from "../graphs/PieCharts";
@@ -36,6 +36,7 @@ export default function Lista({ onCidadeSelecionada }) {
   const cityData = dados[selectedCity];
   const municipio = cityData?.nome || "N/A";
   const tempo_res = cityData?.["tempo-de-resposta"]?.[0]["tempo_resposta"] || "Sem dados";
+  const qtd_abertas = cityData?.["abertura"]?.[0]["qtd_abertas_no_mes"] || "N/A";
 
   const handleCityChange = (event) => {
     setSelectedCity(event.target.value);
@@ -70,6 +71,16 @@ export default function Lista({ onCidadeSelecionada }) {
           <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
             <div className="flex items-center gap-3">
               <Building2 className="text-[#034ea2]" />
+              <p className="font-medium text-[#231f20]">Quantidade de empresas abertas</p>
+            </div>
+            <p className="text-[#034ea2] font-semibold">{qtd_abertas}</p>
+          </div>
+        </li>
+
+        <li>
+          <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+            <div className="flex items-center gap-3">
+              <Clock2 className="text-[#034ea2]" />
               <p className="font-medium text-[#231f20]">Tempo de Resposta</p>
             </div>
             <p className="text-[#034ea2] font-semibold">{tempo_res}</p>
@@ -84,7 +95,7 @@ export default function Lista({ onCidadeSelecionada }) {
           <AccordionItem value="treemap" className="border-none">
             <AccordionTrigger className="flex items-center gap-3 p-4 hover:bg-gray-50 text-[#231f20]">
               <LandPlot className="h-5 w-5 text-[#034ea2]" />
-              <span className="font-medium">Distribuição de Atividades</span>
+              <span className="font-medium">Empresas por Atividades</span>
             </AccordionTrigger>
             <AccordionContent className="p-4 pt-0">
               <TreeMap selectedCity={selectedCity} dados={dados} />
@@ -95,8 +106,8 @@ export default function Lista({ onCidadeSelecionada }) {
         <Accordion type="single" collapsible className="border rounded-lg">
           <AccordionItem value="piecharts" className="border-none">
             <AccordionTrigger className="flex items-center gap-3 p-4 hover:bg-gray-50 text-[#231f20]">
-              <LandPlot className="h-5 w-5 text-[#034ea2]" />
-              <span className="font-medium">Gráficos de Distribuição</span>
+              <FileChartPie className="h-5 w-5 text-[#034ea2]" />
+              <span className="font-medium">Empresas por porte e natureza</span>
             </AccordionTrigger>
             <AccordionContent className="p-4 pt-0">
               <div className="w-full">
