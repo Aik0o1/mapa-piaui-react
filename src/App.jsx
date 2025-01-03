@@ -7,44 +7,51 @@ import Filtros from './components/main/Filtros'
 
 function MainContent() {
   const [cidade, setCidade] = useState(null);
-  const [csvData, setCsvData] = useState(null)
-  const [mes, setMes] = useState(['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'])
-  const [ano, setAno] = useState()
+  const [mes, setMes] = useState([
+    'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+    'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+  ]);
+  const [ano, setAno] = useState();
 
-  // gerencia estado quando nova cidade é clicada
+  // Atualiza estado quando nova cidade é clicada/selecionada
   const handleCidade = (cidade) => {
     setCidade(cidade);
-  }
+    console.log("Cidade selecionada no App:", cidade);
+  };
 
-  // gerencia estado quando mês é selecionado
+  // Atualiza estado quando um mês é selecionado
   const handleMes = (mes) => {
-    setMes(mes)
+    setMes(mes);
     console.log(mes);
-  }
+  };
 
-  // gerencia estado quando ano é selecionado
+  // Atualiza estado quando o ano é selecionado
   const handleAnoSelecionado = (ano) => {
-    setAno(ano)
-  }
+    setAno(ano);
+  };
 
   return (
     <div className="">
 
       <Header />
 
-      <Filtros dadosCsv={csvData} onCidadeSelecionada={handleCidade}
-        selectedCity={cidade} meses={mes} onMesSelecionado={handleMes} selectedMonth={mes} />
+      <Filtros
+        onCidadeSelecionada={handleCidade}
+        selectedCity={cidade}
+        meses={mes}
+        onMesSelecionado={handleMes}
+        selectedMonth={mes}
+      />
 
       <div className="conteudo">
         <PiauiMapa
           onCidadeSelecionada={handleCidade}
-          onCsvData={setCsvData}
         />
 
-        <Lista />
+        <Lista onCidadeSelecionada={cidade} />
       </div>
     </div>
-  )
+  );
 }
 
-export default MainContent
+export default MainContent;

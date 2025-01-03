@@ -6,7 +6,7 @@ import {
 } from "@/components/ui/accordion"
 import React, { useState, useEffect } from "react";
 import * as d3 from "d3";
-import PieChart from "../graphs/PieChart"
+import PieChart from "../graphs/PieCharts"
 import { ChartPie } from 'lucide-react';
 
 export default function GraficoPorte() {
