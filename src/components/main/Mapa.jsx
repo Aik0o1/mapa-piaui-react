@@ -1,47 +1,20 @@
 import React, { useState, Fragment, useRef, useEffect } from 'react'
 import * as d3 from "d3";
 import '../../../src/Mapa.css'
-import Papa from 'papaparse';
 
-function PiauiMapa({ onCidadeSelecionada, onCsvData }) {
-    const [csvData, setCsvData] = useState([]);
-    const [cidadeSelecionada, setCidade] = useState(null)
-
+function PiauiMapa({ onselectedCity, selectedCity }) {
     const svgRef = useRef(null);
 
-    const tooltip = d3.select("body")
-        .append("div")
-        .attr("id", "tooltip")
-        .style("position", "absolute")
-        .style("background", "white")
-        .style("border", "1px solid gray")
-        .style("padding", "5px")
-        .style("display", "none");
-
+    // Destacar a cidade selecionada que vem das props
     useEffect(() => {
-        fetch('https://raw.githubusercontent.com/Aik0o1/mapa-piaui-react/refs/heads/main/src/assets/docs/dados.csv')
-            .then(response => response.text())
-            .then(text => {
-                Papa.parse(text, {
-                    complete: (dados) => {
-                        setCsvData(dados.data);
-                        onCsvData(dados.data);
-                    },
-                    header: true,
-                });
-            });
-    }, []);
+        if (selectedCity) {
+            // console.log(selectedCity);
+            const svg = d3.select(svgRef.current);
 
-    // Efeito para selecionar a cidade no mapa baseado no hash da URL
-    useEffect(() => {
-        const hash = window.location.hash.replace('#', '');
-        if (hash) {
-            const cidadeNoHash = csvData.find(city => city.ID === hash);
-            if (cidadeNoHash) {
-                selecionarCidade(cidadeNoHash);
-            }
+            svg.selectAll(".city").classed("selected", false);  
+            svg.select(`#${selectedCity.ID}`).classed("selected", true);  
         }
-    }, [csvData]);
+    }, [selectedCity]);  // Sempre que selectedCity mudar, destacar a nova cidade
 
     const selecionarCidade = (city) => {
         const svg = d3.select(svgRef.current);
@@ -52,41 +25,10 @@ function PiauiMapa({ onCidadeSelecionada, onCsvData }) {
         // Seleciona a cidade atual
         svg.select(`#${city.ID}`).classed("selected", true);
 
-        setCidade(city);
-        onCidadeSelecionada(city);
+        onselectedCity(city);  // Envia a cidade selecionada para o pai
         window.location.hash = city.ID;
     }
 
-    useEffect(() => {
-        if (csvData.length === 0) return;
-
-        const svg = d3.select(svgRef.current);
-
-        csvData.forEach((city) => {
-            svg.select(`#${city.ID}`)
-                .attr("class", "city")
-                .on("mouseover", function (event) {
-                    d3.select(this).classed("highlight", true);
-                    tooltip.style("display", "block")
-                        .style("left", `${event.pageX + 10}px`)
-                        .style("top", `${event.pageY + 10}px`)
-                        .html(`
-                            <strong>${city.Município}</strong><br>
-                        `);
-                })
-                .on("mouseout", function () {
-                    d3.select(this).classed("highlight", false);
-                    tooltip.style("display", "none");
-                })
-                .on("click", function () {
-                    selecionarCidade(city);
-                });
-        });
-
-        return () => {
-            tooltip.remove();
-        };
-    }, [csvData]);
 
     return (
         <Fragment >
