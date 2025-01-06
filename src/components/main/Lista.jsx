@@ -6,7 +6,7 @@ import PieCharts from "../graphs/PieCharts";
 import { AccordionItem, Accordion, AccordionTrigger, AccordionContent } from "../ui/accordion";
 export default function Lista({ onCidadeSelecionada, mes, ano }) {
   const [dados, setDados] = useState(null);
-  console.log(dados);
+  // console.log(dados);
   
   const [selectedCity, setSelectedCity] = useState("221100");
   const meses = {
@@ -27,30 +27,38 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
   const id = onCidadeSelecionada.id.length > 6 ? onCidadeSelecionada.id.split('-')[1] : onCidadeSelecionada.id
 
   useEffect(() => {
-    if (onCidadeSelecionada?.id && mes && ano) {
-      const numero_mes = meses[mes];
-      // console.log(numero_mes);
-
-      const fetchData = async () => {
-        try {
-          const response = await fetch(
-            `http://127.0.0.1:5000/buscar_dados?cidade=${id}&mes=${numero_mes}&ano=${ano}`
-          );
-          const data = await response.json();
-          setDados(data);
-          setSelectedCity(onCidadeSelecionada.id)
-        } catch (error) {
-          console.error("Erro ao buscar dados do servidor:", error);
+    const fetchData = async () => {
+      try {
+        let url = "";
+  
+        if (onCidadeSelecionada?.id && mes && ano) {
+          const numero_mes = meses[mes];
+          url = `http://127.0.0.1:5000/buscar_dados?cidade=${id}&mes=${numero_mes}&ano=${ano}`;
+        } else {
+          // Última data disponível de Teresina
+          url = `http://127.0.0.1:5000/buscar_dados?cidade=221100&mes=11&ano=2024`;
         }
-      };
-      fetchData();
-    }
+  
+        const response = await fetch(url);
+        const data = await response.json();
+        setDados(data);
+  
+        if (onCidadeSelecionada?.id) {
+          setSelectedCity(onCidadeSelecionada.id);
+        }
+      } catch (error) {
+        console.error("Erro ao buscar dados do servidor:", error);
+      }
+    };
+  
+    fetchData();
   }, [onCidadeSelecionada, mes, ano]);
+  
   if (!dados) {
     return <p>Carregando...</p>;
   }
 
-  console.log(id);
+  // console.log(id);
 
   // console.log(cidadeNoMapa)
   //const dados = dados[cidadeNoMapa];

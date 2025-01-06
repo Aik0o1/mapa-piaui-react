@@ -8,7 +8,7 @@ import Filtros from './components/main/Filtros'
 
 function MainContent() {
   const [cidade, setCidade] = useState({nome:"Teresina", id:"221100"});
-  const [mes, setMes] = useState(11); 
+  const [mes, setMes] = useState('Novembro'); 
   const [ano, setAno] = useState(2024); 
 
   const handleCidade = (cidade) => {
