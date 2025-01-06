@@ -7,51 +7,39 @@ import Lista from './components/main/Lista'
 import Filtros from './components/main/Filtros'
 
 function MainContent() {
-  const [cidade, setCidade] = useState({nome:"Teresina", id:"cidade-221100"});
-  const [mes, setMes] = useState(['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'])
-  const [ano, setAno] = useState()
+  const [cidade, setCidade] = useState({nome:"Teresina", id:"221100"});
+  const [mes, setMes] = useState('Novembro'); 
+  const [ano, setAno] = useState(2024); 
 
-  // gerencia estado quando nova cidade é clicada
   const handleCidade = (cidade) => {
     setCidade(cidade);
-    console.log(`dsds ${cidade.id}`)
-  }
+  };
 
-  // gerencia estado quando mês é selecionado
   const handleMes = (mes) => {
-    setMes(mes)
-    console.log(mes);
-  }
+    setMes(mes);
+  };
 
-  // gerencia estado quando ano é selecionado
   const handleAnoSelecionado = (ano) => {
-    setAno(ano)
-  }
+    setAno(ano);
+  };
 
   return (
     <div className="">
-
       <Header />
-
-      
       <Filtros
         onCidadeSelecionada={handleCidade}
-        selectedCity={cidade}
         onMesSelecionado={handleMes}
         onAnoSelecionado={handleAnoSelecionado}
+        selectedMonth={mes}
+        selectedYear={ano}
+
       />
-
       <div className="conteudo">
-        <PiauiMapa
-          onCidadeSelecionada={handleCidade}
-        />
-
-        <Lista 
-          cidadeSelecionadaNoMapa={cidade}
-        />
+        <PiauiMapa onCidadeSelecionada={handleCidade} />
+        <Lista onCidadeSelecionada={cidade} mes={mes} ano={ano} />
       </div>
     </div>
-  )
+  );
 }
 
-export default MainContent
+export default MainContent;

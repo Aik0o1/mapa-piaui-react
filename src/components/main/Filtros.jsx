@@ -16,27 +16,24 @@ export default function Filtros(props) {
 
     const handleCidadeSelect = (cidade) => {
         props.onCidadeSelecionada(cidade); // Envia a cidade para o pai
-        // console.log("Cidade selecionada no Filtros:", cidade);
     };
 
     const handleMesSelect = (mes) => {
         props.onMesSelecionado(mes); // Envia o mês para o pai
-        // console.log("Mês selecionado no Filtros:", mes);
     };
 
     const handleAnoSelect = (ano) => {
         props.onAnoSelecionado(ano); // Envia o ano para o pai
-        // console.log("Ano selecionado no Filtros:", ano);
     };
 
     return (
-        <div className="filtros">
+        <div className="filtros text-[#034ea2] ">
             <p>Selecione um município ou período</p>
             <div className="selecao">
                 <ComboboxCidades onCidadeSelect={handleCidadeSelect} />
                 <Select className="mes" onValueChange={handleMesSelect}>
                     <SelectTrigger>
-                        <SelectValue placeholder="Selecione um mês" />
+                        <SelectValue placeholder={props.selectedMonth} />
                     </SelectTrigger>
                     <SelectContent>
                         {meses.map((mes, index) => (
@@ -51,7 +48,7 @@ export default function Filtros(props) {
                 </Select>
                 <Select className="ano" onValueChange={handleAnoSelect}>
                     <SelectTrigger>
-                        <SelectValue placeholder="Selecione um ano" />
+                        <SelectValue placeholder={props.selectedYear} />
                     </SelectTrigger>
                     <SelectContent>
                         <SelectItem value="2024">2024</SelectItem>
