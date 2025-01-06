@@ -5,9 +5,10 @@ import "./App.css"
 import Header from './components/main/Header'
 import Lista from './components/main/Lista'
 import Filtros from './components/main/Filtros'
+import Footer from './components/main/Footer'
 
 function MainContent() {
-  const [cidade, setCidade] = useState({nome:"Teresina", id:"221100"});
+  const [cidade, setCidade] = useState({nome:"TERESINA", id:"221100"});
   const [mes, setMes] = useState('Novembro'); 
   const [ano, setAno] = useState(2024); 
 
@@ -24,7 +25,7 @@ function MainContent() {
   };
 
   return (
-    <div className="">
+    <div className="bg-gray-50">
       <Header />
       <Filtros
         onCidadeSelecionada={handleCidade}
@@ -32,12 +33,14 @@ function MainContent() {
         onAnoSelecionado={handleAnoSelecionado}
         selectedMonth={mes}
         selectedYear={ano}
+        cidadeSelecionada={cidade}
 
       />
       <div className="conteudo">
         <PiauiMapa onCidadeSelecionada={handleCidade} />
         <Lista onCidadeSelecionada={cidade} mes={mes} ano={ano} />
       </div>
+      <Footer/>
     </div>
   );
 }
