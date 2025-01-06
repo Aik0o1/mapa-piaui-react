@@ -6,7 +6,7 @@ export default function PieCharts({ selectedCity, dados }) {
     const svgRef2 = useRef();
 
     useEffect(() => {
-        if (!dados || !dados[selectedCity]) return;
+        if (!dados) return;
 
         // Limpa os SVGs anteriores
         d3.select(svgRef1.current).selectAll("*").remove();
@@ -137,8 +137,8 @@ export default function PieCharts({ selectedCity, dados }) {
         };
 
         // Cria os dois gráficos
-        createPieChart(dados[selectedCity].naturezas, svgRef1, "Naturezas");
-        createPieChart(dados[selectedCity].portes, svgRef2, "Portes");
+        createPieChart(dados.naturezas, svgRef1, "Naturezas");
+        createPieChart(dados.portes, svgRef2, "Portes");
 
         // Cleanup
         return () => {
@@ -162,5 +162,4 @@ export default function PieCharts({ selectedCity, dados }) {
         </div>
     );
 };
-
 

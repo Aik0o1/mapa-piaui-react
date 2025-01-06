@@ -4,48 +4,71 @@ import TemposAnalise from './TemposAnalise';
 import TreeMap from "../graphs/treeMap";
 import PieCharts from "../graphs/PieCharts";
 import { AccordionItem, Accordion, AccordionTrigger, AccordionContent } from "../ui/accordion";
-export default function Lista({ cidadeSelecionadaNoMapa }) {
+export default function Lista({ onCidadeSelecionada, mes, ano }) {
   const [dados, setDados] = useState(null);
-  const [selectedCity, setSelectedCity] = useState("221100"); 
+  // console.log(dados);
+  
+  const [selectedCity, setSelectedCity] = useState("221100");
+  const meses = {
+    'Janeiro': 1,
+    'Fevereiro': 2,
+    'Março': 3,
+    'Abril': 4,
+    'Maio': 5,
+    'Junho': 6,
+    'Julho': 7,
+    'Agosto': 8,
+    'Setembro': 9,
+    'Outubro': 10,
+    'Novembro': 11,
+    'Dezembro': 12,
+  };
+
+  const id = onCidadeSelecionada.id.length > 6 ? onCidadeSelecionada.id.split('-')[1] : onCidadeSelecionada.id
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:5000/dados");
+        let url = "";
+  
+        if (onCidadeSelecionada?.id && mes && ano) {
+          const numero_mes = meses[mes];
+          url = `http://127.0.0.1:5000/buscar_dados?cidade=${id}&mes=${numero_mes}&ano=${ano}`;
+        } else {
+          // Última data disponível de Teresina
+          url = `http://127.0.0.1:5000/buscar_dados?cidade=221100&mes=11&ano=2024`;
+        }
+  
+        const response = await fetch(url);
         const data = await response.json();
         setDados(data);
+  
+        if (onCidadeSelecionada?.id) {
+          setSelectedCity(onCidadeSelecionada.id);
+        }
       } catch (error) {
-        console.error("Erro ao buscar dados do CouchDB:", error);
+        console.error("Erro ao buscar dados do servidor:", error);
       }
     };
+  
     fetchData();
-  }, []);
-
+  }, [onCidadeSelecionada, mes, ano]);
+  
   if (!dados) {
     return <p>Carregando...</p>;
   }
 
-  const cidadeNoMapa = cidadeSelecionadaNoMapa.id.length > 6 ? cidadeSelecionadaNoMapa.id.split('-')[1] : cidadeSelecionadaNoMapa.id
-  console.log(cidadeNoMapa)
-  const cityData = dados[cidadeNoMapa];
-  const municipio = cityData?.nome || "N/A";
-  const tempo_res = cityData?.["tempo-de-resposta"]?.[0]["tempo_resposta"] || "Sem dados";
-  const qtd_abertas = cityData?.["abertura"]?.[0]["qtd_abertas_no_mes"] || "N/A";
+  // console.log(id);
+
+  // console.log(cidadeNoMapa)
+  //const dados = dados[cidadeNoMapa];
+  const municipio = dados?.nome || "N/A";
+  const tempo_res = dados?.["tempo-de-resposta"]?.[0]["tempo_resposta"] || "Sem dados";
+  const qtd_abertas = dados?.["abertura"]?.[0]["qtd_abertas_no_mes"] || "N/A";
 
 
   return (
     <div className="informacoes-municipais p-6 bg-white rounded-lg shadow-md">
-      {/* <select
-        value={selectedCity}
-        onChange={handleCityChange}
-        className="w-full mb-6 p-3 border rounded-md bg-white text-[#231f20] border-[#034ea2] focus:ring-2 focus:ring-[#034ea2] focus:border-transparent"
-      >
-        {Object.keys(dados).map(cityCode => (
-          <option key={cityCode} value={cityCode}>
-            {dados[cityCode].nome}
-          </option>
-        ))}
-      </select> */}
 
       <ul className="space-y-6">
         <li>
@@ -80,16 +103,16 @@ export default function Lista({ cidadeSelecionadaNoMapa }) {
       </ul>
 
       <div className="mt-6 space-y-4">
-        <TemposAnalise selectedCity={cidadeNoMapa} />
+        <TemposAnalise selectedCity={id} />
 
         <Accordion type="single" collapsible className="border rounded-lg">
           <AccordionItem value="treemap" className="border-none">
             <AccordionTrigger className="flex items-center gap-3 p-4 hover:bg-gray-50 text-[#231f20]">
               <LandPlot className="h-5 w-5 text-[#034ea2]" />
-              <span className="font-medium">Empresas por Atividades</span>
+              <span className="font-medium">Empresas abertas por atividades</span>
             </AccordionTrigger>
             <AccordionContent className="p-4 pt-0">
-              <TreeMap selectedCity={cidadeNoMapa} dados={dados} />
+              <TreeMap selectedCity={id} dados={dados} />
             </AccordionContent>
           </AccordionItem>
         </Accordion>
@@ -98,11 +121,11 @@ export default function Lista({ cidadeSelecionadaNoMapa }) {
           <AccordionItem value="piecharts" className="border-none">
             <AccordionTrigger className="flex items-center gap-3 p-4 hover:bg-gray-50 text-[#231f20]">
               <FileChartPie className="h-5 w-5 text-[#034ea2]" />
-              <span className="font-medium">Empresas por porte e natureza</span>
+              <span className="font-medium">Empresas abertas por porte e natureza</span>
             </AccordionTrigger>
             <AccordionContent className="p-4 pt-0">
               <div className="w-full">
-                <PieCharts selectedCity={cidadeNoMapa} dados={dados} />
+                <PieCharts selectedCity={id} dados={dados} />
               </div>
             </AccordionContent>
           </AccordionItem>

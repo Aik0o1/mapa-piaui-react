@@ -30,7 +30,16 @@ export default function Filtros(props) {
         <div className="filtros text-[#034ea2] ">
             <p>Selecione um município ou período</p>
             <div className="selecao">
-                <ComboboxCidades onCidadeSelect={handleCidadeSelect} />
+                <ComboboxCidades onCidadeSelect={handleCidadeSelect} cidadeSelecionada={props.cidadeSelecionada} />
+
+                <Select className="ano" onValueChange={handleAnoSelect}>
+                    <SelectTrigger>
+                        <SelectValue placeholder={props.selectedYear} />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="2024">2024</SelectItem>
+                    </SelectContent>
+                </Select>
                 <Select className="mes" onValueChange={handleMesSelect}>
                     <SelectTrigger>
                         <SelectValue placeholder={props.selectedMonth} />
@@ -46,14 +55,7 @@ export default function Filtros(props) {
                         ))}
                     </SelectContent>
                 </Select>
-                <Select className="ano" onValueChange={handleAnoSelect}>
-                    <SelectTrigger>
-                        <SelectValue placeholder={props.selectedYear} />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="2024">2024</SelectItem>
-                    </SelectContent>
-                </Select>
+               
             </div>
         </div>
     );

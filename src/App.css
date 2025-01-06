@@ -1,12 +1,14 @@
 #root {
   width: 100%;
   margin: 0 auto;
-  padding: 2rem;
+  overflow: hidden
 }
 
 * {
   font-family: Rawline, Raleway, 'Open Sans', sans-serif, Arial, Helvetica !important;
 }
+
+
 
 @media (prefers-reduced-motion: no-preference) {
   a:nth-of-type(2) .logo {
@@ -19,7 +21,7 @@
 }
 
 .read-the-docs {
-  color: #888;
+  color: #ad1b1b;
 }
 
 /* .city {
@@ -76,7 +78,7 @@
 /* mapa e tabela */
 .conteudo {
   display: grid;
-  grid-template-columns: 1fr 1.5fr;
+  grid-template-columns: 1.2fr 1.5fr;
   padding: 3rem 0;
   font-size: 0.875rem;
 }
@@ -111,3 +113,4 @@
   background-color: #034ea2;
   border-radius: 3px;
 }
+

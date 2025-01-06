@@ -18,7 +18,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
-export function ComboboxCidades({ onCidadeSelect }) {
+export function ComboboxCidades({ onCidadeSelect, cidadeSelecionada }) {
   const [open, setOpen] = useState(false);
   const [cidades, setCidades] = useState([]);
   const [value, setValue] = useState("");
@@ -72,7 +72,7 @@ export function ComboboxCidades({ onCidadeSelect }) {
           aria-expanded={open}
           className="w-[200px] justify-between"
         >
-          {value || "TERESINA"}
+          {value || cidadeSelecionada.nome }
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
