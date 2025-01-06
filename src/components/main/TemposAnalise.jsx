@@ -8,6 +8,8 @@ import React, { useState, useEffect } from "react";
 import { Clock2 } from "lucide-react";
 
 export default function TemposAnalise({ selectedCity }) {
+  // console.log(selectedCity);
+  
   const [dados, setDados] = useState(null);
 
   useEffect(() => {
@@ -28,7 +30,6 @@ export default function TemposAnalise({ selectedCity }) {
   }
 
   const cityData = dados[selectedCity];
-  // console.log(dados)
   
   // Check if tempo-de-analise exists and has items
   if (!cityData?.["tempo-de-analise"]?.length) {
@@ -46,7 +47,6 @@ export default function TemposAnalise({ selectedCity }) {
       </Accordion>
     );
   }
-  // console.log(cityData)
   if( cityData["tempo-de-analise"] != "Sem dados"){
 
   }

@@ -5,7 +5,7 @@ export default function TreeMap({ selectedCity, dados }) {
   const svgRef = useRef();
 
   useEffect(() => {
-    if (!dados || !dados[selectedCity] || !dados[selectedCity].atividades) return;
+    if (!dados || !dados.atividades) return;
 
     // Limpa o SVG anterior
     d3.select(svgRef.current).selectAll("*").remove();
@@ -14,7 +14,7 @@ export default function TreeMap({ selectedCity, dados }) {
     const height = 600;
 
     // Limita a 10 atvs
-    const atividadesLimitadas = dados[selectedCity].atividades
+    const atividadesLimitadas = dados.atividades
       .sort((a, b) => b.qtd_por_seção_da_atividade - a.qtd_por_seção_da_atividade)
       .slice(0, 10);
 
@@ -93,7 +93,7 @@ export default function TreeMap({ selectedCity, dados }) {
       .style("text-transform", "capitalize")
       .text(d => d.text);
 
-
+   
     const tooltip = d3.select("body")
       .append("div")
       .style("position", "absolute")
@@ -122,7 +122,7 @@ export default function TreeMap({ selectedCity, dados }) {
 
   return (
     <div className="mt-4">
-      {/* <h3 className="text-lg font-semibold mb-2">Distribuição de Atividades</h3> */}
+      <h3 className="text-lg font-semibold mb-2">Distribuição de Atividades</h3>
       <div className="border rounded p-4">
         <svg ref={svgRef}></svg>
       </div>
