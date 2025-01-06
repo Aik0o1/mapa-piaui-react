@@ -121,13 +121,11 @@ def buscar_dados():
     if not cidade_encontrada:
         return jsonify({"error": "Cidade não encontrada"}), 404
 
-    response_data = {
-        "cidade": cidade,
-        "dados": cidade_encontrada
-    }
+    cidade_encontrada['id'] = cidade
+    cidade_encontrada['data'] = data_procurada
     
     # Retorna os dados com charset UTF-8 no cabeçalho Content-Type
-    response = jsonify(response_data)
+    response = jsonify(cidade_encontrada)
     response.headers['Content-Type'] = 'application/json; charset=utf-8'
     return response
 
