@@ -30,8 +30,9 @@ function MainContent() {
         onCidadeSelecionada={handleCidade}
         onMesSelecionado={handleMes}
         onAnoSelecionado={handleAnoSelecionado}
-        selectedCity={cidade}
         selectedMonth={mes}
+        selectedYear={ano}
+
       />
       <div className="conteudo">
         <PiauiMapa onCidadeSelecionada={handleCidade} />
