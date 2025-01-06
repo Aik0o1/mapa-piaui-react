@@ -318,7 +318,7 @@
 /* No seu mapa.css */
 .city {
     stroke: #4b5563;
-    stroke-width: 100;
+    stroke-width: 250;
     transition: all 0.3s ease;
     cursor: pointer;
     transform-origin: center;
@@ -326,8 +326,7 @@
   
   .city.selected {
     fill: #3b82f6;
-    transform: scale(1.05); /* Aumenta o tamanho em 5% */
-    z-index: 100; 
+    stroke-width: 1100;
   }
   
   .city.highlight {
@@ -337,3 +336,5 @@
   .no-selected {
     opacity: 0.7; 
   }
+
+  

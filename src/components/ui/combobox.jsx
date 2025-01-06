@@ -45,7 +45,6 @@ export function ComboboxCidades({ onCidadeSelect }) {
       .classed("no-selected", true)
       .transition()
       .duration(300)
-      .attr("transform", "scale(1)");
     
     const cityElement = svg.select(`#cidade-${cidade.id}`);
     if (!cityElement.empty()) {
@@ -54,7 +53,6 @@ export function ComboboxCidades({ onCidadeSelect }) {
         .classed("no-selected", false)
         .transition()
         .duration(300)
-        .attr("transform", "scale(1.05)");
     }
   };
 

@@ -77,7 +77,6 @@ function PiauiMapa({ onCidadeSelecionada }) {
                 .classed("no-selected", true)
                 .transition()
                 .duration(300)
-                .attr("transform", "scale(1)");
               
               // Seleciona e aumenta a nova cidade
               d3.select(this)
@@ -85,7 +84,6 @@ function PiauiMapa({ onCidadeSelecionada }) {
                 .classed("no-selected", false)
                 .transition()
                 .duration(300)
-                .attr("transform", "scale(1.05)");
               
               onCidadeSelecionada(city);
             });
@@ -96,7 +94,7 @@ function PiauiMapa({ onCidadeSelecionada }) {
 
     return (
         <Fragment >
-            <div id="map-container" className="">
+            <div id="map-container" className="bg-f">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 145500 194500"
