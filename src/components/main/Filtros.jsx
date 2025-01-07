@@ -7,6 +7,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import { Button } from '../ui/button';
 
 export default function Filtros(props) {
     const [meses, setMes] = useState([
@@ -26,12 +27,17 @@ export default function Filtros(props) {
         props.onAnoSelecionado(ano); // Envia o ano para o pai
     };
 
+    const limparFiltros = () => {
+        props.onMesSelecionado("Selecione um mês")
+        props.onAnoSelecionado("Selecione um ano")
+        console.log(props.selectedMonth)
+    }
+
     return (
         <div className="filtros text-[#034ea2] ">
             <p>Selecione um município ou período</p>
             <div className="selecao">
                 <ComboboxCidades onCidadeSelect={handleCidadeSelect} cidadeSelecionada={props.cidadeSelecionada} />
-
                 <Select className="ano" onValueChange={handleAnoSelect}>
                     <SelectTrigger>
                         <SelectValue placeholder={props.selectedYear} />
@@ -55,7 +61,13 @@ export default function Filtros(props) {
                         ))}
                     </SelectContent>
                 </Select>
-               
+                <Button
+                    className=""
+                    variant="outline"
+                    onClick={limparFiltros}
+                >Limpar Filtros
+                </Button>
+
             </div>
         </div>
     );
