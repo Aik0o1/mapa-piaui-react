@@ -7,29 +7,13 @@ import {
 import React, { useState, useEffect } from "react";
 import { Clock2 } from "lucide-react";
 
-export default function TemposAnalise({ selectedCity }) {
+export default function TemposAnalise({ dados }) {
   // console.log(selectedCity);
   
-  const [dados, setDados] = useState(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch("http://127.0.0.1:5000/dados");
-        const data = await response.json();
-        setDados(data);
-      } catch (error) {
-        console.error("Erro ao buscar dados do CouchDB:", error);
-      }
-    };
-    fetchData();
-  }, []);
 
-  if (!dados) {
-    return <p>Carregando...</p>;
-  }
 
-  const cityData = dados[selectedCity];
+  const cityData = dados;
   
   // Check if tempo-de-analise exists and has items
   if (!cityData?.["tempo-de-analise"]?.length) {

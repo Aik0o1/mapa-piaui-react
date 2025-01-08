@@ -15,40 +15,60 @@ export default function Filtros(props) {
         'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
     ]);
 
+    const [selectedMes, setSelectedMes] = useState(props.selectedMonth);
+    const [selectedAno, setSelectedAno] = useState(props.selectedYear);
+    const [selectedCidade, setSelectedCidade] = useState(props.cidadeSelecionada);
+    
+
+
     const handleCidadeSelect = (cidade) => {
-        props.onCidadeSelecionada(cidade); // Envia a cidade para o pai
+        props.onCidadeSelecionada(cidade);
     };
 
     const handleMesSelect = (mes) => {
-        props.onMesSelecionado(mes); // Envia o mês para o pai
+        setSelectedMes(mes);
+        props.onMesSelecionado(mes);
     };
 
     const handleAnoSelect = (ano) => {
-        props.onAnoSelecionado(ano); // Envia o ano para o pai
+        setSelectedAno(ano);
+        props.onAnoSelecionado(ano);
     };
 
     const limparFiltros = () => {
-        props.onMesSelecionado("Selecione um mês")
-        props.onAnoSelecionado("Selecione um ano")
-        console.log(props.selectedMonth)
+        setSelectedMes("");
+        setSelectedAno("");
+        setSelectedCidade("")
+        props.onMesSelecionado("Selecione um mês");
+        props.onAnoSelecionado("Selecione um ano");
+        props.onCidadeSelecionada({nome:"Selecione um município", id:""});
+
     }
 
     return (
-        <div className="filtros text-[#034ea2] ">
+        <div className="filtros text-[#034ea2]">
             <p>Selecione um município ou período</p>
             <div className="selecao">
                 <ComboboxCidades onCidadeSelect={handleCidadeSelect} cidadeSelecionada={props.cidadeSelecionada} />
-                <Select className="ano" onValueChange={handleAnoSelect}>
+                <Select 
+                    className="ano" 
+                    onValueChange={handleAnoSelect}
+                    value={selectedAno}
+                >
                     <SelectTrigger>
-                        <SelectValue placeholder={props.selectedYear} />
+                        <SelectValue placeholder="Selecione um ano" />
                     </SelectTrigger>
                     <SelectContent>
                         <SelectItem value="2024">2024</SelectItem>
                     </SelectContent>
                 </Select>
-                <Select className="mes" onValueChange={handleMesSelect}>
+                <Select 
+                    className="mes" 
+                    onValueChange={handleMesSelect}
+                    value={selectedMes}
+                >
                     <SelectTrigger>
-                        <SelectValue placeholder={props.selectedMonth} />
+                        <SelectValue placeholder="Selecione um mês" />
                     </SelectTrigger>
                     <SelectContent>
                         {meses.map((mes, index) => (
@@ -65,9 +85,9 @@ export default function Filtros(props) {
                     className=""
                     variant="outline"
                     onClick={limparFiltros}
-                >Limpar Filtros
+                >
+                    Limpar Filtros
                 </Button>
-
             </div>
         </div>
     );

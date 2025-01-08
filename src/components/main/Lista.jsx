@@ -33,11 +33,11 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
   
         if (onCidadeSelecionada?.id && mes && ano) {
           const numero_mes = meses[mes];
-          url = `http://127.0.0.1:5000/buscar_dados?cidade=${id}&mes=${numero_mes}&ano=${ano}`;
-        } else {
-          // Última data disponível de Teresina
-          url = `http://127.0.0.1:5000/buscar_dados?cidade=221100&mes=11&ano=2024`;
-        }
+          url = `http://10.40.25.235:5000/buscar_dados?cidade=${id}&mes=${numero_mes}&ano=${ano}`;}
+        // } else {
+        //   // Última data disponível de Teresina
+        //   url = `http://10.40.25.235:5000/buscar_dados?cidade=221100&mes=11&ano=2024`;
+        // }
   
         const response = await fetch(url);
         const data = await response.json();
@@ -103,7 +103,7 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
       </ul>
 
       <div className="mt-6 space-y-4">
-        <TemposAnalise selectedCity={id} />
+        <TemposAnalise dados={dados} />
 
         <Accordion type="single" collapsible className="border rounded-lg">
           <AccordionItem value="treemap" className="border-none">

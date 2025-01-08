@@ -8,16 +8,18 @@ import Filtros from './components/main/Filtros'
 import Footer from './components/main/Footer'
 
 function MainContent() {
-  const [cidade, setCidade] = useState({nome:"TERESINA", id:"221100"});
+  const [cidade, setCidade] = useState({nome:"Selecione um município", id:""});
   const [mes, setMes] = useState('Novembro'); 
-  const [ano, setAno] = useState(2024); 
+  const [ano, setAno] = useState('2024'); 
 
   const handleCidade = (cidade) => {
     setCidade(cidade);
+    console.log(cidade)
   };
 
   const handleMes = (mes) => {
     setMes(mes);
+    console.log(mes)
   };
 
   const handleAnoSelecionado = (ano) => {

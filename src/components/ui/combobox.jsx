@@ -26,7 +26,7 @@ export function ComboboxCidades({ onCidadeSelect, cidadeSelecionada }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:5000/id_nome_cidades");
+        const response = await fetch("http://10.40.25.235:5000/id_nome_cidades");
         const data = await response.json();
         setCidades(data);
       } catch (error) {
@@ -72,7 +72,7 @@ export function ComboboxCidades({ onCidadeSelect, cidadeSelecionada }) {
           aria-expanded={open}
           className="w-[200px] justify-between"
         >
-          {value || cidadeSelecionada.nome }
+          {cidadeSelecionada.nome || value }
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
