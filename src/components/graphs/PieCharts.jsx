@@ -6,7 +6,7 @@ export default function PieCharts({ selectedCity, dados }) {
     const svgRef2 = useRef();
 
     useEffect(() => {
-        if (!dados) return;
+        if (!dados || !dados.naturezas || !dados.portes) return;
 
         // Limpa os SVGs anteriores
         d3.select(svgRef1.current).selectAll("*").remove();
