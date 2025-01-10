@@ -70,7 +70,7 @@ export function ComboboxCidades({ onCidadeSelect, cidadeSelecionada }) {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-[200px] justify-between"
+          className="w-[250px] justify-between"
         >
           {cidadeSelecionada.nome || value }
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
