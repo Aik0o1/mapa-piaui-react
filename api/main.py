@@ -3,6 +3,7 @@ from urllib.parse import quote
 import json
 from flask import Flask, jsonify, Response, request
 from flask_cors import CORS
+import datetime
 
 # Database connection setup
 password = 'sti@JUCEPI_2020'
@@ -22,7 +23,23 @@ CORS(app)
 
 @app.route('/buscar_todas', methods=['GET'])
 def dados_gerais():
-    doc = db['35299b45e7ec1d69564f1a0b5e01a3bb']
+    # Obter o documento mais recente
+    data_mais_atual = datetime.datetime(2024, 1, 1)
+    documento_mais_recente = None
+
+    for doc_id in db:
+        documento = db[doc_id]
+        mes_ano = documento["data"].split('/')
+        mes = int(mes_ano[0])
+        ano = int(mes_ano[1])
+        new_date = datetime.datetime(ano, mes, 1)
+
+        if new_date > data_mais_atual:
+            data_mais_atual = new_date
+            documento_mais_recente = documento
+
+    if not documento_mais_recente:
+        return jsonify({"error": "Nenhum documento encontrado"}), 404
 
     totais = {
         "naturezas": [],
@@ -30,10 +47,11 @@ def dados_gerais():
         "atividades": [],
         "abertura": [],
         "tempo-de-analise": [],
-        "tempo-de-resposta": []    }
+        "tempo-de-resposta": []
+    }
 
-    # Itera sobre as cidades no documento
-    for _, valor in doc['cidades'].items():
+    # Itera sobre as cidades no documento mais recente
+    for _, valor in documento_mais_recente['cidades'].items():
         # Processa naturezas
         for natureza in valor.get('naturezas', []):
             totais["naturezas"].append({
@@ -63,30 +81,28 @@ def dados_gerais():
                     "qtd_abertas_no_mes": abertura.get('qtd_abertas_no_mes', 0)
                 })
 
-       # Processa tempos de análise
+        # Processa tempos de análise
         for tempo_a in valor.get('tempo-de-analise', []):
             if isinstance(tempo_a, dict):
                 totais["tempo-de-analise"].append({
-                'tipo': tempo_a.get('tipo'),
-                "tempo_analise": tempo_a.get('tempo_analise', '00:00:00')
+                    'tipo': tempo_a.get('tipo'),
+                    "tempo_analise": tempo_a.get('tempo_analise', '00:00:00')
                 })
-                # print(tempo_a)
 
         # Processa tempos de resposta
         for tempo_r in valor.get('tempo-de-resposta', []):
             if isinstance(tempo_r, dict):
                 totais["tempo-de-resposta"].append({
-                'tipo': 'tempo_resposta',
-                "tempo_resposta": tempo_r.get('tempo_resposta', '00:00:00')
-               })
-                # print(tempo_r)
-
+                    'tipo': 'tempo_resposta',
+                    "tempo_resposta": tempo_r.get('tempo_resposta', '00:00:00')
+                })
 
     # Consolida os dados
     totais["naturezas"] = _consolidar_dados(totais["naturezas"], "qtd_por_natureza")
     totais["portes"] = _consolidar_dados(totais["portes"], "qtd_por_porte")
     totais["atividades"] = _consolidar_dados(totais["atividades"], "qtd_por_seção_da_atividade")
     totais["nome"] = "Todos"
+
     # Adiciona o total geral de aberturas
     total_aberturas = sum(item['qtd_abertas_no_mes'] for item in totais["abertura"])
     totais["abertura"] = [{
@@ -96,6 +112,7 @@ def dados_gerais():
 
     totais["tempo-de-analise"] = somar_tempos(totais["tempo-de-analise"], 'tempo_analise')
     totais["tempo-de-resposta"] = somar_tempos(totais["tempo-de-resposta"], 'tempo_resposta')
+
     # Retorna os dados em formato JSON
     response = jsonify(totais)
     response.headers['Content-Type'] = 'application/json; charset=utf-8'
@@ -191,6 +208,7 @@ def get_all_cidades():
     nomes_cidades = [cidade_data['nome'] for cidade_id, cidade_data in doc['cidades'].items()]
     
     return jsonify(nomes_cidades)
+
 # Return all city names with their data
 @app.route('/dados')
 def get_all_data():
@@ -247,6 +265,47 @@ def get_atividades(codigo):
 def get_data():
     doc = db['6d66c335d17c58f7257574d13f000589']
     return jsonify({"data": doc['data']})
+
+# @app.route('/data_recente')
+# def retorna_data_mais_recente():
+#     data_mais_atual = datetime.date(2024, 1,1)
+
+#     for doc in db:
+#         # print(doc)
+#         documento = db[doc]["data"]
+#         mes_ano = documento.split('/')
+#         mes = int(mes_ano[0])
+#         ano = int(mes_ano[1])
+#         # print("\n", documento)
+#         new = datetime.date(ano, mes, 1)
+#         # print(new)
+#         if new > data_mais_atual:
+#             data_mais_atual = new
+
+#     ano, mes, dia = str(data_mais_atual).split('-')
+    
+#     return (f'{mes}/{ano}')
+
+@app.route('/data_recente')
+def retorna_data_mais_recente():
+    import datetime
+
+    data_mais_atual = datetime.date(2024, 1, 1)
+
+    for doc in db:
+        documento = db[doc]["data"]
+        mes_ano = documento.split('/')
+        mes = int(mes_ano[0])
+        ano = int(mes_ano[1])
+        new = datetime.date(ano, mes, 1)
+        if new > data_mais_atual:
+            data_mais_atual = new
+
+    ano, mes, _ = str(data_mais_atual).split('-')
+
+    # Retorna o JSON no formato { "mes": "MM", "ano": "AAAA" }
+    return jsonify({"mes": mes, "ano": ano})
+
 
 if __name__ == '__main__':
     app.run(debug=True)
