@@ -24,7 +24,7 @@ function PiauiMapa({ onCidadeSelecionada }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("http://10.40.25.235:5000/id_nome_cidades");
+        const response = await fetch("http://127.0.0.1:5000/id_nome_cidades");
         const data = await response.json();
         const normalizedCidades = data.map((cidade) => ({
           ...cidade,
