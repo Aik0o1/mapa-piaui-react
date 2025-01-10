@@ -8,7 +8,7 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
   const [dados, setDados] = useState(null);
   // console.log(dados);
   
-  const [selectedCity, setSelectedCity] = useState("221100");
+  const [selectedCity, setSelectedCity] = useState("");
   const meses = {
     'Janeiro': 1,
     'Fevereiro': 2,
