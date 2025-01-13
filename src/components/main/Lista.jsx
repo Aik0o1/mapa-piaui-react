@@ -7,7 +7,7 @@ import { AccordionItem, Accordion, AccordionTrigger, AccordionContent } from "..
 export default function Lista({ onCidadeSelecionada, mes, ano }) {
   const [dados, setDados] = useState(null);
   // console.log(dados);
-  
+
   const [selectedCity, setSelectedCity] = useState("");
   const meses = {
     'Janeiro': 1,
@@ -30,19 +30,21 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
     const fetchData = async () => {
       try {
         let url = "";
-  
+
         if (onCidadeSelecionada?.id && mes && ano) {
           const numero_mes = meses[mes];
-          url = `http://127.0.0.1:5000/buscar_dados?cidade=${id}&mes=${numero_mes}&ano=${ano}`;}
-        else {
-          // Última data disponível de Teresina
+          url = `http://127.0.0.1:5000/buscar_dados?cidade=${onCidadeSelecionada.id}&mes=${numero_mes}&ano=${ano}`;
+        } else if (mes && ano) {
+          const numero_mes = meses[mes];
+          url = `http://127.0.0.1:5000/buscar_todas?mes=${numero_mes}&ano=${ano}`;
+        } else {
           url = `http://127.0.0.1:5000/buscar_todas`;
         }
-  
+
         const response = await fetch(url);
         const data = await response.json();
         setDados(data);
-  
+
         if (onCidadeSelecionada?.id) {
           setSelectedCity(onCidadeSelecionada.id);
         }
@@ -50,10 +52,10 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
         console.error("Erro ao buscar dados do servidor:", error);
       }
     };
-  
+
     fetchData();
   }, [onCidadeSelecionada, mes, ano]);
-  
+
   if (!dados) {
     return <p>Carregando...</p>;
   }

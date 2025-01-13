@@ -23,7 +23,9 @@ CORS(app)
 
 @app.route('/buscar_todas', methods=['GET'])
 def dados_gerais():
-    # Obter o documento mais recente
+    mes_param = request.args.get('mes', type=int)  
+    ano_param = request.args.get('ano', type=int)
+
     data_mais_atual = datetime.datetime(2024, 1, 1)
     documento_mais_recente = None
 
@@ -34,9 +36,14 @@ def dados_gerais():
         ano = int(mes_ano[1])
         new_date = datetime.datetime(ano, mes, 1)
 
-        if new_date > data_mais_atual:
-            data_mais_atual = new_date
-            documento_mais_recente = documento
+        if mes_param and ano_param:
+            if ano == ano_param and mes == mes_param:
+                documento_mais_recente = documento
+                break  
+        else:
+            if new_date > data_mais_atual:
+                data_mais_atual = new_date
+                documento_mais_recente = documento
 
     if not documento_mais_recente:
         return jsonify({"error": "Nenhum documento encontrado"}), 404
@@ -50,7 +57,6 @@ def dados_gerais():
         "tempo-de-resposta": []
     }
 
-    # Itera sobre as cidades no documento mais recente
     for _, valor in documento_mais_recente['cidades'].items():
         # Processa naturezas
         for natureza in valor.get('naturezas', []):
@@ -77,7 +83,7 @@ def dados_gerais():
         for abertura in valor.get('abertura', []):
             if isinstance(abertura, dict):
                 totais["abertura"].append({
-                    "tipo": abertura.get('tipo', 'Sem tipo'),
+                    "tipo": abertura.get('tipo'),
                     "qtd_abertas_no_mes": abertura.get('qtd_abertas_no_mes', 0)
                 })
 
@@ -103,7 +109,6 @@ def dados_gerais():
     totais["atividades"] = _consolidar_dados(totais["atividades"], "qtd_por_seção_da_atividade")
     totais["nome"] = "Todos"
 
-    # Adiciona o total geral de aberturas
     total_aberturas = sum(item['qtd_abertas_no_mes'] for item in totais["abertura"])
     totais["abertura"] = [{
         "tipo": "todas",
