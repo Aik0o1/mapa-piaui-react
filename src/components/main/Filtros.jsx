@@ -1,5 +1,6 @@
 import { ComboboxCidades } from '../ui/combobox';
 import { useState } from 'react';
+import * as d3 from 'd3';
 import {
     Select,
     SelectContent,
@@ -35,6 +36,18 @@ export default function Filtros(props) {
         props.onAnoSelecionado(ano);
     };
 
+
+    const highlightCityOnMap = () => {
+        const svg = d3.select("#map");
+        
+        svg.selectAll(".city")
+          .classed("selected", false)
+          .classed("no-selected", false)
+          .transition()
+          .duration(300)
+        
+      };
+
     const limparFiltros = () => {
         setSelectedMes("");
         setSelectedAno("");
@@ -42,8 +55,10 @@ export default function Filtros(props) {
         props.onMesSelecionado("Selecione um mês");
         props.onAnoSelecionado("Selecione um ano");
         props.onCidadeSelecionada({nome:"Selecione um município", id:""});
+        highlightCityOnMap()
 
     }
+
 
     return (
         <div className="filtros text-[#034ea2]">
