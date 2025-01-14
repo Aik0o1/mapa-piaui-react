@@ -1,3 +1,5 @@
+
+import { useEffect } from 'react';
 import { ComboboxCidades } from '../ui/combobox';
 import { useState } from 'react';
 import * as d3 from 'd3';
@@ -16,11 +18,30 @@ export default function Filtros(props) {
         'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
     ]);
 
+    const mesesDict = {'01':'Janeiro', '02':'Fevereiro', '03':'Março', '04':'Abril', '05':'Maio', '06':'Junho',
+        '07':'Julho', '08':'Agosto', '09':'Setembro', "10":'Outubro', "11":'Novembro', '12':'Dezembro'}
+
     const [selectedMes, setSelectedMes] = useState(props.selectedMonth);
     const [selectedAno, setSelectedAno] = useState(props.selectedYear);
     const [selectedCidade, setSelectedCidade] = useState(props.cidadeSelecionada);
-    
+    const [dataRecente, setDataRecente] = useState()
 
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const url = "http://10.40.25.235:5000/data_recente"
+                const response = await fetch(url);
+                const data = await response.json();
+                setDataRecente(data);
+                console.log(data)
+            } catch (error) {
+                console.error("Erro ao buscar dados do servidor:", error);
+              }
+        }
+
+        fetchData();
+      }, []);
 
     const handleCidadeSelect = (cidade) => {
         props.onCidadeSelecionada(cidade);
@@ -49,14 +70,14 @@ export default function Filtros(props) {
       };
 
     const limparFiltros = () => {
-        setSelectedMes("");
-        setSelectedAno("");
+        setSelectedMes(mesesDict[dataRecente.mes]);
+        setSelectedAno(dataRecente.ano);
         setSelectedCidade("")
-        props.onMesSelecionado("Selecione um mês");
-        props.onAnoSelecionado("Selecione um ano");
+
+        props.onMesSelecionado(mesesDict[dataRecente.mes]);
+        props.onAnoSelecionado(dataRecente.ano);
         props.onCidadeSelecionada({nome:"Selecione um município", id:""});
         highlightCityOnMap()
-
     }
 
 
