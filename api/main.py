@@ -8,7 +8,7 @@ import datetime
 # Database connection setup
 password = 'sti@JUCEPI_2020'
 encoded_password = quote(password)
-couch = couchdb.Server(f'http://admin:{encoded_password}@10.40.25.11:5984/')
+couch = couchdb.Server(f'http://admin:{encoded_password}@10.0.140.2:5984/')
 db_name = 'test2'
 
 # Check if database exists
