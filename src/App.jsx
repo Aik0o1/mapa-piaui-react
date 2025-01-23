@@ -6,17 +6,19 @@ import Header from './components/main/Header';
 import Lista from './components/main/Lista';
 import Filtros from './components/main/Filtros';
 import Footer from './components/main/Footer';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import Abas from './components/main/Tabs';
 
 function MainContent() {
   const [cidade, setCidade] = useState({ nome: 'Selecione um município', id: '' });
   const [mes, setMes] = useState(""); // Inicializa com valor vazio
   const [ano, setAno] = useState(""); // Inicializa com valor vazio
-  const [loading, setLoading] = useState(true); 
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("http://10.0.140.2:5000/data_recente");
+        const response = await fetch("http://127.0.0.1:5000/data_recente");
         const data = await response.json(); // Recebe o JSON no formato { "mes": "MM", "ano": "AAAA" }
 
         const meses = [
@@ -29,15 +31,15 @@ function MainContent() {
 
         setMes(mesRecente);
         setAno(anoRecente);
-        setLoading(false); 
+        setLoading(false);
       } catch (error) {
         console.error("Erro ao buscar dados do servidor:", error);
-        setLoading(false); 
+        setLoading(false);
       }
     };
 
-    fetchData(); 
-  }, []); 
+    fetchData();
+  }, []);
 
   if (loading) {
     return <div>Carregando...</div>; // Exibe uma mensagem de carregamento enquanto os dados não chegam
@@ -57,6 +59,7 @@ function MainContent() {
 
   return (
     <div className="bg-gray-50">
+
       <Header />
       <Filtros
         onCidadeSelecionada={handleCidade}
@@ -67,9 +70,12 @@ function MainContent() {
         cidadeSelecionada={cidade}
       />
       <div className="conteudo">
-        <PiauiMapa onCidadeSelecionada={handleCidade} />
-        <Lista onCidadeSelecionada={cidade} mes={mes} ano={ano} />
+        <PiauiMapa onCidadeSelecionada={handleCidade} /> 
+        <Abas cidadeSelecionada={cidade} mes={mes} ano={ano} />
+
       </div>
+
+
       <Footer />
     </div>
   );
