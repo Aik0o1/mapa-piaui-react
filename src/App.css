@@ -82,7 +82,7 @@
 .conteudo {
   display: grid;
   grid-template-columns: 1.2fr 1.5fr;
-  padding: 3rem 0;
+  padding: 1rem 0;
   font-size: 0.875rem;
 }
 
