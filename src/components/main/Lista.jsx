@@ -10,18 +10,18 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
 
   const [selectedCity, setSelectedCity] = useState("");
   const meses = {
-    'Janeiro': 1,
-    'Fevereiro': 2,
-    'Março': 3,
-    'Abril': 4,
-    'Maio': 5,
-    'Junho': 6,
-    'Julho': 7,
-    'Agosto': 8,
-    'Setembro': 9,
-    'Outubro': 10,
-    'Novembro': 11,
-    'Dezembro': 12,
+    'Janeiro': '01',
+    'Fevereiro': '02',
+    'Março': '03',
+    'Abril': '04',
+    'Maio': '05',
+    'Junho': '06',
+    'Julho': '07',
+    'Agosto': '08',
+    'Setembro': '09',
+    'Outubro': '10',
+    'Novembro': '11',
+    'Dezembro': '12',
   };
 
   const id = onCidadeSelecionada.id.length > 6 ? onCidadeSelecionada.id.split('-')[1] : onCidadeSelecionada.id
@@ -33,12 +33,12 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
 
         if (onCidadeSelecionada?.id && mes && ano) {
           const numero_mes = meses[mes];
-          url = `http://10.0.140.2:5000/buscar_dados?cidade=${id}&mes=${numero_mes}&ano=${ano}`;
+          url = `http://10.40.25.248:5000/buscar_dados?cidade=${id}&mes=${numero_mes}&ano=${ano}`;
         } else if (mes && ano) {
           const numero_mes = meses[mes];
-          url = `http://10.0.140.2:5000/buscar_todas?mes=${numero_mes}&ano=${ano}`;
+          url = `http://10.40.25.248:5000/buscar_todas?mes=${numero_mes}&ano=${ano}`;
         } else {
-          url = `http://10.0.140.2:5000/buscar_todas`;
+          url = `http://10.40.25.248:5000/buscar_todas`;
         }
 
         const response = await fetch(url);
@@ -114,7 +114,7 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
               <span className="font-medium">Empresas abertas por atividades</span>
             </AccordionTrigger>
             <AccordionContent className="p-4 pt-0">
-              <TreeMap selectedCity={id} dados={dados} />
+              {dados.error == "Cidade não encontrada" || dados.atividades == "Sem dados" ? <div>Sem dados</div>:<TreeMap selectedCity={id} dados={dados} />}
             </AccordionContent>
           </AccordionItem>
         </Accordion>
@@ -127,7 +127,8 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
             </AccordionTrigger>
             <AccordionContent className="p-4 pt-0">
               <div className="w-full">
-                <PieCharts selectedCity={id} dados={dados} />
+              {dados.error == "Cidade não encontrada" || dados.atividades == "Sem dados" ? <div>Sem dados</div>:<PieCharts selectedCity={id} dados={dados}/>}
+              
               </div>
             </AccordionContent>
           </AccordionItem>
