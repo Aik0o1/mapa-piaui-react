@@ -5,9 +5,11 @@ export default function TreeMap({ selectedCity, dados }) {
   const svgRef = useRef();
 
   useEffect(() => {
-    if (!dados || !dados.atividades) return;
+    if (!dados || !dados.atividades || dados.atividades == "Sem dados")
+       return
 
     // Limpa o SVG anterior
+    console.log(dados)
     d3.select(svgRef.current).selectAll("*").remove();
 
     const width = 1000;

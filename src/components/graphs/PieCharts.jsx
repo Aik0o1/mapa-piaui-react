@@ -6,7 +6,7 @@ export default function PieCharts({ selectedCity, dados }) {
     const svgRef2 = useRef();
 
     useEffect(() => {
-        if (!dados || !dados.naturezas || !dados.portes) return;
+        if (!dados || !dados.naturezas || !dados.portes || dados.atividades=="Sem dados") return;
 
         // Limpa os SVGs anteriores
         d3.select(svgRef1.current).selectAll("*").remove();
@@ -49,6 +49,8 @@ export default function PieCharts({ selectedCity, dados }) {
 
         // Função para criar gráfico de pizza
         const createPieChart = (data, svgRef, title) => {
+            
+            if (data == "Sem dados") return
             // Prepara os dados removendo o número do início
             const cleanedData = data.map(item => ({
                 ...item,
