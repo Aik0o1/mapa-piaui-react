@@ -28,15 +28,17 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
 
   useEffect(() => {
     const fetchData = async () => {
+      console.log(dados);
+
       try {
         let url = "";
 
         if (onCidadeSelecionada?.id && mes && ano) {
           const numero_mes = meses[mes];
-          url = `http://127.0.0.1:5000/buscar_dados?cidade=${id}&mes=${numero_mes}&ano=${ano}`;
+          url = `http://127.0.0.1:5000/abertas?cidade=${id}&mes=${numero_mes}&ano=${ano}`;
         } else {
           const numero_mes = meses[mes];
-          url = `http://127.0.0.1:5000/buscar_dados?cidade=2211001&mes=${numero_mes}&ano=${ano}`;
+          url = `http://127.0.0.1:5000/abertas?cidade=2211001&mes=${numero_mes}&ano=${ano}`;
 
         }
 
@@ -113,7 +115,7 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
               <span className="font-medium">Empresas abertas por atividades</span>
             </AccordionTrigger>
             <AccordionContent className="p-4 pt-0">
-              {dados.error == "Cidade não encontrada" || dados.atividades == "Sem dados" ? <div>Sem dados</div>:<TreeMap selectedCity={id} dados={dados} />}
+              {dados.error == "Cidade não encontrada" || dados.atividades == "Sem dados" ? <div>Sem dados</div> : <TreeMap selectedCity={id} dados={dados} />}
             </AccordionContent>
           </AccordionItem>
         </Accordion>
@@ -126,8 +128,8 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
             </AccordionTrigger>
             <AccordionContent className="p-4 pt-0">
               <div className="w-full">
-              {dados.error == "Cidade não encontrada" || dados.atividades == "Sem dados" ? <div>Sem dados</div>:<PieCharts selectedCity={id} dados={dados}/>}
-              
+                {dados.error == "Cidade não encontrada" || dados.atividades == "Sem dados" ? <div>Sem dados</div> : <PieCharts selectedCity={id} dados={dados} />}
+
               </div>
             </AccordionContent>
           </AccordionItem>
