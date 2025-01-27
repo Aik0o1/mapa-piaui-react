@@ -6,7 +6,7 @@ export default function TreeMap({ selectedCity, dados }) {
 
   useEffect(() => {
     if (!dados || !dados.atividades || dados.atividades == "Sem dados")
-       return
+      return
 
     // Limpa o SVG anterior
     console.log(dados)
@@ -66,7 +66,7 @@ export default function TreeMap({ selectedCity, dados }) {
         const rectWidth = d.x1 - d.x0;
         const maxCharsPerLine = Math.floor(rectWidth / 8);
 
-        const words = d.data.name.split(/[\s-]/);
+        const words = d.data.name.split(/[-_]/);
         const lines = [];
         let currentLine = [];
 
@@ -81,21 +81,23 @@ export default function TreeMap({ selectedCity, dados }) {
         });
         if (currentLine.length) lines.push(currentLine.join(' '));
 
+        lines.push(`${d.data.value}`);
+
         return lines.map((text, index) => ({
           text,
-          isName: true,
+          isValue: index === lines.length - 1,
           lineIndex: index
         }));
       })
       .enter().append("tspan")
       .attr("x", 4)
-      .attr("y", (d, i) => 14 + d.lineIndex * 14)
-      .attr("fill", "white")
-      .style("font-size", "12px")
+      .attr("y", (d, i) => 25 + d.lineIndex * 20)
+      .attr("fill", d => (d.isValue ? "yellow" : "white"))
+      .style("font-size", d => (d.isValue ? "14px" : "18px"))
       .style("text-transform", "capitalize")
       .text(d => d.text);
 
-   
+
     const tooltip = d3.select("body")
       .append("div")
       .style("position", "absolute")

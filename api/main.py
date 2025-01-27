@@ -8,14 +8,18 @@ import datetime
 # Database connection setup
 password = 'sti@JUCEPI_2020'
 encoded_password = quote(password)
-couch = couchdb.Server(f'http://admin:{encoded_password}@10.0.140.2:5984/')
-db_name = 'test2'
+couch = couchdb.Server(f'http://admin:{encoded_password}@10.40.25.11:5984/')
+
+abertas_db_name = 'municipios-2024'
+ativas_db_name = 'municipios-2024-ativas'
 
 # Check if database exists
-if db_name in couch:
-    db = couch[db_name]
+if abertas_db_name and ativas_db_name in couch:
+    db = couch[abertas_db_name]
+    db_ativas = couch[ativas_db_name]
+
 else:
-    print(f"O banco de dados '{db_name}' não existe.")
+    print(f"O banco de dados '{abertas_db_name}' não existe.")
     exit()
 
 app = Flask(__name__)
@@ -59,25 +63,38 @@ def dados_gerais():
 
     for _, valor in documento_mais_recente['cidades'].items():
         # Processa naturezas
-        for natureza in valor.get('naturezas', []):
-            totais["naturezas"].append({
-                "tipo": natureza['tipo'],
-                "qtd_por_natureza": natureza['qtd_por_natureza']
-            })
+        if isinstance(valor.get('naturezas'), list):
+            for natureza in valor.get('naturezas', []):
+                totais["naturezas"].append({
+                    "tipo": natureza['tipo'],
+                    "qtd_por_natureza": natureza['qtd_por_natureza']
+                })
+        else:   
+            totais["naturezas"].append({"tipo": "Sem dados", "qtd_por_natureza": 0})
+
 
         # Processa portes
-        for porte in valor.get('portes', []):
-            totais["portes"].append({
-                "tipo": porte['tipo'],
-                "qtd_por_porte": porte['qtd_por_porte']
-            })
+        if isinstance(valor.get('portes'), list):
+            for porte in valor.get('portes', []):
+                totais["portes"].append({
+                    "tipo": porte['tipo'],
+                    "qtd_por_porte": porte['qtd_por_porte']
+                })
+        else:
+            totais["portes"].append({ "tipo": 'Sem dados',
+                    "qtd_por_porte":0})
+
 
         # Processa atividades
-        for atividade in valor.get('atividades', []):
-            totais["atividades"].append({
-                "tipo": atividade['tipo'],
-                "qtd_por_seção_da_atividade": atividade['qtd_por_seção_da_atividade']
-            })
+        if isinstance(valor.get('atividades'), list):
+            for atividade in valor.get('atividades', []):
+                totais["atividades"].append({
+                    "tipo": atividade['tipo'],
+                    "qtd_por_seção_da_atividade": atividade['qtd_por_seção_da_atividade']
+                })
+        else:
+            totais["atividades"].append({ "tipo": 'Sem dados',
+                    "qtd_por_seção_da_atividade":0})
 
         # Processa aberturas
         for abertura in valor.get('abertura', []):
@@ -107,7 +124,7 @@ def dados_gerais():
     totais["naturezas"] = _consolidar_dados(totais["naturezas"], "qtd_por_natureza")
     totais["portes"] = _consolidar_dados(totais["portes"], "qtd_por_porte")
     totais["atividades"] = _consolidar_dados(totais["atividades"], "qtd_por_seção_da_atividade")
-    totais["nome"] = "Todos"
+    # totais["nome"] = "Teresina"
 
     total_aberturas = sum(item['qtd_abertas_no_mes'] for item in totais["abertura"])
     totais["abertura"] = [{
@@ -169,8 +186,8 @@ def somar_tempos(tempos, campo):
 
     return resultados
 
-@app.route('/buscar_dados', methods=['GET'])
-def buscar_dados():
+@app.route('/abertas', methods=['GET'])
+def buscar_dados_abertas():
     cidade = request.args.get('cidade')
     # print(cidade)
     mes = request.args.get('mes')
@@ -204,10 +221,45 @@ def buscar_dados():
             
     return jsonify({"error": "Dados não encontrados para o mês/ano especificado"}), 404
 
+@app.route('/ativas', methods=['GET'])
+def buscar_dados_ativas():
+    cidade = request.args.get('cidade')
+    # print(cidade)
+    mes = request.args.get('mes')
+    ano = request.args.get('ano')
+
+    if not cidade or not mes or not ano:
+        return jsonify({"error": "Cidade, mês e ano são necessários"}), 400
+    
+    # Formata a data no formato "mês/ano"
+    data_procurada = f"{mes}/{ano}"
+    
+    # Acessa o banco de dados
+    for doc in db_ativas:
+        documento = db_ativas[doc]
+
+        if documento['data'] == data_procurada:
+            print(data_procurada)
+        # return jsonify({"error": "Dados não encontrados para o mês/ano especificado"}), 404
+            cidade_encontrada = documento['cidades'].get(cidade)
+
+            if not cidade_encontrada:
+                return jsonify({"error": "Cidade não encontrada"}), 404
+
+            cidade_encontrada['id'] = cidade
+            cidade_encontrada['data'] = data_procurada
+            
+            # Retorna os dados com charset UTF-8 no cabeçalho Content-Type
+            response = jsonify(cidade_encontrada)
+            response.headers['Content-Type'] = 'application/json; charset=utf-8'
+            return response
+            
+    return jsonify({"error": "Dados não encontrados para o mês/ano especificado"}), 404
+
 # Return list of all cities
 @app.route('/cidades')
 def get_all_cidades():
-    doc = db['35299b45e7ec1d69564f1a0b5e01a3bb']
+    doc = db['35299b45e7ec1d69564f1a0b5e03e2a2']
     
     # Extrai os nomes das cidades
     nomes_cidades = [cidade_data['nome'] for cidade_id, cidade_data in doc['cidades'].items()]
@@ -247,7 +299,7 @@ def get_portes(codigo):
 # lista de todos os nomes de cidades
 @app.route('/id_nome_cidades', methods=['GET'])
 def get_id_nome_cidades():
-    doc = db['35299b45e7ec1d69564f1a0b5e01a3bb']
+    doc = db['35299b45e7ec1d69564f1a0b5e03e2a2']
     
     # Formata os dados no formato desejado
     cidades = [{"id": int(cidade_id), "nome": cidade_data['nome']} 

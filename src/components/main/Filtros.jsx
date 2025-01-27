@@ -30,7 +30,7 @@ export default function Filtros(props) {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const url = "http://10.0.140.2:5000/data_recente"
+                const url = "http://127.0.0.1:5000/data_recente"
                 const response = await fetch(url);
                 const data = await response.json();
                 setDataRecente(data);

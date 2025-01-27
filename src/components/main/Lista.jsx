@@ -33,12 +33,11 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
 
         if (onCidadeSelecionada?.id && mes && ano) {
           const numero_mes = meses[mes];
-          url = `http://10.40.25.248:5000/buscar_dados?cidade=${id}&mes=${numero_mes}&ano=${ano}`;
-        } else if (mes && ano) {
-          const numero_mes = meses[mes];
-          url = `http://10.40.25.248:5000/buscar_todas?mes=${numero_mes}&ano=${ano}`;
+          url = `http://127.0.0.1:5000/buscar_dados?cidade=${id}&mes=${numero_mes}&ano=${ano}`;
         } else {
-          url = `http://10.40.25.248:5000/buscar_todas`;
+          const numero_mes = meses[mes];
+          url = `http://127.0.0.1:5000/buscar_dados?cidade=2211001&mes=${numero_mes}&ano=${ano}`;
+
         }
 
         const response = await fetch(url);
