@@ -1,3 +1,5 @@
 Flask
-flask-cors
 couchdb
+gunicorn
+flask-cors
+python-dotenv
