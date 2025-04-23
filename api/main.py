@@ -1,14 +1,18 @@
-import couchdb
-from urllib.parse import quote
+import os
 import json
-from flask import Flask, jsonify, Response, request
-from flask_cors import CORS
+import couchdb
 import datetime
+from flask_cors import CORS
+from dotenv import load_dotenv
+from urllib.parse import quote
+from flask import Flask, jsonify, Response, request
+
+load_dotenv()  # take environment variables
 
 # Database connection setup
-password = 'sti@JUCEPI_2020'
+password = os.getenv("SENHA")
 encoded_password = quote(password)
-couch = couchdb.Server(f'http://admin:{encoded_password}@10.40.25.11:5984/')
+couch = couchdb.Server(f'http://admin:{encoded_password}@{os.getenv("IP")}')
 
 abertas_db_name = 'municipios-2024'
 ativas_db_name = 'municipios-2024-ativas'
@@ -259,7 +263,7 @@ def buscar_dados_ativas():
 # Return list of all cities
 @app.route('/cidades')
 def get_all_cidades():
-    doc = db['35299b45e7ec1d69564f1a0b5e03e2a2']
+    doc = db[os.getenv("DOCUMENTO")]
     
     # Extrai os nomes das cidades
     nomes_cidades = [cidade_data['nome'] for cidade_id, cidade_data in doc['cidades'].items()]
@@ -269,13 +273,15 @@ def get_all_cidades():
 # Return all city names with their data
 @app.route('/dados')
 def get_all_data():
-    doc = db['6d66c335d17c58f7257574d13f000589']
+    doc = db[os.getenv("DOCUMENTO")]
+
     return jsonify(doc['cidades'])
 
 # Get data for a specific city
 @app.route('/cidade/<codigo>')
 def get_cidade_data(codigo):
-    doc = db['6d66c335d17c58f7257574d13f000589']
+    doc = db[os.getenv("DOCUMENTO")]
+
     if codigo in doc['cidades']:
         return jsonify(doc['cidades'][codigo])
     return jsonify({"error": "Cidade não encontrada"}), 404
@@ -283,7 +289,8 @@ def get_cidade_data(codigo):
 # Get all naturezas for a specific city
 @app.route('/cidade/<codigo>/naturezas')
 def get_naturezas(codigo):
-    doc = db['6d66c335d17c58f7257574d13f000589']
+    doc = db[os.getenv("DOCUMENTO")]
+
     if codigo in doc['cidades']:
         return jsonify(doc['cidades'][codigo]['naturezas'])
     return jsonify({"error": "Cidade não encontrada"}), 404
@@ -291,7 +298,8 @@ def get_naturezas(codigo):
 # Get all portes for a specific city
 @app.route('/cidade/<codigo>/portes')
 def get_portes(codigo):
-    doc = db['6d66c335d17c58f7257574d13f000589']
+    doc = db[os.getenv("DOCUMENTO")]
+
     if codigo in doc['cidades']:
         return jsonify(doc['cidades'][codigo]['portes'])
     return jsonify({"error": "Cidade não encontrada"}), 404
@@ -299,8 +307,8 @@ def get_portes(codigo):
 # lista de todos os nomes de cidades
 @app.route('/id_nome_cidades', methods=['GET'])
 def get_id_nome_cidades():
-    doc = db['35299b45e7ec1d69564f1a0b5e03e2a2']
-    
+    doc = db[os.getenv("DOCUMENTO")]
+
     # Formata os dados no formato desejado
     cidades = [{"id": int(cidade_id), "nome": cidade_data['nome']} 
                for cidade_id, cidade_data in doc['cidades'].items()]
@@ -312,7 +320,8 @@ def get_id_nome_cidades():
 # Get all atividades for a specific city
 @app.route('/cidade/<codigo>/atividades')
 def get_atividades(codigo):
-    doc = db['6d66c335d17c58f7257574d13f000589']
+    doc = db[os.getenv("DOCUMENTO")]
+
     if codigo in doc['cidades']:
         return jsonify(doc['cidades'][codigo]['atividades'])
     return jsonify({"error": "Cidade não encontrada"}), 404
@@ -320,7 +329,8 @@ def get_atividades(codigo):
 # Get data and month
 @app.route('/info')
 def get_data():
-    doc = db['6d66c335d17c58f7257574d13f000589']
+    doc = db[os.getenv("DOCUMENTO")]
+
     return jsonify({"data": doc['data']})
 
 # @app.route('/data_recente')
@@ -365,4 +375,4 @@ def retorna_data_mais_recente():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host="0.0.0.0")
+    app.run()
