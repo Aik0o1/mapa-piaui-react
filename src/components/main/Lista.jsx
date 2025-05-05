@@ -35,10 +35,10 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
 
         if (onCidadeSelecionada?.id && mes && ano) {
           const numero_mes = meses[mes];
-          url = `http://127.0.0.1:5000/abertas?cidade=${id}&mes=${numero_mes}&ano=${ano}`;
+          url = `https://dev-apimapa.jucepi.pi.gov.br//abertas?cidade=${id}&mes=${numero_mes}&ano=${ano}`;
         } else {
           const numero_mes = meses[mes];
-          url = `http://127.0.0.1:5000/abertas?cidade=2211001&mes=${numero_mes}&ano=${ano}`;
+          url = `https://dev-apimapa.jucepi.pi.gov.br//abertas?cidade=2211001&mes=${numero_mes}&ano=${ano}`;
 
         }
 

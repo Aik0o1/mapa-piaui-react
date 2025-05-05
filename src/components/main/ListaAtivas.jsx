@@ -33,10 +33,10 @@ export default function ListaAtivas({ onCidadeSelecionada, mes, ano }) {
 
                 if (onCidadeSelecionada?.id && mes && ano) {
                     const numero_mes = meses[mes];
-                    url_ativas = `http://127.0.0.1:5000/ativas?cidade=${id}&mes=${numero_mes}&ano=${ano}`;
+                    url_ativas = `https://dev-apimapa.jucepi.pi.gov.br//ativas?cidade=${id}&mes=${numero_mes}&ano=${ano}`;
                 } else {
                     const numero_mes = meses[mes];
-                    url_ativas = `http://127.0.0.1:5000/ativas?cidade=2211001&mes=${numero_mes}&ano=${ano}`;
+                    url_ativas = `https://dev-apimapa.jucepi.pi.gov.br//ativas?cidade=2211001&mes=${numero_mes}&ano=${ano}`;
                 }
 
                 const response = await fetch(url_ativas);

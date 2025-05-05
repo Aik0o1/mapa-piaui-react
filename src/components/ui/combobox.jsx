@@ -26,7 +26,7 @@ export function ComboboxCidades({ onCidadeSelect, cidadeSelecionada }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:5000/id_nome_cidades");
+        const response = await fetch("https://dev-apimapa.jucepi.pi.gov.br//id_nome_cidades");
         const data = await response.json();
         setCidades(data);
       } catch (error) {
