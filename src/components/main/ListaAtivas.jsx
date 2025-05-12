@@ -62,7 +62,7 @@ export default function ListaAtivas({ onCidadeSelecionada, mes, ano }) {
 
     // console.log(cidadeNoMapa)
     //const dados = dados[cidadeNoMapa];
-    const municipio = dados?.nome || "N/A";
+    const municipio = onCidadeSelecionada.nome == "Selecione um município"? "TERESINA" : onCidadeSelecionada.nome
     //   const tempo_res = dados?.["tempo-de-resposta"]?.[0]["tempo_resposta"] || "Sem dados";
     const qtd_ativas_no_mes = dados?.["ativas"] || "N/A";
 
