@@ -65,7 +65,7 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
 
   // console.log(cidadeNoMapa)
   //const dados = dados[cidadeNoMapa];
-  const municipio = dados?.nome || "N/A";
+  const municipio = onCidadeSelecionada.nome == "Selecione um município"? "TERESINA" : onCidadeSelecionada.nome
   const tempo_res = dados?.["tempo-de-resposta"]?.[0]["tempo_resposta"] || "Sem dados";
   const qtd_abertas = dados?.["abertura"]?.[0]["qtd_abertas_no_mes"] || "N/A";
 
