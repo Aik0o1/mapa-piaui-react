@@ -18,7 +18,7 @@ abertas_db_name = 'municipios-2024'
 ativas_db_name = 'municipios-2024-ativas'
 
 # Check if database exists
-if abertas_db_name and ativas_db_name in couch:
+if abertas_db_name in couch and ativas_db_name in couch:
     db = couch[abertas_db_name]
     db_ativas = couch[ativas_db_name]
 
@@ -28,6 +28,52 @@ else:
 
 app = Flask(__name__)
 CORS(app)
+
+@app.route("/ranking", methods=['GET'])
+def buscar_ranking():
+    try:
+        # Obtém parâmetros da URL
+        cidade = request.args.get('cidade')  # Ex: "2211001"
+        mes = request.args.get('mes')        # Ex: "12"
+        ano = request.args.get('ano')        # Ex: "2024"
+
+        # Validação básica
+        if not all([cidade, mes, ano]):
+            return jsonify({"error": "Parâmetros 'cidade', 'mes' e 'ano' são obrigatórios"}), 400
+
+        # Acessa o banco de dados
+        db_name = "dados_empresariais"
+        if db_name not in couch:
+            return jsonify({"error": f"Banco de dados '{db_name}' não existe"}), 404
+
+        db = couch[db_name]
+        doc_id = f"{mes.zfill(2)}-{ano}"  # Formato "12-2024"
+
+        # Verifica se o documento existe
+        if doc_id not in db:
+            return jsonify({"error": f"Documento {doc_id} não encontrado"}), 404
+
+        doc = db[doc_id]
+
+        # Verifica se a cidade existe no documento
+        if cidade not in doc:
+            return jsonify({"error": f"Cidade {cidade} não encontrada no documento"}), 404
+        
+
+        # Resposta de sucesso
+        return jsonify({
+            "id": doc_id,
+            "municipio": cidade,
+            **doc[cidade]
+        })
+
+    except couchdb.http.Unauthorized:
+        return jsonify({"error": "Acesso não autorizado ao CouchDB"}), 401
+    except Exception as e:
+        # Log do erro real (aparece no terminal onde o Flask está rodando)
+        app.logger.error(f"Erro interno: {str(e)}", exc_info=True)
+        return jsonify({"error": "Erro interno no servidor"}), 500
+
 
 @app.route('/buscar_todas', methods=['GET'])
 def dados_gerais():
