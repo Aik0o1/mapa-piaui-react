@@ -1,18 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import PiauiMapa from './components/main/Mapa';
-import './Mapa.css';
 import './App.css';
-import Header from './components/main/Header';
-import Lista from './components/main/Lista';
-import Filtros from './components/main/Filtros';
-import Footer from './components/main/Footer';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import './Mapa.css';
 import Abas from './components/main/Tabs';
+import { useState, useEffect } from 'react';
+import Header from './components/main/Header';
+import Footer from './components/main/Footer';
+import PiauiMapa from './components/main/Mapa';
+import Filtros from './components/main/Filtros';
 
 function MainContent() {
   const [cidade, setCidade] = useState({ nome: 'Selecione um município', id: '' });
-  const [mes, setMes] = useState(""); // Inicializa com valor vazio
-  const [ano, setAno] = useState(""); // Inicializa com valor vazio
+  const [mes, setMes] = useState(""); 
+  const [ano, setAno] = useState(""); 
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

@@ -56,8 +56,8 @@ export default function ListaRanking({ onCidadeSelecionada, mes, ano }) {
             : onCidadeSelecionada.id;
 
         const url = onCidadeSelecionada?.id
-          ? `http://127.0.0.1:5000/ranking?cidade=${id}&mes=${numero_mes}&ano=${ano}`
-          : `http://127.0.0.1:5000/ranking?cidade=2211001&mes=${numero_mes}&ano=${ano}`;
+          ? `https://dev-apimapa.jucepi.pi.gov.br/ranking?cidade=${id}&mes=${numero_mes}&ano=${ano}`
+          : `https://dev-apimapa.jucepi.pi.gov.br/ranking?cidade=2211001&mes=${numero_mes}&ano=${ano}`;
 
         const response = await fetch(url);
         if (!response.ok) throw new Error("Erro ao buscar dados");
