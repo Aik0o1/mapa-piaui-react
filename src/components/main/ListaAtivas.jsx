@@ -27,6 +27,19 @@ export default function ListaAtivas({ onCidadeSelecionada, mes, ano }) {
     const id = onCidadeSelecionada.id.length > 6 ? onCidadeSelecionada.id.split('-')[1] : onCidadeSelecionada.id
 
     useEffect(() => {
+        const btnAno = document.getElementsByClassName("anoEscolha")[0]
+        const btnMes = document.getElementsByClassName("mesEscolha")[0]
+        const btnLimparFiltros = document.getElementsByClassName("limpar-filtros")[0]
+
+        btnAno.style.visibility = "hidden"
+        btnMes.style.visibility = "hidden"
+        btnLimparFiltros.style.visibility = "hidden"
+    }, []);
+
+    useEffect(() => {
+        // const btnAno = document.getElementsByClassName("anoEscolha")
+        // btnAno[0].hidden = true
+
         const fetchData = async () => {
             try {
                 let url_ativas = "";
@@ -62,7 +75,7 @@ export default function ListaAtivas({ onCidadeSelecionada, mes, ano }) {
 
     // console.log(cidadeNoMapa)
     //const dados = dados[cidadeNoMapa];
-    const municipio = onCidadeSelecionada.nome == "Selecione um município"? "TERESINA" : onCidadeSelecionada.nome
+    const municipio = onCidadeSelecionada.nome == "Selecione um município" ? "TERESINA" : onCidadeSelecionada.nome
     //   const tempo_res = dados?.["tempo-de-resposta"]?.[0]["tempo_resposta"] || "Sem dados";
     const qtd_ativas_no_mes = dados?.["ativas"] || "N/A";
 

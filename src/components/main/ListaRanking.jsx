@@ -44,6 +44,17 @@ export default function ListaRanking({ onCidadeSelecionada, mes, ano }) {
     }));
   };
 
+    useEffect(() => {
+        const btnAno = document.getElementsByClassName("anoEscolha")[0]
+        const btnMes = document.getElementsByClassName("mesEscolha")[0]
+        const btnLimparFiltros = document.getElementsByClassName("limpar-filtros")[0]
+
+        btnAno.style.visibility = "visible"
+        btnMes.style.visibility = "visible"
+        btnLimparFiltros.style.visibility = "visible"
+    }, []);
+
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -215,14 +226,12 @@ export default function ListaRanking({ onCidadeSelecionada, mes, ano }) {
                       return (
                         <li key={doc} className="flex items-center gap-3">
                           <div
-                            className={`w-5 h-5 rounded-full flex items-center justify-center ${
-                              isEnabled ? "bg-green-100" : "bg-red-100"
-                            }`}
+                            className={`w-5 h-5 rounded-full flex items-center justify-center ${isEnabled ? "bg-green-100" : "bg-red-100"
+                              }`}
                           >
                             <div
-                              className={`w-3 h-3 rounded-full ${
-                                isEnabled ? "bg-green-500" : "bg-red-500"
-                              }`}
+                              className={`w-3 h-3 rounded-full ${isEnabled ? "bg-green-500" : "bg-red-500"
+                                }`}
                             />
                           </div>
                           <span className="font-medium">
@@ -268,9 +277,8 @@ export default function ListaRanking({ onCidadeSelecionada, mes, ano }) {
                 <div
                   className="bg-[#034ea2] h-3 rounded-full transition-all duration-500"
                   style={{
-                    width: `${
-                      dados.indice_atendimentos.percentual_atendimento * 100
-                    }%`,
+                    width: `${dados.indice_atendimentos.percentual_atendimento * 100
+                      }%`,
                   }}
                 />
               </div>

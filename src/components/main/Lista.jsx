@@ -26,6 +26,16 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
 
   const id = onCidadeSelecionada.id.length > 6 ? onCidadeSelecionada.id.split('-')[1] : onCidadeSelecionada.id
 
+    useEffect(() => {
+        const btnAno = document.getElementsByClassName("anoEscolha")[0]
+        const btnMes = document.getElementsByClassName("mesEscolha")[0]
+        const btnLimparFiltros = document.getElementsByClassName("limpar-filtros")[0]
+
+        btnAno.style.visibility = "visible"
+        btnMes.style.visibility = "visible"
+        btnLimparFiltros.style.visibility = "visible"
+    }, []);
+
   useEffect(() => {
     const fetchData = async () => {
       console.log(dados);
@@ -65,7 +75,7 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
 
   // console.log(cidadeNoMapa)
   //const dados = dados[cidadeNoMapa];
-  const municipio = onCidadeSelecionada.nome == "Selecione um município"? "TERESINA" : onCidadeSelecionada.nome
+  const municipio = onCidadeSelecionada.nome == "Selecione um município" ? "TERESINA" : onCidadeSelecionada.nome
   const tempo_res = dados?.["tempo-de-resposta"]?.[0]["tempo_resposta"] || "Sem dados";
   const qtd_abertas = dados?.["abertura"]?.[0]["qtd_abertas_no_mes"] || "N/A";
 
