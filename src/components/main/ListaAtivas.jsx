@@ -42,14 +42,19 @@ export default function ListaAtivas({ onCidadeSelecionada, mes, ano }) {
 
         const fetchData = async () => {
             try {
+                const hoje = new Date();
+                const anoAtual = hoje.getFullYear()
+                const mesAtual = hoje.getMonth() + 1 < 10 ? `0${hoje.getMonth() + 1}` : hoje.getMonth() + 1   
+                console.log(anoAtual, mesAtual)
+
                 let url_ativas = "";
 
-                if (onCidadeSelecionada?.id && mes && ano) {
+                if (onCidadeSelecionada?.id && mesAtual && anoAtual) {
                     const numero_mes = meses[mes];
-                    url_ativas = `https://dev-apimapa.jucepi.pi.gov.br//ativas?cidade=${id}&mes=${numero_mes}&ano=${ano}`;
+                    url_ativas = `https://dev-apimapa.jucepi.pi.gov.br//ativas?cidade=${id}&mes=${mesAtual}&ano=${anoAtual}`;
                 } else {
                     const numero_mes = meses[mes];
-                    url_ativas = `https://dev-apimapa.jucepi.pi.gov.br//ativas?cidade=2211001&mes=${numero_mes}&ano=${ano}`;
+                    url_ativas = `https://dev-apimapa.jucepi.pi.gov.br//ativas?cidade=2211001&mes=${mesAtual}&ano=${anoAtual}`;
                 }
 
                 const response = await fetch(url_ativas);
