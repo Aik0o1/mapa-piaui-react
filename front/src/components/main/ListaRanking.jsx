@@ -44,16 +44,16 @@ export default function ListaRanking({ onCidadeSelecionada, mes, ano }) {
     }));
   };
 
-    useEffect(() => {
-        const btnAno = document.getElementsByClassName("anoEscolha")[0]
-        const btnMes = document.getElementsByClassName("mesEscolha")[0]
-        const btnLimparFiltros = document.getElementsByClassName("limpar-filtros")[0]
+  useEffect(() => {
+    const btnAno = document.getElementsByClassName("anoEscolha")[0];
+    const btnMes = document.getElementsByClassName("mesEscolha")[0];
+    const btnLimparFiltros =
+      document.getElementsByClassName("limpar-filtros")[0];
 
-        btnAno.style.visibility = "visible"
-        btnMes.style.visibility = "visible"
-        btnLimparFiltros.style.visibility = "visible"
-    }, []);
-
+    btnAno.style.visibility = "visible";
+    btnMes.style.visibility = "visible";
+    btnLimparFiltros.style.visibility = "visible";
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -67,17 +67,20 @@ export default function ListaRanking({ onCidadeSelecionada, mes, ano }) {
             : onCidadeSelecionada.id;
 
         const url = onCidadeSelecionada?.id
-          ? `https://dev-apimapa.jucepi.pi.gov.br/ranking?cidade=${id}&mes=${numero_mes}&ano=${ano}`
+          ? `https://dev-apimapa.jucepi.pi.gov.br/ultimo-id?cidade=${id}&mes=${numero_mes}&ano=${ano}`
           : `https://dev-apimapa.jucepi.pi.gov.br/ranking?cidade=2211001&mes=${numero_mes}&ano=${ano}`;
 
         const response = await fetch(url);
-        if (!response.ok) throw new Error("Erro ao buscar dados");
-
         const data = await response.json();
-        setDados(data.ranking);
+
+        if (!response.ok || !data.ranking) {
+          setDados(null);
+        } else {
+          setDados(data.ranking);
+        }
       } catch (err) {
         setError(err.message);
-        console.error("Erro:", err);
+        // console.error("Erro:", err);
       } finally {
         setLoading(false);
       }
@@ -178,7 +181,7 @@ export default function ListaRanking({ onCidadeSelecionada, mes, ano }) {
               <div className="flex justify-between items-center w-full">
                 <span className="font-medium">Pontuação Total</span>
                 <span className="font-bold text-[#034ea2]">
-                  {totalPontuacao}
+                  {totalPontuacao == 0 ? "" : totalPontuacao}
                 </span>
               </div>
             </AccordionTrigger>
@@ -226,12 +229,14 @@ export default function ListaRanking({ onCidadeSelecionada, mes, ano }) {
                       return (
                         <li key={doc} className="flex items-center gap-3">
                           <div
-                            className={`w-5 h-5 rounded-full flex items-center justify-center ${isEnabled ? "bg-green-100" : "bg-red-100"
-                              }`}
+                            className={`w-5 h-5 rounded-full flex items-center justify-center ${
+                              isEnabled ? "bg-green-100" : "bg-red-100"
+                            }`}
                           >
                             <div
-                              className={`w-3 h-3 rounded-full ${isEnabled ? "bg-green-500" : "bg-red-500"
-                                }`}
+                              className={`w-3 h-3 rounded-full ${
+                                isEnabled ? "bg-green-500" : "bg-red-500"
+                              }`}
                             />
                           </div>
                           <span className="font-medium">
@@ -242,14 +247,14 @@ export default function ListaRanking({ onCidadeSelecionada, mes, ano }) {
                     })}
                 </ul>
               ) : (
-                <div>Sem dados</div>
+                <p className="text-gray-500">Sem dados</p>
               )}
             </AccordionContent>
           </AccordionItem>
         </Accordion>
 
         {/* Índice de Atendimento */}
-        <div className="space-y-2 pb-4">
+        <div className="space-y-2">
           <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
             <div className="flex items-center gap-3">
               <LaptopMinimalCheck className="text-[#034ea2]" />
@@ -277,14 +282,15 @@ export default function ListaRanking({ onCidadeSelecionada, mes, ano }) {
                 <div
                   className="bg-[#034ea2] h-3 rounded-full transition-all duration-500"
                   style={{
-                    width: `${dados.indice_atendimentos.percentual_atendimento * 100
-                      }%`,
+                    width: `${
+                      dados.indice_atendimentos.percentual_atendimento * 100
+                    }%`,
                   }}
                 />
               </div>
             </div>
           ) : (
-            <div className="px-4">Sem dados</div>
+            <p className="text-gray-500 px-4">Sem dados</p>
           )}
         </div>
 
@@ -316,7 +322,7 @@ export default function ListaRanking({ onCidadeSelecionada, mes, ano }) {
                     ))}
                 </ul>
               ) : (
-                <div>Sem dados</div>
+                <p className="text-gray-500">Sem dados</p>
               )}
             </AccordionContent>
           </AccordionItem>

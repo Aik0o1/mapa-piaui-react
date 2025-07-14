@@ -18,13 +18,13 @@ export default function TemposAnalise({ dados }) {
   // Check if tempo-de-analise exists and has items
   if (!cityData?.["tempo-de-analise"]?.length) {
     return (
-      <Accordion type="single" collapsible>
+      <Accordion type="single" collapsible className="border rounded-lg">
         <AccordionItem value="item-1">
           <AccordionTrigger className="flex items-center gap-2">
             <Clock2 className="h-4 w-4" />
             <span>Tempos de Análise</span>
           </AccordionTrigger>
-          <AccordionContent>
+          <AccordionContent className="p-4 pt-0">
             <p className="text-gray-500">Nenhum tempo de análise registrado</p>
           </AccordionContent>
         </AccordionItem>

@@ -16,7 +16,7 @@ function MainContent() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("https://dev-apimapa.jucepi.pi.gov.br//data_recente");
+        const response = await fetch("http://localhost:5000/data_recente");
         const data = await response.json(); // Recebe o JSON no formato { "mes": "MM", "ano": "AAAA" }
 
         const meses = [

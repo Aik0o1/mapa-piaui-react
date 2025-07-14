@@ -30,11 +30,11 @@ export default function Filtros(props) {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const url = "https://dev-apimapa.jucepi.pi.gov.br//data_recente"
+                const url = "http://localhost:5000/data_recente"
                 const response = await fetch(url);
                 const data = await response.json();
                 setDataRecente(data);
-                console.log(data)
+                // console.log(data)
             } catch (error) {
                 console.error("Erro ao buscar dados do servidor:", error);
               }
@@ -87,11 +87,11 @@ export default function Filtros(props) {
             <p>Selecione um município ou período</p>
                 <ComboboxCidades onCidadeSelect={handleCidadeSelect} cidadeSelecionada={props.cidadeSelecionada} />
                 <Select 
-                    className="ano" 
+                    className="anoEscolha" 
                     onValueChange={handleAnoSelect}
                     value={selectedAno}
                 >
-                    <SelectTrigger className="w-[250px]">
+                    <SelectTrigger className="anoEscolha w-[250px]">
                         <SelectValue placeholder="Selecione um ano" />
                     </SelectTrigger>
                     <SelectContent>
@@ -105,7 +105,7 @@ export default function Filtros(props) {
                     onValueChange={handleMesSelect}
                     value={selectedMes}
                 >
-                    <SelectTrigger className="w-[250px]">
+                    <SelectTrigger className="mesEscolha w-[250px]">
                         <SelectValue placeholder="Selecione um mês" />
                     </SelectTrigger>
                     <SelectContent>
@@ -120,7 +120,7 @@ export default function Filtros(props) {
                     </SelectContent>
                 </Select>
                 <Button
-                    className="w-[250px]"
+                    className="limpar-filtros w-[250px]"
                     variant="outline"
                     onClick={limparFiltros}
                 >

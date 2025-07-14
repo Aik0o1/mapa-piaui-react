@@ -1,40 +1,55 @@
 import React, { useState, useEffect } from "react";
-import { MapPin, Building2, LandPlot, Clock2, FileChartPie } from "lucide-react";
-import TemposAnalise from './TemposAnalise';
+import {
+  MapPin,
+  Building2,
+  LandPlot,
+  Clock2,
+  FileChartPie,
+} from "lucide-react";
+import TemposAnalise from "./TemposAnalise";
 import TreeMap from "../graphs/treeMap";
 import PieCharts from "../graphs/PieCharts";
-import { AccordionItem, Accordion, AccordionTrigger, AccordionContent } from "../ui/accordion";
+import {
+  AccordionItem,
+  Accordion,
+  AccordionTrigger,
+  AccordionContent,
+} from "../ui/accordion";
 export default function Lista({ onCidadeSelecionada, mes, ano }) {
   const [dados, setDados] = useState(null);
   // console.log(dados);
 
   const [selectedCity, setSelectedCity] = useState("");
   const meses = {
-    'Janeiro': '01',
-    'Fevereiro': '02',
-    'Março': '03',
-    'Abril': '04',
-    'Maio': '05',
-    'Junho': '06',
-    'Julho': '07',
-    'Agosto': '08',
-    'Setembro': '09',
-    'Outubro': '10',
-    'Novembro': '11',
-    'Dezembro': '12',
+    Janeiro: "01",
+    Fevereiro: "02",
+    Março: "03",
+    Abril: "04",
+    Maio: "05",
+    Junho: "06",
+    Julho: "07",
+    Agosto: "08",
+    Setembro: "09",
+    Outubro: "10",
+    Novembro: "11",
+    Dezembro: "12",
   };
 
-  const id = onCidadeSelecionada.id.length > 6 ? onCidadeSelecionada.id.split('-')[1] : onCidadeSelecionada.id
+  const id =
+    onCidadeSelecionada.id.length > 6
+      ? onCidadeSelecionada.id.split("-")[1]
+      : onCidadeSelecionada.id;
 
-    useEffect(() => {
-        const btnAno = document.getElementsByClassName("anoEscolha")[0]
-        const btnMes = document.getElementsByClassName("mesEscolha")[0]
-        const btnLimparFiltros = document.getElementsByClassName("limpar-filtros")[0]
+  useEffect(() => {
+    const btnAno = document.getElementsByClassName("anoEscolha")[0];
+    const btnMes = document.getElementsByClassName("mesEscolha")[0];
+    const btnLimparFiltros =
+      document.getElementsByClassName("limpar-filtros")[0];
 
-        btnAno.style.visibility = "visible"
-        btnMes.style.visibility = "visible"
-        btnLimparFiltros.style.visibility = "visible"
-    }, []);
+    btnAno.style.visibility = "visible";
+    btnMes.style.visibility = "visible";
+    btnLimparFiltros.style.visibility = "visible";
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -49,7 +64,6 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
         } else {
           const numero_mes = meses[mes];
           url = `https://dev-apimapa.jucepi.pi.gov.br//abertas?cidade=2211001&mes=${numero_mes}&ano=${ano}`;
-
         }
 
         const response = await fetch(url);
@@ -75,14 +89,16 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
 
   // console.log(cidadeNoMapa)
   //const dados = dados[cidadeNoMapa];
-  const municipio = onCidadeSelecionada.nome == "Selecione um município" ? "TERESINA" : onCidadeSelecionada.nome
-  const tempo_res = dados?.["tempo-de-resposta"]?.[0]["tempo_resposta"] || "Sem dados";
-  const qtd_abertas = dados?.["abertura"]?.[0]["qtd_abertas_no_mes"] || "N/A";
-
+  const municipio =
+    onCidadeSelecionada.nome == "Selecione um município"
+      ? "TERESINA"
+      : onCidadeSelecionada.nome;
+  const tempo_res =
+    dados?.["tempo-de-resposta"]?.[0]["tempo_resposta"] || "Sem dados";
+  const qtd_abertas = dados?.["abertura"]?.[0]["qtd_abertas_no_mes"] || "-";
 
   return (
     <div className="informacoes-municipais p-6 bg-white rounded-lg shadow-md">
-
       <ul className="space-y-6">
         <li>
           <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
@@ -98,13 +114,15 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
           <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
             <div className="flex items-center gap-3">
               <Building2 className="text-[#034ea2]" />
-              <p className="font-medium text-[#231f20]">Quantidade de empresas abertas</p>
+              <p className="font-medium text-[#231f20]">
+                Quantidade de empresas abertas
+              </p>
             </div>
             <p className="text-[#034ea2] font-semibold">{qtd_abertas}</p>
           </div>
         </li>
 
-        <li>
+        {/* <li>
           <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
             <div className="flex items-center gap-3">
               <Clock2 className="text-[#034ea2]" />
@@ -112,7 +130,7 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
             </div>
             <p className="text-[#034ea2] font-semibold">{tempo_res}</p>
           </div>
-        </li>
+        </li> */}
       </ul>
 
       <div className="mt-6 space-y-4">
@@ -122,10 +140,18 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
           <AccordionItem value="treemap" className="border-none">
             <AccordionTrigger className="flex items-center gap-3 p-4 hover:bg-gray-50 text-[#231f20]">
               <LandPlot className="h-5 w-5 text-[#034ea2]" />
-              <span className="font-medium">Empresas abertas por atividades</span>
+              <span className="font-medium">
+                Empresas abertas por atividades
+              </span>
             </AccordionTrigger>
             <AccordionContent className="p-4 pt-0">
-              {dados.error == "Cidade não encontrada" || dados.atividades == "Sem dados" ? <div>Sem dados</div> : <TreeMap selectedCity={id} dados={dados} />}
+              {dados.error == "Cidade não encontrada" ||
+              dados.error ==
+                "Dados não encontrados para o mês/ano especificado" ? (
+                <p className="text-gray-500">Sem dados</p>
+              ) : (
+                <TreeMap selectedCity={id} dados={dados} />
+              )}
             </AccordionContent>
           </AccordionItem>
         </Accordion>
@@ -134,12 +160,19 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
           <AccordionItem value="piecharts" className="border-none">
             <AccordionTrigger className="flex items-center gap-3 p-4 hover:bg-gray-50 text-[#231f20]">
               <FileChartPie className="h-5 w-5 text-[#034ea2]" />
-              <span className="font-medium">Empresas abertas por porte e natureza</span>
+              <span className="font-medium">
+                Empresas abertas por porte e natureza
+              </span>
             </AccordionTrigger>
             <AccordionContent className="p-4 pt-0">
               <div className="w-full">
-                {dados.error == "Cidade não encontrada" || dados.atividades == "Sem dados" ? <div>Sem dados</div> : <PieCharts selectedCity={id} dados={dados} />}
-
+                {dados.error == "Cidade não encontrada" ||
+                dados.error ==
+                  "Dados não encontrados para o mês/ano especificado" ? (
+                  <p className="text-gray-500">Sem dados</p>
+                ) : (
+                  <PieCharts selectedCity={id} dados={dados} />
+                )}
               </div>
             </AccordionContent>
           </AccordionItem>
@@ -147,4 +180,4 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
       </div>
     </div>
   );
-};
+}
