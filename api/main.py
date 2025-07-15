@@ -30,46 +30,8 @@ app = Flask(__name__)
 CORS(app)
 
 
-@app.route("/ultimo-id", methods=["GET"])
-def obter_ultimo_id():
-    try:
-        nome_banco = request.args.get("db")
-
-        if not nome_banco:
-            return jsonify({"error": "Parâmetro 'db' é obrigatório"}), 400
-
-        if nome_banco not in couch:
-            return jsonify({"error": f"Banco de dados '{nome_banco}' não existe"}), 404
-
-        db = couch[nome_banco]
-
-        # Pega todos os documentos (apenas os IDs)
-        all_docs = db.view("_all_docs", include_docs=False)
-
-        if not all_docs.rows:
-            return (
-                jsonify(
-                    {"error": f"Nenhum documento encontrado no banco '{nome_banco}'"}
-                ),
-                404,
-            )
-
-        # Ordena os IDs lexicograficamente (ex: "01-2024", "02-2025", etc.)
-        ids_ordenados = sorted([row.id for row in all_docs.rows])
-
-        ultimo_id = ids_ordenados[-1]
-
-        return jsonify({"banco": nome_banco, "ultimo_id": ultimo_id})
-
-    except couchdb.http.Unauthorized:
-        return jsonify({"error": "Acesso não autorizado ao CouchDB"}), 401
-    except Exception as e:
-        app.logger.error(f"Erro interno: {str(e)}", exc_info=True)
-        return jsonify({"error": "Erro interno no servidor"}), 500
-
-
-@app.route("/ranking", methods=["GET"])
-def buscar_ranking():
+@app.route("/municipios", methods=["GET"])
+def buscar_municipios():
     try:
         # Obtém parâmetros da URL
         cidade = request.args.get("cidade")  # Ex: "2211001"

@@ -35,11 +35,6 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
     Dezembro: "12",
   };
 
-  const id =
-    onCidadeSelecionada.id.length > 6
-      ? onCidadeSelecionada.id.split("-")[1]
-      : onCidadeSelecionada.id;
-
   useEffect(() => {
     const btnAno = document.getElementsByClassName("anoEscolha")[0];
     const btnMes = document.getElementsByClassName("mesEscolha")[0];
@@ -53,22 +48,35 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
 
   useEffect(() => {
     const fetchData = async () => {
-      console.log(dados);
+      // console.log(dados);
 
       try {
-        let url = "";
+        // let url = "";
 
-        if (onCidadeSelecionada?.id && mes && ano) {
-          const numero_mes = meses[mes];
-          url = `https://dev-apimapa.jucepi.pi.gov.br//abertas?cidade=${id}&mes=${numero_mes}&ano=${ano}`;
-        } else {
-          const numero_mes = meses[mes];
-          url = `https://dev-apimapa.jucepi.pi.gov.br//abertas?cidade=2211001&mes=${numero_mes}&ano=${ano}`;
-        }
+        // if (onCidadeSelecionada) {
+        const numero_mes = meses[mes];
+        const id =
+          onCidadeSelecionada.id.length > 6
+            ? onCidadeSelecionada.id.split("-")[1]
+            : onCidadeSelecionada.id;
+        //   url = `http://localhost:5000/municipios?cidade=${id}&mes=${numero_mes}&ano=${ano}`;
+        // } else {
+        //   const numero_mes = meses[mes];
+        //   url = `http://localhost:5000/municipios?cidade=2211001&mes=${numero_mes}&ano=${ano}`;
+        // }
+
+        const url = onCidadeSelecionada?.id
+          ? `https://dev-apimapa.jucepi.pi.gov.br/ranking?cidade=${id}&mes=${numero_mes}&ano=${ano}`
+          : `https://dev-apimapa.jucepi.pi.gov.br/ranking?cidade=2211001&mes=${numero_mes}&ano=${ano}`;
 
         const response = await fetch(url);
         const data = await response.json();
-        setDados(data);
+
+        if (!response.ok || !data.abertas) {
+          setDados(null);
+        } else {
+          setDados(data.abertas);
+        }
 
         if (onCidadeSelecionada?.id) {
           setSelectedCity(onCidadeSelecionada.id);
@@ -81,9 +89,9 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
     fetchData();
   }, [onCidadeSelecionada, mes, ano]);
 
-  if (!dados) {
-    return <p>Carregando...</p>;
-  }
+  // if (!dados) {
+  //   return <p>Carregando...</p>;
+  // }
 
   // console.log(id);
 
@@ -93,9 +101,16 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
     onCidadeSelecionada.nome == "Selecione um município"
       ? "TERESINA"
       : onCidadeSelecionada.nome;
-  const tempo_res =
-    dados?.["tempo-de-resposta"]?.[0]["tempo_resposta"] || "Sem dados";
-  const qtd_abertas = dados?.["abertura"]?.[0]["qtd_abertas_no_mes"] || "-";
+
+  const totalAbertas =
+    (dados?.portes?.["Demais"] || 0) +
+    (dados?.portes?.["Empresa de pequeno porte"] || 0) +
+    (dados?.portes?.["Microempreendedor Individual"] || 0) +
+    (dados?.portes?.["Microempresa"] || 0);
+
+  // console.log(totalAbertas);
+
+  const qtd_abertas = totalAbertas ? totalAbertas : "-";
 
   return (
     <div className="informacoes-municipais p-6 bg-white rounded-lg shadow-md">
@@ -133,7 +148,7 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
         </li> */}
       </ul>
 
-      <div className="mt-6 space-y-4">
+      {/* <div className="mt-6 space-y-4">
         <TemposAnalise dados={dados} />
 
         <Accordion type="single" collapsible className="border rounded-lg">
@@ -147,7 +162,8 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
             <AccordionContent className="p-4 pt-0">
               {dados.error == "Cidade não encontrada" ||
               dados.error ==
-                "Dados não encontrados para o mês/ano especificado" ? (
+                "Dados não encontrados para o mês/ano especificado" ||
+              dados.atividades == "Sem dados" ? (
                 <p className="text-gray-500">Sem dados</p>
               ) : (
                 <TreeMap selectedCity={id} dados={dados} />
@@ -168,7 +184,8 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
               <div className="w-full">
                 {dados.error == "Cidade não encontrada" ||
                 dados.error ==
-                  "Dados não encontrados para o mês/ano especificado" ? (
+                  "Dados não encontrados para o mês/ano especificado" ||
+                dados.atividades == "Sem dados" ? (
                   <p className="text-gray-500">Sem dados</p>
                 ) : (
                   <PieCharts selectedCity={id} dados={dados} />
@@ -177,7 +194,7 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
             </AccordionContent>
           </AccordionItem>
         </Accordion>
-      </div>
+      </div> */}
     </div>
   );
 }

@@ -19,7 +19,7 @@ import {
 
 export default function ListaRanking({ onCidadeSelecionada, mes, ano }) {
   const [dados, setDados] = useState(null);
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const meses = {
@@ -37,12 +37,12 @@ export default function ListaRanking({ onCidadeSelecionada, mes, ano }) {
     Dezembro: "12",
   };
 
-  const toggleAccordion = (key) => {
-    setOpenAccordions((prev) => ({
-      ...prev,
-      [key]: !prev[key],
-    }));
-  };
+  // const toggleAccordion = (key) => {
+  //   setOpenAccordions((prev) => ({
+  //     ...prev,
+  //     [key]: !prev[key],
+  //   }));
+  // };
 
   useEffect(() => {
     const btnAno = document.getElementsByClassName("anoEscolha")[0];
@@ -58,7 +58,7 @@ export default function ListaRanking({ onCidadeSelecionada, mes, ano }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setLoading(true);
+        // setLoading(true);
 
         const numero_mes = meses[mes];
         const id =
@@ -67,7 +67,7 @@ export default function ListaRanking({ onCidadeSelecionada, mes, ano }) {
             : onCidadeSelecionada.id;
 
         const url = onCidadeSelecionada?.id
-          ? `https://dev-apimapa.jucepi.pi.gov.br/ultimo-id?cidade=${id}&mes=${numero_mes}&ano=${ano}`
+          ? `https://dev-apimapa.jucepi.pi.gov.br/ranking?cidade=${id}&mes=${numero_mes}&ano=${ano}`
           : `https://dev-apimapa.jucepi.pi.gov.br/ranking?cidade=2211001&mes=${numero_mes}&ano=${ano}`;
 
         const response = await fetch(url);
@@ -81,9 +81,10 @@ export default function ListaRanking({ onCidadeSelecionada, mes, ano }) {
       } catch (err) {
         setError(err.message);
         // console.error("Erro:", err);
-      } finally {
-        setLoading(false);
       }
+      // } finally {
+      //   setLoading(false);
+      // }
     };
 
     fetchData();
@@ -124,22 +125,22 @@ export default function ListaRanking({ onCidadeSelecionada, mes, ano }) {
   //   return timeString.split(".")[0]; // Remove microseconds
   // };
 
-  if (loading) {
-    return (
-      <div className="informacoes-municipais p-6 bg-white rounded-lg shadow-md">
-        <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-          <div className="flex items-center gap-3">
-            <MapPin className="text-[#034ea2]" />
-            <p className="font-medium text-[#231f20]">Município</p>
-          </div>
-          <p className="text-[#034ea2] font-semibold">{municipio}</p>
-        </div>
-        <div className="mt-6 space-y-4">
-          <p>Carregando dados...</p>
-        </div>
-      </div>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <div className="informacoes-municipais p-6 bg-white rounded-lg shadow-md">
+  //       <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+  //         <div className="flex items-center gap-3">
+  //           <MapPin className="text-[#034ea2]" />
+  //           <p className="font-medium text-[#231f20]">Município</p>
+  //         </div>
+  //         <p className="text-[#034ea2] font-semibold">{municipio}</p>
+  //       </div>
+  //       <div className="mt-6 space-y-4">
+  //         <p>Carregando dados...</p>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   const totalPontuacao =
     (dados?.documentos_habilitados?.pontuacao || 0) +
