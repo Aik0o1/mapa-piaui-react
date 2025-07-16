@@ -43,23 +43,33 @@ export default function ListaAtivas({ onCidadeSelecionada, mes, ano }) {
         const fetchData = async () => {
             try {
                 const hoje = new Date();
-                const anoAtual = hoje.getFullYear()
-                const mesAtual = hoje.getMonth() + 1 < 10 ? `0${hoje.getMonth() + 1}` : hoje.getMonth() + 1   
-                console.log(anoAtual, mesAtual)
+
+                let anoAtual = hoje.getFullYear();
+                let mesAtual = hoje.getMonth(); // getMonth() já retorna de 0 (jan) a 11 (dez)
+                mesAtual--; // pega o mês anterior
+
+                if (mesAtual < 0) {
+                    mesAtual = 11; // dezembro
+                    anoAtual -= 1; // volta um ano
+                }
+
+                const mesFormatado = mesAtual + 1 < 10 ? `0${mesAtual + 1}` : mesAtual + 1;
+
+                console.log(anoAtual, mesFormatado);
 
                 let url_ativas = "";
 
-                if (onCidadeSelecionada?.id && mesAtual && anoAtual) {
-                    const numero_mes = meses[mes];
-                    url_ativas = `https://dev-apimapa.jucepi.pi.gov.br//ativas?cidade=${id}&mes=${mesAtual}&ano=${anoAtual}`;
+                if (onCidadeSelecionada?.id) {
+                    url_ativas = `https://dev-apimapa.jucepi.pi.gov.br//ativas?cidade=${onCidadeSelecionada.id}&mes=${mesFormatado}&ano=${anoAtual}`;
                 } else {
-                    const numero_mes = meses[mes];
-                    url_ativas = `https://dev-apimapa.jucepi.pi.gov.br//ativas?cidade=2211001&mes=${mesAtual}&ano=${anoAtual}`;
+                    url_ativas = `https://dev-apimapa.jucepi.pi.gov.br/buscar_todas_ativas?mes=${mesFormatado}&ano=${anoAtual}`;
                 }
 
                 const response = await fetch(url_ativas);
                 const data = await response.json();
                 setDados(data);
+
+                console.log("data" ,data)
 
                 if (onCidadeSelecionada?.id) {
                     setSelectedCity(onCidadeSelecionada.id);
@@ -80,9 +90,10 @@ export default function ListaAtivas({ onCidadeSelecionada, mes, ano }) {
 
     // console.log(cidadeNoMapa)
     //const dados = dados[cidadeNoMapa];
-    const municipio = onCidadeSelecionada.nome == "Selecione um município" ? "TERESINA" : onCidadeSelecionada.nome
+    const municipio = onCidadeSelecionada.nome == "Selecione um município" ? "TODOS" : onCidadeSelecionada.nome
     //   const tempo_res = dados?.["tempo-de-resposta"]?.[0]["tempo_resposta"] || "Sem dados";
-    const qtd_ativas_no_mes = dados?.["ativas"] || "N/A";
+    const qtd_ativas_no_mes = dados?.["ativas"]?.[0]?.["qtd_ativas"] || "N/A";
+    console.log("qtd ativas kkkkk", dados.atividades)
 
 
     return (
