@@ -419,6 +419,100 @@ def retorna_data_mais_recente():
     # Retorna o JSON no formato { "mes": "MM", "ano": "AAAA" }
     return jsonify({"mes": mes, "ano": ano})
 
+@app.route('/buscar_todas_ativas', methods=['GET'])
+def dados_gerais_ativas():
+    mes_param = request.args.get('mes', type=int)
+    ano_param = request.args.get('ano', type=int)
+    data_mais_atual = datetime.datetime(2024, 1, 1)
+    documento_mais_recente = None
+    
+    for doc_id in db_ativas:
+        documento = db_ativas[doc_id]
+        mes_ano = documento["data"].split('/')
+        mes = int(mes_ano[0])
+        ano = int(mes_ano[1])
+        new_date = datetime.datetime(ano, mes, 1)
+        
+        if mes_param and ano_param:
+            if ano == ano_param and mes == mes_param:
+                documento_mais_recente = documento
+                break
+        else:
+            if new_date > data_mais_atual:
+                data_mais_atual = new_date
+                documento_mais_recente = documento
+    
+    if not documento_mais_recente:
+        return jsonify({"error": "Nenhum documento encontrado"}), 404
+    
+    totais = {
+        "naturezas": [],
+        "portes": [],
+        "atividades": [],
+        "ativas": []
+    }
+    
+    for _, valor in documento_mais_recente['cidades'].items():
+        # Processa naturezas
+        if isinstance(valor.get('naturezas'), list):
+            for natureza in valor.get('naturezas', []):
+                totais["naturezas"].append({
+                    "tipo": natureza['tipo'],
+                    "qtd_por_natureza": natureza['qtd_por_natureza']
+                })
+        else:
+            totais["naturezas"].append({"tipo": "Sem dados", "qtd_por_natureza": 0})
+        
+        # Processa portes
+        if isinstance(valor.get('portes'), list):
+            for porte in valor.get('portes', []):
+                totais["portes"].append({
+                    "tipo": porte['tipo'],
+                    "qtd_por_porte": porte['qtd_por_porte']
+                })
+        else:
+            totais["portes"].append({"tipo": 'Sem dados', "qtd_por_porte": 0})
+        
+        # Processa atividades
+        if isinstance(valor.get('atividades'), list):
+            for atividade in valor.get('atividades', []):
+                totais["atividades"].append({
+                    "tipo": atividade['tipo'],
+                    "qtd_por_seção_da_atividade": atividade['qtd_por_seção_da_atividade']
+                })
+        else:
+            totais["atividades"].append({"tipo": 'Sem dados', "qtd_por_seção_da_atividade": 0})
+    
+    # Consolida os dados
+    totais["naturezas"] = _consolidar_dados(totais["naturezas"], "qtd_por_natureza")
+    totais["portes"] = _consolidar_dados(totais["portes"], "qtd_por_porte")
+    totais["atividades"] = _consolidar_dados(totais["atividades"], "qtd_por_seção_da_atividade")
+    
+    print(totais)
+    
+    total_ativas = sum(item.get('qtd_por_porte', 0) for item in totais["portes"])
+    totais["ativas"] = [{
+        "tipo": "todas",
+        "qtd_ativas": total_ativas
+    }]
+    
+    # Retorna os dados em formato JSON
+    response = jsonify(totais)
+    response.headers['Content-Type'] = 'application/json; charset=utf-8'
+    return response
+
+
+def _consolidar_dados(dados, campo_soma):
+    """Consolida dados agrupando por tipo e somando os valores de um campo específico."""
+    consolidado = {}
+    for item in dados:
+        tipo = item['tipo']
+        qtd = item[campo_soma]
+        if tipo in consolidado:
+            consolidado[tipo] += qtd
+        else:
+            consolidado[tipo] = qtd
+    return [{"tipo": tipo, campo_soma: qtd} for tipo, qtd in consolidado.items()]    
 
 if __name__ == '__main__':
     app.run()
