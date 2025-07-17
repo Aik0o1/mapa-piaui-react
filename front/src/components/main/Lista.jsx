@@ -4,6 +4,7 @@ import {
   Building2,
   LandPlot,
   Clock2,
+  Clock,
   FileChartPie,
 } from "lucide-react";
 import TemposAnalise from "./TemposAnalise";
@@ -102,6 +103,35 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
       ? "TERESINA"
       : onCidadeSelecionada.nome;
 
+  const documentLabels = {
+    tempo_medio_cp_nome: "Tempo médio - Consulta Pŕevia de Nome",
+    tempo_medio_cp_end: "Tempo médio - Consulta Pŕevia de Endereço",
+    tempo_medio_cp_total: "Tempo médio - Consulta Pŕevia Total",
+    tempo_medio_validacao_cadastral: "Tempo Médio - Validação Cadastral",
+    tempo_medio_tempo_de_registro: "Tempo médio - Registro",
+    media_tempo_total_para_registro: "Média de tempo total para Registro",
+    qtd_processo: "Quantidade de processos",
+  };
+
+  const formatTime = (timeStr) => {
+    if (!timeStr) return null;
+
+    // Se já estiver no formato hh:mm:ss
+    if (/^\d{2}:\d{2}:\d{2}$/.test(timeStr)) {
+      return timeStr;
+    }
+  };
+
+  // Tentar extrair tempo de strings complexas
+  //   const timeMatch = timeStr.match(/(\d{1,2}):(\d{2}):(\d{2})/);
+  //   if (timeMatch) {
+  //     const hours = timeMatch[1].padStart(2, "0");
+  //     return `${hours}:${timeMatch[2]}:${timeMatch[3]}`;
+  //   }
+
+  //   return null;
+  // };
+
   const totalAbertas =
     (dados?.portes?.["Demais"] || 0) +
     (dados?.portes?.["Empresa de pequeno porte"] || 0) +
@@ -148,8 +178,41 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
         </li> */}
       </ul>
 
-      {/* <div className="mt-6 space-y-4">
-        <TemposAnalise dados={dados} />
+      <div className="mt-6 space-y-4">
+        <Accordion type="single" collapsible className="border rounded-lg">
+          <AccordionItem value="tempos" className="border-none">
+            <AccordionTrigger className="flex items-center gap-3 p-4 hover:bg-gray-50 text-[#231f20]">
+              <Clock className="h-5 w-5 text-[#034ea2]" />
+              <span className="font-medium">Tempos de análise</span>
+            </AccordionTrigger>
+
+            <AccordionContent className="p-4 pt-0">
+              {dados?.tempos ? (
+                <ul className="space-y-2">
+                  {Object.entries(dados.tempos)
+                    .filter(([key]) => key !== "qtd_processo")
+                    .map(([doc, tempo]) => (
+                      <li
+                        key={doc}
+                        className="flex justify-between py-2 border-b last:border-b-0"
+                      >
+                        <span className="font-medium">
+                          {documentLabels[doc]}
+                        </span>
+                        <span className="text-[#034ea2] font-mono">
+                          {tempo ? formatTime(tempo) : "-"}
+                        </span>
+                      </li>
+                    ))}
+                </ul>
+              ) : (
+                <p className="text-gray-500">Sem dados</p>
+              )}
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+
+        {/* <TemposAnalise dados={dados} />
 
         <Accordion type="single" collapsible className="border rounded-lg">
           <AccordionItem value="treemap" className="border-none">
@@ -193,8 +256,8 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
               </div>
             </AccordionContent>
           </AccordionItem>
-        </Accordion>
-      </div> */}
+        </Accordion> */}
+      </div>
     </div>
   );
 }
