@@ -96,9 +96,11 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
       : onCidadeSelecionada.nome;
 
   const labels = {
-    tempo_medio_tempo_de_registro: "Média de Tempo para Registro na Junta Comercial",
-    tempo_medio_cp_end: "Média de Tempo para Consulta Pŕevia de Endereço junto ao Município",
-    media_tempo_total_para_registro: "Média de Tempo Total para Registro"
+    tempo_medio_tempo_de_registro:
+      "Média de Tempo para Registro na Junta Comercial",
+    tempo_medio_cp_end:
+      "Média de Tempo para Consulta Pŕevia de Endereço junto ao Município",
+    media_tempo_total_para_registro: "Média de Tempo Total para Registro",
   };
 
   const formatTime = (timeStr) => {
@@ -142,48 +144,6 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
             <p className="text-[#034ea2] font-semibold">{qtd_abertas}</p>
           </div>
         </li>
-
-        {/* <li>
-          <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-            <div className="flex items-center gap-3">
-              <Clock2 className="text-[#034ea2]" />
-              <p className="font-medium text-[#231f20]">
-                Registro na Junta Comercial
-              </p>
-            </div>
-            <p className="text-[#034ea2] font-semibold">
-              {dados?.tempos?.tempo_medio_tempo_de_registro || "-"}
-            </p>
-          </div>
-        </li>
-
-        <li>
-          <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-            <div className="flex items-center gap-3">
-              <Clock2 className="text-[#034ea2]" />
-              <p className="font-medium text-[#231f20]">
-                Consulta Pŕevia de Endereço junto ao Município
-              </p>
-            </div>
-            <p className="text-[#034ea2] font-semibold">
-              {dados?.tempos?.tempo_medio_cp_end || "-"}
-            </p>
-          </div>
-        </li>
-
-        <li>
-          <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-            <div className="flex items-center gap-3">
-              <Clock2 className="text-[#034ea2]" />
-              <p className="font-medium text-[#231f20]">
-                Média de Tempo Total para Registro
-              </p>
-            </div>
-            <p className="text-[#034ea2] font-semibold">
-              {dados?.tempos?.media_tempo_total_para_registro || "-"}
-            </p>
-          </div>
-        </li> */}
       </ul>
 
       <div className="mt-6 space-y-4">
@@ -222,6 +182,44 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
               ) : (
                 <p className="text-gray-500">Sem dados</p>
               )}
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+
+        <Accordion type="single" collapsible className="border rounded-lg">
+          <AccordionItem value="treemap" className="border-none">
+            <AccordionTrigger className="flex items-center gap-3 p-4 hover:bg-gray-50 text-[#231f20]">
+              <LandPlot className="h-5 w-5 text-[#034ea2]" />
+              <span className="font-medium">
+                Empresas ativas por atividades
+              </span>
+            </AccordionTrigger>
+            <AccordionContent className="p-4 pt-0">
+              {dados == null ? (
+                <p className="text-gray-500">Sem dados</p>
+              ) : (
+                <TreeMap dados={{ abertas: dados }} />
+              )}
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+
+        <Accordion type="single" collapsible className="border rounded-lg">
+          <AccordionItem value="piecharts" className="border-none">
+            <AccordionTrigger className="flex items-center gap-3 p-4 hover:bg-gray-50 text-[#231f20]">
+              <FileChartPie className="h-5 w-5 text-[#034ea2]" />
+              <span className="font-medium">
+                Empresas ativas por porte e natureza
+              </span>
+            </AccordionTrigger>
+            <AccordionContent className="p-4 pt-0">
+              <div className="w-full">
+                {dados == null ? (
+                  <p className="text-gray-500">Sem dados</p>
+                ) : (
+                  <PieCharts dados={{ abertas: dados }} />
+                )}
+              </div>
             </AccordionContent>
           </AccordionItem>
         </Accordion>
