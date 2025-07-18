@@ -103,14 +103,24 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
       ? "TERESINA"
       : onCidadeSelecionada.nome;
 
-  const documentLabels = {
-    tempo_medio_cp_nome: "Tempo médio - Consulta Pŕevia de Nome",
-    tempo_medio_cp_end: "Tempo médio - Consulta Pŕevia de Endereço",
-    tempo_medio_cp_total: "Tempo médio - Consulta Pŕevia Total",
-    tempo_medio_validacao_cadastral: "Tempo Médio - Validação Cadastral",
-    tempo_medio_tempo_de_registro: "Tempo médio - Registro",
+  const labelsJunta = {
+    tempo_medio_cp_nome: "Consulta Pŕevia de Nome",
+    // tempo_medio_cp_end: "Tempo médio - Consulta Pŕevia de Endereço",
+    // tempo_medio_cp_total: "Tempo médio - Consulta Pŕevia Total",
+    // tempo_medio_validacao_cadastral: "Tempo Médio - Validação Cadastral",
+    tempo_medio_tempo_de_registro: "Registro",
+    // media_tempo_total_para_registro: "Média de tempo total para Registro",
+    // qtd_processo: "Quantidade de processos",
+  };
+
+  const labelsMunicipio = {
+    // tempo_medio_cp_nome: "Consulta Pŕevia de Nome",
     media_tempo_total_para_registro: "Média de tempo total para Registro",
-    qtd_processo: "Quantidade de processos",
+    tempo_medio_cp_total: "Consulta Pŕevia Total",
+    tempo_medio_cp_end: "Consulta Pŕevia de Endereço",
+    // tempo_medio_validacao_cadastral: "Validação Cadastral",
+    // tempo_medio_tempo_de_registro: "Registro",
+    // qtd_processo: "Quantidade de processos",
   };
 
   const formatTime = (timeStr) => {
@@ -183,22 +193,22 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
           <AccordionItem value="tempos" className="border-none">
             <AccordionTrigger className="flex items-center gap-3 p-4 hover:bg-gray-50 text-[#231f20]">
               <Clock className="h-5 w-5 text-[#034ea2]" />
-              <span className="font-medium">Tempos de análise</span>
+              <span className="font-medium">
+                Média de Tempos de Análise - Junta Comercial
+              </span>
             </AccordionTrigger>
 
             <AccordionContent className="p-4 pt-0">
               {dados?.tempos ? (
                 <ul className="space-y-2">
                   {Object.entries(dados.tempos)
-                    .filter(([key]) => key !== "qtd_processo")
+                    .filter(([key]) => key in labelsJunta)
                     .map(([doc, tempo]) => (
                       <li
                         key={doc}
                         className="flex justify-between py-2 border-b last:border-b-0"
                       >
-                        <span className="font-medium">
-                          {documentLabels[doc]}
-                        </span>
+                        <span className="font-medium">{labelsJunta[doc]}</span>
                         <span className="text-[#034ea2] font-mono">
                           {tempo ? formatTime(tempo) : "-"}
                         </span>
@@ -212,6 +222,38 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
           </AccordionItem>
         </Accordion>
 
+        <Accordion type="single" collapsible className="border rounded-lg">
+          <AccordionItem value="tempos" className="border-none">
+            <AccordionTrigger className="flex items-center gap-3 p-4 hover:bg-gray-50 text-[#231f20]">
+              <Clock className="h-5 w-5 text-[#034ea2]" />
+              <span className="font-medium">
+                Média de Tempos de Análise - Município
+              </span>
+            </AccordionTrigger>
+
+            <AccordionContent className="p-4 pt-0">
+              {dados?.tempos ? (
+                <ul className="space-y-2">
+                  {Object.entries(dados.tempos)
+                    .filter(([key]) => key in labelsMunicipio)
+                    .map(([doc, tempo]) => (
+                      <li
+                        key={doc}
+                        className="flex justify-between py-2 border-b last:border-b-0"
+                      >
+                        <span className="font-medium">{labelsMunicipio[doc]}</span>
+                        <span className="text-[#034ea2] font-mono">
+                          {tempo ? formatTime(tempo) : "-"}
+                        </span>
+                      </li>
+                    ))}
+                </ul>
+              ) : (
+                <p className="text-gray-500">Sem dados</p>
+              )}
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
         {/* <TemposAnalise dados={dados} />
 
         <Accordion type="single" collapsible className="border rounded-lg">
