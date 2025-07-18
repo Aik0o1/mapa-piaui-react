@@ -191,7 +191,7 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
             <AccordionTrigger className="flex items-center gap-3 p-4 hover:bg-gray-50 text-[#231f20]">
               <LandPlot className="h-5 w-5 text-[#034ea2]" />
               <span className="font-medium">
-                Empresas ativas por atividades
+                Empresas abertas por atividades
               </span>
             </AccordionTrigger>
             <AccordionContent className="p-4 pt-0">
@@ -209,7 +209,7 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
             <AccordionTrigger className="flex items-center gap-3 p-4 hover:bg-gray-50 text-[#231f20]">
               <FileChartPie className="h-5 w-5 text-[#034ea2]" />
               <span className="font-medium">
-                Empresas ativas por porte e natureza
+                Empresas abertas por porte e natureza jurídica
               </span>
             </AccordionTrigger>
             <AccordionContent className="p-4 pt-0">
