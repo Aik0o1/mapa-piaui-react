@@ -90,37 +90,15 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
     fetchData();
   }, [onCidadeSelecionada, mes, ano]);
 
-  // if (!dados) {
-  //   return <p>Carregando...</p>;
-  // }
-
-  // console.log(id);
-
-  // console.log(cidadeNoMapa)
-  //const dados = dados[cidadeNoMapa];
   const municipio =
     onCidadeSelecionada.nome == "Selecione um município"
       ? "TERESINA"
       : onCidadeSelecionada.nome;
 
-  const labelsJunta = {
-    tempo_medio_cp_nome: "Consulta Pŕevia de Nome",
-    // tempo_medio_cp_end: "Tempo médio - Consulta Pŕevia de Endereço",
-    // tempo_medio_cp_total: "Tempo médio - Consulta Pŕevia Total",
-    // tempo_medio_validacao_cadastral: "Tempo Médio - Validação Cadastral",
-    tempo_medio_tempo_de_registro: "Registro",
-    // media_tempo_total_para_registro: "Média de tempo total para Registro",
-    // qtd_processo: "Quantidade de processos",
-  };
-
-  const labelsMunicipio = {
-    // tempo_medio_cp_nome: "Consulta Pŕevia de Nome",
-    media_tempo_total_para_registro: "Média de tempo total para Registro",
-    tempo_medio_cp_total: "Consulta Pŕevia Total",
-    tempo_medio_cp_end: "Consulta Pŕevia de Endereço",
-    // tempo_medio_validacao_cadastral: "Validação Cadastral",
-    // tempo_medio_tempo_de_registro: "Registro",
-    // qtd_processo: "Quantidade de processos",
+  const labels = {
+    tempo_medio_tempo_de_registro: "Média de Tempo para Registro na Junta Comercial",
+    tempo_medio_cp_end: "Média de Tempo para Consulta Pŕevia de Endereço junto ao Município",
+    media_tempo_total_para_registro: "Média de Tempo Total para Registro"
   };
 
   const formatTime = (timeStr) => {
@@ -132,23 +110,11 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
     }
   };
 
-  // Tentar extrair tempo de strings complexas
-  //   const timeMatch = timeStr.match(/(\d{1,2}):(\d{2}):(\d{2})/);
-  //   if (timeMatch) {
-  //     const hours = timeMatch[1].padStart(2, "0");
-  //     return `${hours}:${timeMatch[2]}:${timeMatch[3]}`;
-  //   }
-
-  //   return null;
-  // };
-
   const totalAbertas =
     (dados?.portes?.["Demais"] || 0) +
     (dados?.portes?.["Empresa de pequeno porte"] || 0) +
     (dados?.portes?.["Microempreendedor Individual"] || 0) +
     (dados?.portes?.["Microempresa"] || 0);
-
-  // console.log(totalAbertas);
 
   const qtd_abertas = totalAbertas ? totalAbertas : "-";
 
@@ -181,9 +147,41 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
           <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
             <div className="flex items-center gap-3">
               <Clock2 className="text-[#034ea2]" />
-              <p className="font-medium text-[#231f20]">Tempo de Resposta</p>
+              <p className="font-medium text-[#231f20]">
+                Registro na Junta Comercial
+              </p>
             </div>
-            <p className="text-[#034ea2] font-semibold">{tempo_res}</p>
+            <p className="text-[#034ea2] font-semibold">
+              {dados?.tempos?.tempo_medio_tempo_de_registro || "-"}
+            </p>
+          </div>
+        </li>
+
+        <li>
+          <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+            <div className="flex items-center gap-3">
+              <Clock2 className="text-[#034ea2]" />
+              <p className="font-medium text-[#231f20]">
+                Consulta Pŕevia de Endereço junto ao Município
+              </p>
+            </div>
+            <p className="text-[#034ea2] font-semibold">
+              {dados?.tempos?.tempo_medio_cp_end || "-"}
+            </p>
+          </div>
+        </li>
+
+        <li>
+          <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+            <div className="flex items-center gap-3">
+              <Clock2 className="text-[#034ea2]" />
+              <p className="font-medium text-[#231f20]">
+                Média de Tempo Total para Registro
+              </p>
+            </div>
+            <p className="text-[#034ea2] font-semibold">
+              {dados?.tempos?.media_tempo_total_para_registro || "-"}
+            </p>
           </div>
         </li> */}
       </ul>
@@ -193,22 +191,28 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
           <AccordionItem value="tempos" className="border-none">
             <AccordionTrigger className="flex items-center gap-3 p-4 hover:bg-gray-50 text-[#231f20]">
               <Clock className="h-5 w-5 text-[#034ea2]" />
-              <span className="font-medium">
-                Média de Tempos de Análise - Junta Comercial
-              </span>
+              <span className="font-medium">Tempos de Análise</span>
             </AccordionTrigger>
 
             <AccordionContent className="p-4 pt-0">
               {dados?.tempos ? (
                 <ul className="space-y-2">
                   {Object.entries(dados.tempos)
-                    .filter(([key]) => key in labelsJunta)
+                    .filter(([key]) => key in labels)
+                    .sort(([, tempoA], [, tempoB]) => {
+                      const toSeconds = (t) => {
+                        if (!t) return Infinity;
+                        const [h, m, s] = t.split(":").map(Number);
+                        return (h ?? 0) * 3600 + (m ?? 0) * 60 + (s ?? 0);
+                      };
+                      return toSeconds(tempoA) - toSeconds(tempoB);
+                    })
                     .map(([doc, tempo]) => (
                       <li
                         key={doc}
                         className="flex justify-between py-2 border-b last:border-b-0"
                       >
-                        <span className="font-medium">{labelsJunta[doc]}</span>
+                        <span className="font-medium">{labels[doc]}</span>
                         <span className="text-[#034ea2] font-mono">
                           {tempo ? formatTime(tempo) : "-"}
                         </span>
@@ -221,84 +225,6 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
             </AccordionContent>
           </AccordionItem>
         </Accordion>
-
-        <Accordion type="single" collapsible className="border rounded-lg">
-          <AccordionItem value="tempos" className="border-none">
-            <AccordionTrigger className="flex items-center gap-3 p-4 hover:bg-gray-50 text-[#231f20]">
-              <Clock className="h-5 w-5 text-[#034ea2]" />
-              <span className="font-medium">
-                Média de Tempos de Análise - Município
-              </span>
-            </AccordionTrigger>
-
-            <AccordionContent className="p-4 pt-0">
-              {dados?.tempos ? (
-                <ul className="space-y-2">
-                  {Object.entries(dados.tempos)
-                    .filter(([key]) => key in labelsMunicipio)
-                    .map(([doc, tempo]) => (
-                      <li
-                        key={doc}
-                        className="flex justify-between py-2 border-b last:border-b-0"
-                      >
-                        <span className="font-medium">{labelsMunicipio[doc]}</span>
-                        <span className="text-[#034ea2] font-mono">
-                          {tempo ? formatTime(tempo) : "-"}
-                        </span>
-                      </li>
-                    ))}
-                </ul>
-              ) : (
-                <p className="text-gray-500">Sem dados</p>
-              )}
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
-        {/* <TemposAnalise dados={dados} />
-
-        <Accordion type="single" collapsible className="border rounded-lg">
-          <AccordionItem value="treemap" className="border-none">
-            <AccordionTrigger className="flex items-center gap-3 p-4 hover:bg-gray-50 text-[#231f20]">
-              <LandPlot className="h-5 w-5 text-[#034ea2]" />
-              <span className="font-medium">
-                Empresas abertas por atividades
-              </span>
-            </AccordionTrigger>
-            <AccordionContent className="p-4 pt-0">
-              {dados.error == "Cidade não encontrada" ||
-              dados.error ==
-                "Dados não encontrados para o mês/ano especificado" ||
-              dados.atividades == "Sem dados" ? (
-                <p className="text-gray-500">Sem dados</p>
-              ) : (
-                <TreeMap selectedCity={id} dados={dados} />
-              )}
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
-
-        <Accordion type="single" collapsible className="border rounded-lg">
-          <AccordionItem value="piecharts" className="border-none">
-            <AccordionTrigger className="flex items-center gap-3 p-4 hover:bg-gray-50 text-[#231f20]">
-              <FileChartPie className="h-5 w-5 text-[#034ea2]" />
-              <span className="font-medium">
-                Empresas abertas por porte e natureza
-              </span>
-            </AccordionTrigger>
-            <AccordionContent className="p-4 pt-0">
-              <div className="w-full">
-                {dados.error == "Cidade não encontrada" ||
-                dados.error ==
-                  "Dados não encontrados para o mês/ano especificado" ||
-                dados.atividades == "Sem dados" ? (
-                  <p className="text-gray-500">Sem dados</p>
-                ) : (
-                  <PieCharts selectedCity={id} dados={dados} />
-                )}
-              </div>
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion> */}
       </div>
     </div>
   );
