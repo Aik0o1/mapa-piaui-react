@@ -15,12 +15,13 @@ encoded_password = quote(password)
 couch = couchdb.Server(f'http://admin:{encoded_password}@{os.getenv("IP")}')
 
 abertas_db_name = "municipios-2024"
-ativas_db_name = "municipios-2024-ativas"
+ativas_db_name = "dados_ativas"
 
 # Check if database exists
 if abertas_db_name in couch and ativas_db_name in couch:
     db = couch[abertas_db_name]
     db_ativas = couch[ativas_db_name]
+    print(db_ativas)
 
 else:
     print(f"O banco de dados '{abertas_db_name}' não existe.")
@@ -30,7 +31,7 @@ app = Flask(__name__)
 CORS(app)
 
 
-@app.route("/municipios", methods=["GET"])
+@app.route("/empresas_abertas", methods=["GET"])
 def buscar_municipios():
     try:
         # Obtém parâmetros da URL
@@ -79,6 +80,68 @@ def buscar_municipios():
         return jsonify({"error": "Erro interno no servidor"}), 500
 
 
+@app.route("/empresas_ativas", methods=["GET"])
+def buscar_empresas_abertas():
+    try:
+        # Obtém parâmetros da URL
+        cidade = request.args.get("cidade")  # Ex: "2211001" ou "total"
+        mes = request.args.get("mes")  # Ex: "12"
+        ano = request.args.get("ano")  # Ex: "2024"
+        
+        # Validação básica
+        if not all([cidade, mes, ano]):
+            return (
+                jsonify(
+                    {"error": "Parâmetros 'cidade', 'mes' e 'ano' são obrigatórios"}
+                ),
+                400,
+            )
+        
+        # Acessa o banco de dados
+        db_name = "dados_ativas"
+        if db_name not in couch:
+            return jsonify({"error": f"Banco de dados '{db_name}' não existe"}), 404
+        
+        db = couch[db_name]
+        doc_id = f"{mes.zfill(2)}-{ano}"  # Formato "12-2024"
+        
+        # Verifica se o documento existe
+        if doc_id not in db:
+            return jsonify({"error": f"Documento {doc_id} não encontrado"}), 404
+        
+        doc = db[doc_id]
+        
+        # Verifica se a cidade existe no documento
+        if cidade not in doc:
+            return (
+                jsonify({"error": f"Cidade {cidade} não encontrada no documento"}),
+                404,
+            )
+        
+        # Resposta de sucesso - trata tanto códigos IBGE quanto "total"
+        if cidade == "total":
+            return jsonify({
+                "id": doc_id, 
+                "municipio": "total",
+                "tipo": "total",
+                **doc[cidade]
+            })
+        else:
+            return jsonify({
+                "id": doc_id, 
+                "municipio": cidade,
+                "tipo": "municipio", 
+                **doc[cidade]
+            })
+            
+    except couchdb.http.Unauthorized:
+        return jsonify({"error": "Acesso não autorizado ao CouchDB"}), 401
+    except Exception as e:
+        # Log do erro real (aparece no terminal onde o Flask está rodando)
+        app.logger.error(f"Erro interno: {str(e)}", exc_info=True)
+        return jsonify({"error": "Erro interno no servidor"}), 500
+    
+    
 @app.route("/buscar_todas", methods=["GET"])
 def dados_gerais():
     mes_param = request.args.get("mes", type=int)
@@ -205,6 +268,71 @@ def dados_gerais():
     response = jsonify(totais)
     response.headers["Content-Type"] = "application/json; charset=utf-8"
     return response
+
+# @app.route('/buscar_todas_ativas', methods=['GET'])
+# def dados_gerais_ativas():
+#     mes_param = request.args.get('mes', type=int)
+#     ano_param = request.args.get('ano', type=int)
+    
+#     # Formato do documento: "12-2024"
+#     doc_id = f"{str(mes_param).zfill(2)}-{ano_param}"
+    
+#     # Verifica se o documento existe
+#     if doc_id not in db_ativas:
+#         return jsonify({"error": "Nenhum documento encontrado"}), 404
+    
+#     documento = db_ativas[doc_id]
+    
+#     totais = {
+#         "naturezas": {},
+#         "portes": {},
+#         "secoes_atividades": {},
+#         "total_ativas": 0
+#     }
+    
+#     # Itera sobre todos os municípios no documento
+#     for codigo_municipio, dados_municipio in documento.items():
+#         if 'ativas' not in dados_municipio:
+#             continue
+            
+#         ativas_municipio = dados_municipio['ativas']
+        
+#         # Processa naturezas
+#         if 'naturezas' in ativas_municipio and ativas_municipio['naturezas']:
+#             for tipo_natureza, quantidade in ativas_municipio['naturezas'].items():
+#                 if quantidade is not None and quantidade > 0:
+#                     if tipo_natureza in totais["naturezas"]:
+#                         totais["naturezas"][tipo_natureza] += quantidade
+#                     else:
+#                         totais["naturezas"][tipo_natureza] = quantidade
+        
+#         # Processa portes
+#         if 'portes' in ativas_municipio and ativas_municipio['portes']:
+#             for tipo_porte, quantidade in ativas_municipio['portes'].items():
+#                 if quantidade is not None and quantidade > 0:
+#                     if tipo_porte in totais["portes"]:
+#                         totais["portes"][tipo_porte] += quantidade
+#                     else:
+#                         totais["portes"][tipo_porte] = quantidade
+        
+#         # Processa seções de atividades
+#         if 'secoes_atividades' in ativas_municipio and ativas_municipio['secoes_atividades']:
+#             for tipo_atividade, quantidade in ativas_municipio['secoes_atividades'].items():
+#                 if quantidade is not None and quantidade > 0:
+#                     if tipo_atividade in totais["secoes_atividades"]:
+#                         totais["secoes_atividades"][tipo_atividade] += quantidade
+#                     else:
+#                         totais["secoes_atividades"][tipo_atividade] = quantidade
+    
+#     # Calcula o total de empresas ativas
+#     totais["total_ativas"] = sum(totais["portes"].values())
+    
+#     print(totais)
+    
+#     # Retorna os dados em formato JSON
+#     response = jsonify(totais)
+#     response.headers['Content-Type'] = 'application/json; charset=utf-8'
+#     return response
 
 
 def _consolidar_dados(dados, campo_soma):

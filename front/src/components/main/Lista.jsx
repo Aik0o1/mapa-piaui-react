@@ -122,7 +122,7 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
 
   return (
     <div className="informacoes-municipais p-6 bg-white rounded-lg shadow-md">
-      <ul className="space-y-6">
+      <ul className="space-y-4">
         <li>
           <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
             <div className="flex items-center gap-3">
@@ -146,7 +146,7 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
         </li>
       </ul>
 
-      <div className="mt-6 space-y-4">
+      <div className="mt-4 space-y-4">
         <Accordion type="single" collapsible className="border rounded-lg">
           <AccordionItem value="tempos" className="border-none">
             <AccordionTrigger className="flex items-center gap-3 p-4 hover:bg-gray-50 text-[#231f20]">
