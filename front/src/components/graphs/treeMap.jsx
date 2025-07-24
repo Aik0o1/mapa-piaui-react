@@ -13,7 +13,7 @@ export default function TreeMap({ selectedCity, dados }) {
     const width = 1000;
     const height = 600;
 
-    const atividadesObj = dados.abertas?.secoes_atividades || {};
+    const atividadesObj = dados?.secoes_atividades || {};
 
     const atividadesLimitadas = Object.entries(atividadesObj)
       .filter(([_, valor]) => valor !== null && valor !== 0)

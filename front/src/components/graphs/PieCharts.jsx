@@ -8,8 +8,8 @@ export default function PieCharts({ dados }) {
   useEffect(() => {
     if (!dados) return;
 
-    const naturezasObj = dados.abertas?.naturezas || {};
-    const portesObj = dados.abertas?.portes || {};
+    const naturezasObj = dados?.naturezas || {};
+    const portesObj = dados?.portes || {};
 
     // console.log(naturezasObj);
     // console.log(portesObj);

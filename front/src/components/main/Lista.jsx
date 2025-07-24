@@ -112,13 +112,41 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
     }
   };
 
-  const totalAbertas =
-    (dados?.portes?.["Demais"] || 0) +
-    (dados?.portes?.["Empresa de pequeno porte"] || 0) +
-    (dados?.portes?.["Microempreendedor Individual"] || 0) +
-    (dados?.portes?.["Microempresa"] || 0);
+  const calcularTotalAbertas = () => {
+    if (!dados) return "-";
 
-  const qtd_abertas = totalAbertas ? totalAbertas : "-";
+    let total = 0;
+    const { naturezas, portes, secoes_atividades } = dados;
+
+    // Soma valores de naturezas (evita dupla contagem usando apenas uma categoria)
+    if (naturezas && Object.keys(naturezas).length > 0) {
+      Object.values(naturezas).forEach((valor) => {
+        if (valor !== null && typeof valor === "number") {
+          total += valor;
+        }
+      });
+    } else if (portes && Object.keys(portes).length > 0) {
+      // Se não tem naturezas, usa portes
+      Object.values(portes).forEach((valor) => {
+        if (valor !== null && typeof valor === "number") {
+          total += valor;
+        }
+      });
+    } else if (secoes_atividades && Object.keys(secoes_atividades).length > 0) {
+      // Se não tem nem naturezas nem portes, usa seções
+      Object.values(secoes_atividades).forEach((valor) => {
+        if (valor !== null && typeof valor === "number") {
+          total += valor;
+        }
+      });
+    }
+
+    return total > 0 ? total.toLocaleString("pt-BR") : "-";
+  };
+
+  const qtd_abertas = calcularTotalAbertas();
+
+  // const qtd_abertas = totalAbertas ? totalAbertas : "-";
 
   return (
     <div className="informacoes-municipais p-6 bg-white rounded-lg shadow-md">
@@ -198,7 +226,7 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
               {dados == null ? (
                 <p className="text-gray-500">Sem dados</p>
               ) : (
-                <TreeMap dados={{ abertas: dados }} />
+                <TreeMap dados={dados} />
               )}
             </AccordionContent>
           </AccordionItem>
@@ -217,7 +245,7 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
                 {dados == null ? (
                   <p className="text-gray-500">Sem dados</p>
                 ) : (
-                  <PieCharts dados={{ abertas: dados }} />
+                  <PieCharts dados={dados} />
                 )}
               </div>
             </AccordionContent>
