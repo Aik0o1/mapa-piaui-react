@@ -20,6 +20,8 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
   const [dados, setDados] = useState(null);
   // console.log(dados);
 
+  const apiUrlExterna = import.meta.env.VITE_URL_API_EXTERNA;
+
   const [selectedCity, setSelectedCity] = useState("");
   const meses = {
     Janeiro: "01",
@@ -67,8 +69,8 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
         // }
 
         const url = onCidadeSelecionada?.id
-          ? `https://dev-apimapa.jucepi.pi.gov.br/ranking?cidade=${id}&mes=${numero_mes}&ano=${ano}`
-          : `https://dev-apimapa.jucepi.pi.gov.br/ranking?cidade=2211001&mes=${numero_mes}&ano=${ano}`;
+          ? `${apiUrlExterna}/ranking?cidade=${id}&mes=${numero_mes}&ano=${ano}`
+          : `${apiUrlExterna}/ranking?cidade=2211001&mes=${numero_mes}&ano=${ano}`;
 
         const response = await fetch(url);
         const data = await response.json();

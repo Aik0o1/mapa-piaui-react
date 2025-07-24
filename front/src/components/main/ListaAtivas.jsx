@@ -20,6 +20,7 @@ export default function ListaAtivas({ onCidadeSelecionada, mes, ano }) {
   const [dados, setDados] = useState(null);
   // const [loading, setLoading] = useState(true);
   // const [error, setError] = useState(null);
+  const apiUrlInterna = import.meta.env.VITE_URL_API_INTERNA;
 
   const [selectedCity, setSelectedCity] = useState("");
   const meses = {
@@ -64,8 +65,8 @@ export default function ListaAtivas({ onCidadeSelecionada, mes, ano }) {
 
         // Corrigindo a URL - removendo o "?" extra
         const url_ativas = onCidadeSelecionada?.id
-          ? `http://127.0.0.1:5000/empresas_ativas?cidade=${id}&mes=${numero_mes}&ano=${ano}`
-          : `http://127.0.0.1:5000/empresas_ativas?cidade=total&mes=${numero_mes}&ano=${ano}`;
+          ? `${apiUrlInterna}/empresas_ativas?cidade=${id}&mes=${numero_mes}&ano=${ano}`
+          : `${apiUrlInterna}/empresas_ativas?cidade=total&mes=${numero_mes}&ano=${ano}`;
 
         // console.log("URL:", url_ativas);
 
