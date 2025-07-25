@@ -19,7 +19,7 @@ import {
 
 export default function ListaRanking({ onCidadeSelecionada, mes, ano }) {
   const [dados, setDados] = useState(null);
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const meses = {
@@ -37,28 +37,28 @@ export default function ListaRanking({ onCidadeSelecionada, mes, ano }) {
     Dezembro: "12",
   };
 
-  const toggleAccordion = (key) => {
-    setOpenAccordions((prev) => ({
-      ...prev,
-      [key]: !prev[key],
-    }));
-  };
+  // const toggleAccordion = (key) => {
+  //   setOpenAccordions((prev) => ({
+  //     ...prev,
+  //     [key]: !prev[key],
+  //   }));
+  // };
 
-    useEffect(() => {
-        const btnAno = document.getElementsByClassName("anoEscolha")[0]
-        const btnMes = document.getElementsByClassName("mesEscolha")[0]
-        const btnLimparFiltros = document.getElementsByClassName("limpar-filtros")[0]
+  useEffect(() => {
+    const btnAno = document.getElementsByClassName("anoEscolha")[0];
+    const btnMes = document.getElementsByClassName("mesEscolha")[0];
+    const btnLimparFiltros =
+      document.getElementsByClassName("limpar-filtros")[0];
 
-        btnAno.style.visibility = "visible"
-        btnMes.style.visibility = "visible"
-        btnLimparFiltros.style.visibility = "visible"
-    }, []);
-
+    btnAno.style.visibility = "visible";
+    btnMes.style.visibility = "visible";
+    btnLimparFiltros.style.visibility = "visible";
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setLoading(true);
+        // setLoading(true);
 
         const numero_mes = meses[mes];
         const id =
@@ -67,20 +67,29 @@ export default function ListaRanking({ onCidadeSelecionada, mes, ano }) {
             : onCidadeSelecionada.id;
 
         const url = onCidadeSelecionada?.id
-          ? `https://dev-apimapa.jucepi.pi.gov.br/ranking?cidade=${id}&mes=${numero_mes}&ano=${ano}`
-          : `https://dev-apimapa.jucepi.pi.gov.br/ranking?cidade=2211001&mes=${numero_mes}&ano=${ano}`;
+          ? `${import.meta.env.VITE_URL}/ranking?cidade=${id}&mes=${numero_mes}&ano=${ano}`
+          : `${import.meta.env.VITE_URL}/ranking?cidade=2211001&mes=${numero_mes}&ano=${ano}`;
 
-        const response = await fetch(url);
-        if (!response.ok) throw new Error("Erro ao buscar dados");
-
+        const response = await fetch(url, {
+          method: "GET",
+          headers: {
+            "Authorization" : `Bearer ${import.meta.env.VITE_API_TOKEN}`
+          }
+        });
         const data = await response.json();
-        setDados(data.ranking);
+
+        if (!response.ok || !data.ranking) {
+          setDados(null);
+        } else {
+          setDados(data.ranking);
+        }
       } catch (err) {
         setError(err.message);
-        console.error("Erro:", err);
-      } finally {
-        setLoading(false);
+        // console.error("Erro:", err);
       }
+      // } finally {
+      //   setLoading(false);
+      // }
     };
 
     fetchData();
@@ -121,22 +130,22 @@ export default function ListaRanking({ onCidadeSelecionada, mes, ano }) {
   //   return timeString.split(".")[0]; // Remove microseconds
   // };
 
-  if (loading) {
-    return (
-      <div className="informacoes-municipais p-6 bg-white rounded-lg shadow-md">
-        <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-          <div className="flex items-center gap-3">
-            <MapPin className="text-[#034ea2]" />
-            <p className="font-medium text-[#231f20]">Município</p>
-          </div>
-          <p className="text-[#034ea2] font-semibold">{municipio}</p>
-        </div>
-        <div className="mt-6 space-y-4">
-          <p>Carregando dados...</p>
-        </div>
-      </div>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <div className="informacoes-municipais p-6 bg-white rounded-lg shadow-md">
+  //       <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+  //         <div className="flex items-center gap-3">
+  //           <MapPin className="text-[#034ea2]" />
+  //           <p className="font-medium text-[#231f20]">Município</p>
+  //         </div>
+  //         <p className="text-[#034ea2] font-semibold">{municipio}</p>
+  //       </div>
+  //       <div className="mt-6 space-y-4">
+  //         <p>Carregando dados...</p>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   const totalPontuacao =
     (dados?.documentos_habilitados?.pontuacao || 0) +
@@ -178,7 +187,7 @@ export default function ListaRanking({ onCidadeSelecionada, mes, ano }) {
               <div className="flex justify-between items-center w-full">
                 <span className="font-medium">Pontuação Total</span>
                 <span className="font-bold text-[#034ea2]">
-                  {totalPontuacao}
+                  {totalPontuacao == 0 ? "" : totalPontuacao}
                 </span>
               </div>
             </AccordionTrigger>
@@ -226,12 +235,14 @@ export default function ListaRanking({ onCidadeSelecionada, mes, ano }) {
                       return (
                         <li key={doc} className="flex items-center gap-3">
                           <div
-                            className={`w-5 h-5 rounded-full flex items-center justify-center ${isEnabled ? "bg-green-100" : "bg-red-100"
-                              }`}
+                            className={`w-5 h-5 rounded-full flex items-center justify-center ${
+                              isEnabled ? "bg-green-100" : "bg-red-100"
+                            }`}
                           >
                             <div
-                              className={`w-3 h-3 rounded-full ${isEnabled ? "bg-green-500" : "bg-red-500"
-                                }`}
+                              className={`w-3 h-3 rounded-full ${
+                                isEnabled ? "bg-green-500" : "bg-red-500"
+                              }`}
                             />
                           </div>
                           <span className="font-medium">
@@ -242,14 +253,14 @@ export default function ListaRanking({ onCidadeSelecionada, mes, ano }) {
                     })}
                 </ul>
               ) : (
-                <div>Sem dados</div>
+                <p className="text-gray-500">Sem dados</p>
               )}
             </AccordionContent>
           </AccordionItem>
         </Accordion>
 
         {/* Índice de Atendimento */}
-        <div className="space-y-2 pb-4">
+        <div className="space-y-2">
           <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
             <div className="flex items-center gap-3">
               <LaptopMinimalCheck className="text-[#034ea2]" />
@@ -277,14 +288,15 @@ export default function ListaRanking({ onCidadeSelecionada, mes, ano }) {
                 <div
                   className="bg-[#034ea2] h-3 rounded-full transition-all duration-500"
                   style={{
-                    width: `${dados.indice_atendimentos.percentual_atendimento * 100
-                      }%`,
+                    width: `${
+                      dados.indice_atendimentos.percentual_atendimento * 100
+                    }%`,
                   }}
                 />
               </div>
             </div>
           ) : (
-            <div className="px-4">Sem dados</div>
+            <p className="text-gray-500 px-4">Sem dados</p>
           )}
         </div>
 
@@ -316,7 +328,7 @@ export default function ListaRanking({ onCidadeSelecionada, mes, ano }) {
                     ))}
                 </ul>
               ) : (
-                <div>Sem dados</div>
+                <p className="text-gray-500">Sem dados</p>
               )}
             </AccordionContent>
           </AccordionItem>
