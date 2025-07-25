@@ -16,7 +16,12 @@ function MainContent() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("https://dev-apimapa.jucepi.pi.gov.br//data_recente");
+        const response = await fetch(`${import.meta.env.VITE_URL}//data_recente`, {
+          method : "GET",
+          headers : {
+            'Authorization': `Bearer ${import.meta.env.VITE_API_TOKEN}`
+          }
+        });
         const data = await response.json(); // Recebe o JSON no formato { "mes": "MM", "ano": "AAAA" }
 
         const meses = [
