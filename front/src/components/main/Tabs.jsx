@@ -1,17 +1,15 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import PiauiMapa from "./Mapa";
 import Lista from "./Lista";
 import ListaAtivas from "./ListaAtivas";
 import ListaRanking from "./ListaRanking";
 
 export default function Abas({
-  onCidadeSelecionadaMapa,
   cidadeSelecionada,
   mes,
   ano,
 }) {
   return (
-    <Tabs className="" defaultValue="ativas">
+    <Tabs defaultValue="ativas">
       <TabsList className="w-full relative  flex gap-2">
         <TabsTrigger value="ativas">Empresas Ativas</TabsTrigger>
         <TabsTrigger value="abertas">Abertura de Empresas</TabsTrigger>
@@ -19,25 +17,19 @@ export default function Abas({
       </TabsList>
 
       <TabsContent value="ativas">
-        <div className="">
-          <ListaAtivas onCidadeSelecionada={cidadeSelecionada} />
-        </div>
+        <ListaAtivas onCidadeSelecionada={cidadeSelecionada} />
       </TabsContent>
 
       <TabsContent value="abertas">
-        <div className="">
-          <Lista onCidadeSelecionada={cidadeSelecionada} mes={mes} ano={ano} />
-        </div>
+        <Lista onCidadeSelecionada={cidadeSelecionada} mes={mes} ano={ano} />
       </TabsContent>
 
       <TabsContent value="ranking">
-        <div className="">
-          <ListaRanking
-            onCidadeSelecionada={cidadeSelecionada}
-            mes={mes}
-            ano={ano}
-          />
-        </div>
+        <ListaRanking
+          onCidadeSelecionada={cidadeSelecionada}
+          mes={mes}
+          ano={ano}
+        />
       </TabsContent>
     </Tabs>
   );
