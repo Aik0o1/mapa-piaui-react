@@ -16,27 +16,13 @@ import {
   AccordionContent,
 } from "../ui/accordion";
 
-export default function ListaAtivas({ onCidadeSelecionada, mes, ano }) {
+export default function ListaAtivas({ onCidadeSelecionada }) {
   const [dados, setDados] = useState(null);
   // const [loading, setLoading] = useState(true);
   // const [error, setError] = useState(null);
   const apiUrlInterna = import.meta.env.VITE_URL_API_INTERNA;
 
   const [selectedCity, setSelectedCity] = useState("");
-  const meses = {
-    Janeiro: "01",
-    Fevereiro: "02",
-    Março: "03",
-    Abril: "04",
-    Maio: "05",
-    Junho: "06",
-    Julho: "07",
-    Agosto: "08",
-    Setembro: "09",
-    Outubro: "10",
-    Novembro: "11",
-    Dezembro: "12",
-  };
 
   useEffect(() => {
     const btnAno = document.getElementsByClassName("anoEscolha")[0];
@@ -59,14 +45,19 @@ export default function ListaAtivas({ onCidadeSelecionada, mes, ano }) {
 
         // setLoading(true);
         // setError(null);
+        const { ano, mes } = await (
+          await fetch("http://localhost:5000/data_recente")
+        ).json();
 
-        const numero_mes = meses[mes];
+        // console.log(dataData)
+
+        // const numero_mes = meses[mes];
         // console.log("Mês:", numero_mes, "Ano:", ano, "Cidade:", id);
 
         // Corrigindo a URL - removendo o "?" extra
         const url_ativas = onCidadeSelecionada?.id
-          ? `${apiUrlInterna}/empresas_ativas?cidade=${id}&mes=${numero_mes}&ano=${ano}`
-          : `${apiUrlInterna}/empresas_ativas?cidade=total&mes=${numero_mes}&ano=${ano}`;
+          ? `${apiUrlInterna}/empresas_ativas?cidade=${id}&mes=${mes}&ano=${ano}`
+          : `${apiUrlInterna}/empresas_ativas?cidade=total&mes=${mes}&ano=${ano}`;
 
         // console.log("URL:", url_ativas);
 
@@ -110,7 +101,7 @@ export default function ListaAtivas({ onCidadeSelecionada, mes, ano }) {
     };
 
     fetchData();
-  }, [onCidadeSelecionada, mes, ano]);
+  }, [onCidadeSelecionada]);
 
   // if (loading) {
   //   return (

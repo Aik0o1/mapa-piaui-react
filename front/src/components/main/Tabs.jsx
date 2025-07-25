@@ -20,11 +20,7 @@ export default function Abas({
 
       <TabsContent value="ativas">
         <div className="">
-          <ListaAtivas
-            onCidadeSelecionada={cidadeSelecionada}
-            mes={mes}
-            ano={ano}
-          />
+          <ListaAtivas onCidadeSelecionada={cidadeSelecionada} />
         </div>
       </TabsContent>
 
