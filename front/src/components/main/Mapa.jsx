@@ -24,7 +24,7 @@ function PiauiMapa({ onCidadeSelecionada }) {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch("https://dev-apimapa.jucepi.pi.gov.br/id_nome_cidades");
+                const response = await fetch("http://localhost:5000/id_nome_cidades");
                 const data = await response.json();
                 const normalizedCidades = data.map((cidade) => ({
                     ...cidade,

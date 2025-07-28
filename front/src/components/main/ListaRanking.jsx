@@ -67,8 +67,8 @@ export default function ListaRanking({ onCidadeSelecionada, mes, ano }) {
             : onCidadeSelecionada.id;
 
         const url = onCidadeSelecionada?.id
-          ? `https://dev-apimapa.jucepi.pi.gov.br/ranking?cidade=${id}&mes=${numero_mes}&ano=${ano}`
-          : `https://dev-apimapa.jucepi.pi.gov.br/ranking?cidade=2211001&mes=${numero_mes}&ano=${ano}`;
+          ? `http://localhost:5000/empresas_abertas?cidade=${id}&mes=${numero_mes}&ano=${ano}`
+          : `http://localhost:5000/empresas_abertas?cidade=2211001&mes=${numero_mes}&ano=${ano}`;
 
         const response = await fetch(url);
         const data = await response.json();
@@ -92,8 +92,8 @@ export default function ListaRanking({ onCidadeSelecionada, mes, ano }) {
 
   const municipio =
     onCidadeSelecionada?.nome === "Selecione um município"
-      ? "TERESINA"
-      : onCidadeSelecionada?.nome || "TERESINA";
+      ? "Teresina"
+      : onCidadeSelecionada?.nome || "Teresina";
 
   const documentLabels = {
     al: "Alvará de Localização",

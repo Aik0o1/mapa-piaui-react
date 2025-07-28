@@ -26,7 +26,7 @@ export function ComboboxCidades({ onCidadeSelect, cidadeSelecionada }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("https://dev-apimapa.jucepi.pi.gov.br//id_nome_cidades");
+        const response = await fetch("http://localhost:5000//id_nome_cidades");
         const data = await response.json();
         setCidades(data);
       } catch (error) {
@@ -39,20 +39,21 @@ export function ComboboxCidades({ onCidadeSelect, cidadeSelecionada }) {
 
   const highlightCityOnMap = (cidade) => {
     const svg = d3.select("#map");
-    
-    svg.selectAll(".city")
+
+    svg
+      .selectAll(".city")
       .classed("selected", false)
       .classed("no-selected", true)
       .transition()
-      .duration(300)
-    
+      .duration(300);
+
     const cityElement = svg.select(`#cidade-${cidade.id}`);
     if (!cityElement.empty()) {
       cityElement
         .classed("selected", true)
         .classed("no-selected", false)
         .transition()
-        .duration(300)
+        .duration(300);
     }
   };
 
@@ -72,7 +73,7 @@ export function ComboboxCidades({ onCidadeSelect, cidadeSelecionada }) {
           aria-expanded={open}
           className="w-[250px] justify-between"
         >
-          {cidadeSelecionada.nome || value }
+          {cidadeSelecionada.nome || value}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -96,7 +97,7 @@ export function ComboboxCidades({ onCidadeSelect, cidadeSelecionada }) {
                         value === cidade.nome ? "opacity-100" : "opacity-0"
                       )}
                     />
-                    {cidade.id} - {cidade.nome}
+                    {cidade.nome}
                   </CommandItem>
                 ))}
               </CommandGroup>

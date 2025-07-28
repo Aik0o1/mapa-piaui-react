@@ -122,7 +122,7 @@ export default function ListaAtivas({ onCidadeSelecionada }) {
   // Determina o nome do município baseado no tipo de dados
   const municipio =
     onCidadeSelecionada.nome === "Selecione um município"
-      ? "TOTAL GERAL"
+      ? "Total"
       : onCidadeSelecionada.nome;
 
   // Calcula o total de empresas ativas somando todas as categorias

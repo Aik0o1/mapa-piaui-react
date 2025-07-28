@@ -20,7 +20,7 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
   const [dados, setDados] = useState(null);
   // console.log(dados);
 
-  const apiUrlExterna = import.meta.env.VITE_URL_API_EXTERNA;
+  const apiUrlInterna = import.meta.env.VITE_URL_API_INTERNA;
 
   const [selectedCity, setSelectedCity] = useState("");
   const meses = {
@@ -69,8 +69,8 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
         // }
 
         const url = onCidadeSelecionada?.id
-          ? `${apiUrlExterna}/ranking?cidade=${id}&mes=${numero_mes}&ano=${ano}`
-          : `${apiUrlExterna}/ranking?cidade=2211001&mes=${numero_mes}&ano=${ano}`;
+          ? `${apiUrlInterna}/empresas_abertas?cidade=${id}&mes=${numero_mes}&ano=${ano}`
+          : `${apiUrlInterna}/empresas_abertas?cidade=total&mes=${numero_mes}&ano=${ano}`;
 
         const response = await fetch(url);
         const data = await response.json();
@@ -94,15 +94,14 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
 
   const municipio =
     onCidadeSelecionada.nome == "Selecione um município"
-      ? "TERESINA"
+      ? "Total"
       : onCidadeSelecionada.nome;
 
   const labels = {
-    tempo_medio_tempo_de_registro:
-      "Média de Tempo para Registro na Junta Comercial",
+    tempo_medio_registro: "Média de Tempo para Registro na Junta Comercial",
     tempo_medio_cp_end:
-      "Média de Tempo para Consulta Pŕevia de Endereço junto ao Município",
-    media_tempo_total_para_registro: "Média de Tempo Total para Registro",
+      "Média de Tempo para Consulta Prévia de Endereço junto ao Município",
+    tempo_medio_total: "Média de Tempo Total para Registro",
   };
 
   const formatTime = (timeStr) => {

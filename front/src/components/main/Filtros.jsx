@@ -39,9 +39,9 @@ export default function Filtros(props) {
     "07": "Julho",
     "08": "Agosto",
     "09": "Setembro",
-    10: "Outubro",
-    11: "Novembro",
-    12: "Dezembro",
+    "10": "Outubro",
+    "11": "Novembro",
+    "12": "Dezembro",
   };
 
   const [selectedMes, setSelectedMes] = useState(props.selectedMonth);
