@@ -21,6 +21,7 @@ export default function ListaRanking({ onCidadeSelecionada, mes, ano }) {
   const [dados, setDados] = useState(null);
   // const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const apiUrl = import.meta.env.VITE_URL_API;
 
   const meses = {
     Janeiro: "01",
@@ -67,8 +68,8 @@ export default function ListaRanking({ onCidadeSelecionada, mes, ano }) {
             : onCidadeSelecionada.id;
 
         const url = onCidadeSelecionada?.id
-          ? `http://localhost:5000/empresas_abertas?cidade=${id}&mes=${numero_mes}&ano=${ano}`
-          : `http://localhost:5000/empresas_abertas?cidade=2211001&mes=${numero_mes}&ano=${ano}`;
+          ? `${apiUrl}/empresas_abertas?cidade=${id}&mes=${numero_mes}&ano=${ano}`
+          : `${apiUrl}/empresas_abertas?cidade=2211001&mes=${numero_mes}&ano=${ano}`;
 
         const response = await fetch(url);
         const data = await response.json();

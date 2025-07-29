@@ -20,7 +20,7 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
   const [dados, setDados] = useState(null);
   // console.log(dados);
 
-  const apiUrlInterna = import.meta.env.VITE_URL_API_INTERNA;
+  const apiUrl = import.meta.env.VITE_URL_API;
 
   const [selectedCity, setSelectedCity] = useState("");
   const meses = {
@@ -62,15 +62,15 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
           onCidadeSelecionada.id.length > 6
             ? onCidadeSelecionada.id.split("-")[1]
             : onCidadeSelecionada.id;
-        //   url = `http://localhost:5000/municipios?cidade=${id}&mes=${numero_mes}&ano=${ano}`;
+        //   url = `${apiUrl}/municipios?cidade=${id}&mes=${numero_mes}&ano=${ano}`;
         // } else {
         //   const numero_mes = meses[mes];
-        //   url = `http://localhost:5000/municipios?cidade=2211001&mes=${numero_mes}&ano=${ano}`;
+        //   url = `${apiUrl}/municipios?cidade=2211001&mes=${numero_mes}&ano=${ano}`;
         // }
 
         const url = onCidadeSelecionada?.id
-          ? `${apiUrlInterna}/empresas_abertas?cidade=${id}&mes=${numero_mes}&ano=${ano}`
-          : `${apiUrlInterna}/empresas_abertas?cidade=total&mes=${numero_mes}&ano=${ano}`;
+          ? `${apiUrl}//empresas_abertas?cidade=${id}&mes=${numero_mes}&ano=${ano}`
+          : `${apiUrl}//empresas_abertas?cidade=total&mes=${numero_mes}&ano=${ano}`;
 
         const response = await fetch(url);
         const data = await response.json();

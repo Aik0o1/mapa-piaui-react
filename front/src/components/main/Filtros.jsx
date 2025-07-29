@@ -12,6 +12,8 @@ import {
 import { Button } from "../ui/button";
 
 export default function Filtros(props) {
+  const apiUrl = import.meta.env.VITE_URL_API;
+
   const [meses, setMes] = useState([
     "Janeiro",
     "Fevereiro",
@@ -52,7 +54,7 @@ export default function Filtros(props) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const url = "http://localhost:5000/data_recente";
+        const url = `${apiUrl}//data_recente`;
         const response = await fetch(url);
         const data = await response.json();
         setDataRecente(data);

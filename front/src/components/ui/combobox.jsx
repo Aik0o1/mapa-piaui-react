@@ -1,4 +1,3 @@
-import * as React from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { useState, useEffect } from "react";
 import * as d3 from "d3";
@@ -22,11 +21,12 @@ export function ComboboxCidades({ onCidadeSelect, cidadeSelecionada }) {
   const [open, setOpen] = useState(false);
   const [cidades, setCidades] = useState([]);
   const [value, setValue] = useState("");
+  const apiUrl = import.meta.env.VITE_URL_API;
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("http://localhost:5000//id_nome_cidades");
+        const response = await fetch(`${apiUrl}/id_nome_cidades`);
         const data = await response.json();
         setCidades(data);
       } catch (error) {

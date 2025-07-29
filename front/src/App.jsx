@@ -12,11 +12,12 @@ function MainContent() {
   const [mes, setMes] = useState(""); 
   const [ano, setAno] = useState(""); 
   const [loading, setLoading] = useState(true);
+    const apiUrl = import.meta.env.VITE_URL_API;
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("http://localhost:5000/data_recente");
+        const response = await fetch(`${apiUrl}/data_recente`);
         const data = await response.json(); // Recebe o JSON no formato { "mes": "MM", "ano": "AAAA" }
 
         const meses = [

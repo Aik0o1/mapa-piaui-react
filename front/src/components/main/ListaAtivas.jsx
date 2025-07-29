@@ -20,7 +20,7 @@ export default function ListaAtivas({ onCidadeSelecionada }) {
   const [dados, setDados] = useState(null);
   // const [loading, setLoading] = useState(true);
   // const [error, setError] = useState(null);
-  const apiUrlInterna = import.meta.env.VITE_URL_API_INTERNA;
+  const apiUrl = import.meta.env.VITE_URL_API;
 
   const [selectedCity, setSelectedCity] = useState("");
 
@@ -46,7 +46,7 @@ export default function ListaAtivas({ onCidadeSelecionada }) {
         // setLoading(true);
         // setError(null);
         const { ano, mes } = await (
-          await fetch("http://localhost:5000/data_recente")
+          await fetch(`${apiUrl}/data_recente`)
         ).json();
 
         // console.log(dataData)
@@ -56,8 +56,8 @@ export default function ListaAtivas({ onCidadeSelecionada }) {
 
         // Corrigindo a URL - removendo o "?" extra
         const url_ativas = onCidadeSelecionada?.id
-          ? `${apiUrlInterna}/empresas_ativas?cidade=${id}&mes=${mes}&ano=${ano}`
-          : `${apiUrlInterna}/empresas_ativas?cidade=total&mes=${mes}&ano=${ano}`;
+          ? `${apiUrl}//empresas_ativas?cidade=${id}&mes=${mes}&ano=${ano}`
+          : `${apiUrl}//empresas_ativas?cidade=total&mes=${mes}&ano=${ano}`;
 
         // console.log("URL:", url_ativas);
 
