@@ -46,7 +46,13 @@ export default function ListaAtivas({ onCidadeSelecionada }) {
         // setLoading(true);
         // setError(null);
         const { ano, mes } = await (
-          await fetch(`${apiUrl}/data_recente`)
+          await fetch(`${apiUrl}/data_recente`, {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${apiToken}`,
+              "Content-Type": "application/json", // opcional, mas comum
+            },
+          })
         ).json();
 
         // console.log(dataData)
