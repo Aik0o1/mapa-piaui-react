@@ -1,3 +1,4 @@
+from functools import wraps
 import os
 import json
 import couchdb
@@ -30,8 +31,44 @@ else:
 app = Flask(__name__)
 CORS(app)
 
+API_TOKEN = os.getenv("API_TOKEN", "123456789")
+
+def token_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        token = None
+        
+        # Token pode ser passado de 3 formas:
+        # 1. Header Authorization: "Bearer <token>"
+        if 'Authorization' in request.headers:
+            auth_header = request.headers['Authorization']
+            try:
+                token = auth_header.split(" ")[1]  # Remove "Bearer " do início
+            except IndexError:
+                token = auth_header  # Caso seja enviado só o token sem "Bearer"
+        
+        # 2. Header X-API-Token
+        elif 'X-API-Token' in request.headers:
+            token = request.headers['X-API-Token']
+        
+        # 3. Query parameter ?token=
+        elif 'token' in request.args:
+            token = request.args.get('token')
+        
+        if not token:
+            return jsonify({'message': 'Token é obrigatório!'}), 401
+        
+        # Verifica se o token é válido
+        if token != API_TOKEN:
+            return jsonify({'message': 'Token inválido!'}), 401
+        
+        return f(*args, **kwargs)
+    
+    return decorated
+
 
 @app.route("/empresas_abertas", methods=["GET"])
+@token_required
 def buscar_municipios():
     try:
         # Obtém parâmetros da URL
@@ -93,6 +130,7 @@ def buscar_municipios():
 
 
 @app.route("/empresas_ativas", methods=["GET"])
+@token_required
 def buscar_empresas_abertas():
     try:
         # Obtém parâmetros da URL
@@ -155,6 +193,7 @@ def buscar_empresas_abertas():
 
 
 @app.route("/id_nome_cidades", methods=["GET"])
+@token_required
 def get_id_nome_cidades():
     DB_NAME = 'filtros'
     db = couch[DB_NAME]
@@ -191,7 +230,9 @@ def get_id_nome_cidades():
         
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
 @app.route('/data_recente')
+@token_required
 def retorna_data_mais_recente():
     try:
         db_name = "dados_empresariais"
