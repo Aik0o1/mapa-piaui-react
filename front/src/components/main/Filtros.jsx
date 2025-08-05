@@ -13,6 +13,7 @@ import { Button } from "../ui/button";
 
 export default function Filtros(props) {
   const apiUrl = import.meta.env.VITE_URL_API;
+  const apiToken = import.meta.env.VITE_API_TOKEN;
 
   const [meses, setMes] = useState([
     "Janeiro",
@@ -41,9 +42,9 @@ export default function Filtros(props) {
     "07": "Julho",
     "08": "Agosto",
     "09": "Setembro",
-    "10": "Outubro",
-    "11": "Novembro",
-    "12": "Dezembro",
+    10: "Outubro",
+    11: "Novembro",
+    12: "Dezembro",
   };
 
   const [selectedMes, setSelectedMes] = useState(props.selectedMonth);
@@ -54,8 +55,13 @@ export default function Filtros(props) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const url = `${apiUrl}//data_recente`;
-        const response = await fetch(url);
+        const url = `${apiUrl}/data_recente`;
+        const response = await fetch(url, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${apiToken}`,
+          },
+        });
         const data = await response.json();
         setDataRecente(data);
         // console.log(data)

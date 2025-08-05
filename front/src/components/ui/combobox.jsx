@@ -26,7 +26,13 @@ export function ComboboxCidades({ onCidadeSelect, cidadeSelecionada }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`${apiUrl}/id_nome_cidades`);
+        const url = `${apiUrl}/id_nome_cidades`;
+        const response = await fetch(url, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${apiToken}`,
+          },
+        });
         const data = await response.json();
         setCidades(data);
       } catch (error) {

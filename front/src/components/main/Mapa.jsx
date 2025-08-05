@@ -5,7 +5,9 @@ function PiauiMapa({ onCidadeSelecionada }) {
   const [cidades, setAllCidades] = useState([]);
   const svgRef = useRef(null);
   const tooltipRef = useRef(null);
+
   const apiUrl = import.meta.env.VITE_URL_API;
+  const apiToken = import.meta.env.VITE_API_TOKEN;
 
   // Criar tooltip quando o componente montar
   useEffect(() => {
@@ -26,7 +28,13 @@ function PiauiMapa({ onCidadeSelecionada }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`${apiUrl}/id_nome_cidades`);
+        const url = `${apiUrl}/id_nome_cidades`;
+        const response = await fetch(url, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${apiToken}`,
+          },
+        });
         const data = await response.json();
         const normalizedCidades = data.map((cidade) => ({
           ...cidade,
