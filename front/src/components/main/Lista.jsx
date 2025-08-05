@@ -21,6 +21,7 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
   // console.log(dados);
 
   const apiUrl = import.meta.env.VITE_URL_API;
+  const apiToken = import.meta.env.VITE_API_TOKEN;
 
   const [selectedCity, setSelectedCity] = useState("");
   const meses = {
@@ -69,10 +70,15 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
         // }
 
         const url = onCidadeSelecionada?.id
-          ? `${apiUrl}//empresas_abertas?cidade=${id}&mes=${numero_mes}&ano=${ano}`
-          : `${apiUrl}//empresas_abertas?cidade=total&mes=${numero_mes}&ano=${ano}`;
+          ? `${apiUrl}/empresas_abertas?cidade=${id}&mes=${numero_mes}&ano=${ano}`
+          : `${apiUrl}/empresas_abertas?cidade=total&mes=${numero_mes}&ano=${ano}`;
 
-        const response = await fetch(url);
+        const response = await fetch(url, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${apiToken}`,
+          },
+        });
         const data = await response.json();
 
         if (!response.ok || !data.abertas) {

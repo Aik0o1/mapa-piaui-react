@@ -1,7 +1,7 @@
 import './App.css';
 import './Mapa.css';
 import Abas from './components/main/Tabs';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useReducer } from 'react';
 import Header from './components/main/Header';
 import Footer from './components/main/Footer';
 import PiauiMapa from './components/main/Mapa';
@@ -12,12 +12,20 @@ function MainContent() {
   const [mes, setMes] = useState(""); 
   const [ano, setAno] = useState(""); 
   const [loading, setLoading] = useState(true);
-    const apiUrl = import.meta.env.VITE_URL_API;
+
+  const apiUrl = import.meta.env.VITE_URL_API;
+  const apiToken = import.meta.env.VITE_API_TOKEN
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`${apiUrl}/data_recente`);
+        const response = await fetch(`${apiUrl}/data_recente`, {
+          method : "GET",
+          headers : {
+            'Authorization': `Bearer ${apiToken}`
+          }
+        });
+
         const data = await response.json(); // Recebe o JSON no formato { "mes": "MM", "ano": "AAAA" }
 
         const meses = [

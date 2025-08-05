@@ -18,9 +18,9 @@ import {
 
 export default function ListaAtivas({ onCidadeSelecionada }) {
   const [dados, setDados] = useState(null);
-  // const [loading, setLoading] = useState(true);
-  // const [error, setError] = useState(null);
+
   const apiUrl = import.meta.env.VITE_URL_API;
+  const apiToken = import.meta.env.VITE_API_TOKEN;
 
   const [selectedCity, setSelectedCity] = useState("");
 
@@ -56,12 +56,17 @@ export default function ListaAtivas({ onCidadeSelecionada }) {
 
         // Corrigindo a URL - removendo o "?" extra
         const url_ativas = onCidadeSelecionada?.id
-          ? `${apiUrl}//empresas_ativas?cidade=${id}&mes=${mes}&ano=${ano}`
-          : `${apiUrl}//empresas_ativas?cidade=total&mes=${mes}&ano=${ano}`;
+          ? `${apiUrl}/empresas_ativas?cidade=${id}&mes=${mes}&ano=${ano}`
+          : `${apiUrl}/empresas_ativas?cidade=total&mes=${mes}&ano=${ano}`;
 
         // console.log("URL:", url_ativas);
 
-        const response = await fetch(url_ativas);
+        const response = await fetch(url_ativas, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${apiToken}`,
+          },
+        });
         const data = await response.json();
 
         // console.log(data);
@@ -73,19 +78,6 @@ export default function ListaAtivas({ onCidadeSelecionada }) {
 
           setDados(data.ativas);
         }
-        // if (!response.ok) {
-        //   throw new Error(`HTTP error! status: ${response.status}`);
-        // }
-
-        // console.log("Dados recebidos:", data);
-
-        // if (data.error) {
-        //   setError(data.error);
-        //   setDados(null);
-        // } else {
-        //   setDados(data);
-        //   setError(null);
-        // }
 
         if (onCidadeSelecionada?.id) {
           setSelectedCity(onCidadeSelecionada.id);
@@ -93,11 +85,6 @@ export default function ListaAtivas({ onCidadeSelecionada }) {
       } catch (error) {
         console.error("Erro ao buscar dados do servidor:", error);
       }
-      //   setError(`Erro ao carregar dados: ${error.message}`);
-      //   setDados(null);
-      // } finally {
-      //   setLoading(false);
-      // }
     };
 
     fetchData();
