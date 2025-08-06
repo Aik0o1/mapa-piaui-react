@@ -14,7 +14,10 @@ export default function PieCharts({ dados }) {
     // Converte objetos em arrays e remove valores nulos
     const naturezas = Object.entries(naturezasObj)
       .filter(([, qtd]) => qtd != null)
-      .map(([tipo, qtd]) => ({ tipo, qtd_por_natureza: qtd }));
+      .map(([tipo, qtd]) => ({
+        tipo: tipo.replace(/^\d{3}-\d\s+-\s+/, ""), 
+        qtd_por_natureza: qtd
+      }));
 
     const portes = Object.entries(portesObj)
       .filter(([, qtd]) => qtd != null)
@@ -51,7 +54,7 @@ export default function PieCharts({ dados }) {
         .arc()
         .innerRadius(0)
         .outerRadius(radius);
-      
+
       const arcHover = d3
         .arc()
         .innerRadius(0)
@@ -90,11 +93,11 @@ export default function PieCharts({ dados }) {
             .duration(200)
             .attr("d", arcHover)
             .style("opacity", 1);
-          
+
           const value = d.data.qtd_por_natureza || d.data.qtd_por_porte;
           const total = data.reduce((sum, item) => sum + (item.qtd_por_natureza || item.qtd_por_porte), 0);
           const percent = Math.round((value / total) * 100 * 100) / 100;
-          
+
           tooltip
             .style("opacity", 1)
             .html(`<strong>${d.data.tipo}</strong><br>Quantidade: ${value.toLocaleString('pt-BR')}<br>Percentual: ${percent}%`);
@@ -128,7 +131,7 @@ export default function PieCharts({ dados }) {
         const total = data.reduce((sum, item) => sum + (item.qtd_por_natureza || item.qtd_por_porte), 0);
         const value = d.data.qtd_por_natureza || d.data.qtd_por_porte;
         const percent = Math.round((value / total) * 100 * 100) / 100; // Duas casas decimais
-        if (percent >=15) { // Só mostra percentual para segmentos com 5% ou mais
+        if (percent >= 15) { // Só mostra percentual para segmentos com 5% ou mais
           d3.select(this).text(`${percent}%`);
         }
       });
@@ -142,14 +145,14 @@ export default function PieCharts({ dados }) {
     // Criar legendas
     const createLegend = (result, containerId) => {
       if (!result) return;
-      
+
       const container = document.getElementById(containerId);
       if (!container) return;
-      
+
       container.innerHTML = '';
-      
+
       const total = result.data.reduce((sum, d) => sum + (d.qtd_por_natureza || d.qtd_por_porte), 0);
-      
+
       // Ordenar os dados do maior para o menor
       const sortedData = [...result.data]
         .map((d, i) => ({
@@ -159,11 +162,11 @@ export default function PieCharts({ dados }) {
           percent: Math.round((d.qtd_por_natureza || d.qtd_por_porte) / total * 100 * 100) / 100
         }))
         .sort((a, b) => b.value - a.value);
-      
+
       sortedData.forEach((d) => {
         const legendItem = document.createElement('div');
         legendItem.className = 'flex items-center gap-3 p-2 rounded hover:bg-gray-50';
-        
+
         legendItem.innerHTML = `
           <div class="w-4 h-4 rounded flex-shrink-0" style="background-color: ${result.colors(d.colorIndex)}"></div>
           <div class="flex-1 min-w-0">
@@ -171,7 +174,7 @@ export default function PieCharts({ dados }) {
             <div class="text-xs text-gray-500">${d.value.toLocaleString('pt-BR')} (${d.percent}%)</div>
           </div>
         `;
-        
+
         container.appendChild(legendItem);
       });
     };
@@ -198,11 +201,11 @@ export default function PieCharts({ dados }) {
               Naturezas Jurídicas
             </h3>
           </div>
-          
+
           <div className="flex justify-center mb-4">
             <svg ref={svgRef1}></svg>
           </div>
-          
+
           <div className="border-t pt-4">
             <h4 className="text-sm font-semibold text-gray-700 mb-3">Legenda</h4>
             <div id="legend-naturezas" className="space-y-1 max-h-48 overflow-y-auto">
@@ -219,11 +222,11 @@ export default function PieCharts({ dados }) {
               Portes das Empresas
             </h3>
           </div>
-          
+
           <div className="flex justify-center mb-4">
             <svg ref={svgRef2}></svg>
           </div>
-          
+
           <div className="border-t pt-4">
             <h4 className="text-sm font-semibold text-gray-700 mb-3">Legenda</h4>
             <div id="legend-portes" className="space-y-1 max-h-48 overflow-y-auto">
