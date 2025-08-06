@@ -21,7 +21,10 @@ export function ComboboxCidades({ onCidadeSelect, cidadeSelecionada }) {
   const [open, setOpen] = useState(false);
   const [cidades, setCidades] = useState([]);
   const [value, setValue] = useState("");
+  
   const apiUrl = import.meta.env.VITE_URL_API;
+  const apiToken = import.meta.env.VITE_API_TOKEN;
+
 
   useEffect(() => {
     const fetchData = async () => {
