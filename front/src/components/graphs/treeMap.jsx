@@ -3,7 +3,6 @@ import * as d3 from "d3";
 
 export default function TreeMap({ selectedCity, dados }) {
   const svgRef = useRef();
-
   useEffect(() => {
     if (!dados) return;
 
@@ -68,63 +67,96 @@ export default function TreeMap({ selectedCity, dados }) {
       .attr("opacity", 0.8)
       .attr("stroke", "#fff");
 
-    // quebra linha do texto
-    cell
-      .append("text")
-      .selectAll("tspan")
-      .data((d) => {
-        const rectWidth = d.x1 - d.x0;
-        const maxCharsPerLine = Math.floor(rectWidth / 8);
+    // Adiciona texto do nome da atividade
+    cell.each(function(d) {
+      const rectWidth = d.x1 - d.x0;
+      const rectHeight = d.y1 - d.y0;
+      const cellGroup = d3.select(this);
 
-        const words = d.data.name.split(/[-_]/);
-        const lines = [];
-        let currentLine = [];
+      // Calcula tamanhos de fonte apropriados
+      const minDimension = Math.min(rectWidth, rectHeight);
+      const labelFontSize = Math.max(10, Math.min(14, minDimension / 8));
+      const valueFontSize = Math.max(16, Math.min(28, minDimension / 4));
 
-        words.forEach((word) => {
-          const currentLineLength = currentLine.join(" ").length;
-          if (currentLineLength + word.length + 1 <= maxCharsPerLine) {
-            currentLine.push(word);
+      // Quebra o texto do nome em palavras
+      const words = d.data.name.split(/[-_\s]+/);
+      const maxCharsPerLine = Math.floor(rectWidth / (labelFontSize * 0.7));
+
+      // Agrupa palavras em linhas
+      const lines = [];
+      let currentLine = "";
+
+      words.forEach(word => {
+        const testLine = currentLine ? `${currentLine} ${word}` : word;
+        if (testLine.length <= maxCharsPerLine) {
+          currentLine = testLine;
+        } else {
+          if (currentLine) {
+            lines.push(currentLine);
+            currentLine = word;
           } else {
-            lines.push(currentLine.join(" "));
-            currentLine = [word];
+            // Palavra muito longa, trunca
+            lines.push(word.substring(0, maxCharsPerLine - 3) + "...");
           }
-        });
-        if (currentLine.length) lines.push(currentLine.join(" "));
+        }
+      });
+      if (currentLine) lines.push(currentLine);
 
-        lines.push(`${d.data.value}`);
+      // Limita o número de linhas baseado na altura disponível
+      const lineHeight = labelFontSize + 2;
+      const maxLines = Math.floor((rectHeight - valueFontSize - 20) / lineHeight);
+      const finalLines = lines.slice(0, Math.max(1, maxLines));
 
-        return lines.map((text, index) => ({
-          text,
-          isValue: index === lines.length - 1,
-          lineIndex: index,
-        }));
-      })
-      .enter()
-      .append("tspan")
-      .attr("x", 4)
-      .attr("y", (d, i) => 25 + d.lineIndex * 20)
-      .attr("fill", (d) => (d.isValue ? "yellow" : "white"))
-      .style("font-size", (d) => (d.isValue ? "14px" : "18px"))
-      .style("text-transform", "capitalize")
-      .text((d) => d.text);
+      // Adiciona as linhas de texto do nome
+      const textGroup = cellGroup.append("g");
+
+      finalLines.forEach((line, i) => {
+        textGroup
+          .append("text")
+          .attr("x", 5)
+          .attr("y", 15 + (i * lineHeight))
+          .attr("text-anchor", "start")
+          .attr("fill", "white")
+          .style("font-size", `${labelFontSize}px`)
+          .style("font-weight", "bold")
+          .style("text-transform", "capitalize")
+          .text(line);
+      });
+
+      // Adiciona o número (valor) bem destacado
+// Adiciona o número (valor) bem destacado logo abaixo das linhas de texto
+textGroup
+  .append("text")
+  .attr("x", 5) 
+  .attr("y", 15 + (finalLines.length * lineHeight) + 15) 
+  .attr("text-anchor", "start")
+  .attr("fill", "#FFFFFF")
+  .style("font-size", `${valueFontSize}px`)
+  .style("font-weight", "bold")
+  .style("text-shadow", "0px 0px 1px rgba(0,0,0,0.8)")
+  .text(d.data.value);
+
+    });
 
     const tooltip = d3
       .select("body")
       .append("div")
       .style("position", "absolute")
-      .style("background", "rgba(0, 0, 0, 0.7)")
+      .style("background", "rgba(0, 0, 0, 0.9)")
       .style("color", "white")
-      .style("padding", "5px")
-      .style("border-radius", "3px")
+      .style("padding", "10px")
+      .style("border-radius", "5px")
       .style("visibility", "hidden")
-      .style("font-size", "12px");
+      .style("font-size", "14px")
+      .style("z-index", "1000")
 
     cell
       .on("mouseover", (event, d) => {
         tooltip
           .style("visibility", "visible")
           .html(
-            `<strong>${d.data.name}</strong><br>Quantidade: ${d.data.value}`
+            `<strong style="color: #FFD700;">${d.data.name}</strong><br>
+             <span style="font-size: 16px;">Quantidade: <strong style="color: #FFD700;">${d.data.value}</strong></span>`
           );
       })
       .on("mousemove", (event) => {
@@ -135,13 +167,22 @@ export default function TreeMap({ selectedCity, dados }) {
       .on("mouseout", () => {
         tooltip.style("visibility", "hidden");
       });
+
+    // Cleanup do tooltip quando o componente for desmontado
+    return () => {
+      d3.select("body").selectAll("div").filter(function() {
+        return d3.select(this).style("position") === "absolute" &&
+               d3.select(this).style("background").includes("rgba(0, 0, 0, 0.9)");
+      }).remove();
+    };
   }, [selectedCity, dados]);
 
   return (
     <div className="mt-4">
       <div className="border rounded p-4">
-        <svg ref={svgRef}></svg>
+        <svg ref={svgRef} style={{ width: "100%", height: "auto" }}></svg>
       </div>
     </div>
   );
 }
+
