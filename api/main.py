@@ -128,6 +128,33 @@ def buscar_municipios():
         app.logger.error(f"Erro interno: {str(e)}", exc_info=True)
         return jsonify({"error": "Erro interno no servidor"}), 500
 
+@app.route("/ultima_atualizacao", methods=["GET"])
+@token_required
+def buscar_ultima_atualizacao():
+    try:
+        db_name = "dados_ativas"
+        if db_name not in couch:
+            return jsonify({"error": f"Banco de dados '{db_name}' não existe"}), 404
+        db = couch[db_name]
+        doc_id = "ultimaAtualizacao"
+
+        if doc_id not in db:
+            return jsonify({"error": f"Documento {doc_id} não encontrado"}), 404
+        
+        doc = db[doc_id]
+        print(doc)
+        return jsonify({
+                "id": doc_id, 
+                "ultimaAtualizacao": doc["ultimaAtualizacao"]
+            })
+
+    except couchdb.http.Unauthorized:
+        return jsonify({"error": "Acesso não autorizado ao CouchDB"}), 401
+    except Exception as e:
+        # Log do erro real (aparece no terminal onde o Flask está rodando)
+        app.logger.error(f"Erro interno: {str(e)}", exc_info=True)
+        return jsonify({"error": "Erro interno no servidor"}), 500
+
 
 @app.route("/empresas_ativas", methods=["GET"])
 @token_required
@@ -160,6 +187,7 @@ def buscar_empresas_abertas():
             return jsonify({"error": f"Documento {doc_id} não encontrado"}), 404
         
         doc = db[doc_id]
+        print(doc)
         
         # Verifica se a cidade existe no documento
         if cidade not in doc:
