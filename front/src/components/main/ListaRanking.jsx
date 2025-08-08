@@ -109,14 +109,13 @@ export default function ListaRanking({ onCidadeSelecionada, mes, ano }) {
     im: "Inscrição Municipal",
   };
 
-  const formatTime = (timeStr) => {
+const formatTime = (timeStr) => {
     if (!timeStr) return null;
 
-    // Se já estiver no formato hh:mm:ss
-    if (/^\d{2}:\d{2}:\d{2}$/.test(timeStr)) {
+    // Aceita de 2 a 4 dígitos para horas
+    if (/^\d{2,4}:\d{2}:\d{2}$/.test(timeStr)) {
       return timeStr;
     }
-
     // Tentar extrair tempo de strings complexas
     const timeMatch = timeStr.match(/(\d{1,2}):(\d{2}):(\d{2})/);
     if (timeMatch) {

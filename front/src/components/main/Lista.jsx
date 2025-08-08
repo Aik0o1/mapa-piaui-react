@@ -110,11 +110,11 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
     tempo_medio_total: "Média de Tempo Total para Registro",
   };
 
-  const formatTime = (timeStr) => {
+const formatTime = (timeStr) => {
     if (!timeStr) return null;
 
-    // Se já estiver no formato hh:mm:ss
-    if (/^\d{2}:\d{2}:\d{2}$/.test(timeStr)) {
+    // Aceita de 2 a 4 dígitos para horas
+    if (/^\d{2,4}:\d{2}:\d{2}$/.test(timeStr)) {
       return timeStr;
     }
   };
