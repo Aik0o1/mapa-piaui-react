@@ -109,7 +109,7 @@ export default function ListaRanking({ onCidadeSelecionada, mes, ano }) {
     im: "Inscrição Municipal",
   };
 
-const formatTime = (timeStr) => {
+  const formatTime = (timeStr) => {
     if (!timeStr) return null;
 
     // Aceita de 2 a 4 dígitos para horas
@@ -147,6 +147,21 @@ const formatTime = (timeStr) => {
   //     </div>
   //   );
   // }
+
+  function corPontucao(pontuacao) {
+    if (pontuacao > 75) {
+      return "bg-[#008000]"
+    }
+    else if (pontuacao > 50 && pontuacao <= 75)
+      return "bg-[#FFFF00]"
+
+    else if (pontuacao > 25 && pontuacao <= 50)
+      return "bg-[#D35400]"
+
+    else {
+      return "bg-[#FF0000]"
+    }
+  }
 
   const totalPontuacao =
     (dados?.documentos_habilitados?.pontuacao || 0) +
@@ -187,11 +202,18 @@ const formatTime = (timeStr) => {
               <CheckCircle className="h-5 w-5 text-[#034ea2]" />
               <div className="flex justify-between items-center w-full">
                 <span className="font-medium">Pontuação Total</span>
-                <span className="font-bold text-[#034ea2]">
+                <span className="flex gap-2 items-center justify-center font-bold text-[#034ea2]">
+                  <div
+                    className={`w-3 h-3 rounded-full ${corPontucao(totalPontuacao)}`}
+
+                  />
                   {totalPontuacao == 0 ? "" : totalPontuacao}
                 </span>
+
               </div>
             </AccordionTrigger>
+
+
 
             <AccordionContent className="p-4 pt-0">
               <ul className="space-y-2">
@@ -218,6 +240,36 @@ const formatTime = (timeStr) => {
           </AccordionItem>
         </Accordion>
 
+<div className="legenda flex flex-co gap-2 justify-end">
+
+
+          <span className="flex gap-2 items-center mr-3  ">
+            <div className="w-3 h-3 rounded-full bg-[#008000] rigth"></div>
+            Mais que 75 pontos
+          </span>
+
+
+            {/* <span className="flex gap-2 items-center mr-3  ">
+            <div className="w-3 h-3 rounded-full bg-[#008000]"></div>
+            {">"} 75%
+          </span> */}
+
+
+          <span className="flex gap-2 items-center mr-3">
+            <div className="w-3 h-3 rounded-full bg-[#FFFF00]"></div>
+        Entre 51 e 75 pontos
+          </span>
+
+          <span className="flex gap-2 items-center mr-3">
+            <div className="w-3 h-3 rounded-full bg-[#D35400]"></div>
+            Entre 26 e 50 pontos
+          </span>
+
+          <span className="flex gap-2 items-center mr-3">
+            <div className="w-3 h-3 rounded-full bg-[#FF0000]"> </div>
+            Igual ou menos que 25 pontos
+          </span>
+        </div>
         {/* Documentos Habilitados - Accordion */}
         <Accordion type="single" collapsible className="border rounded-lg">
           <AccordionItem value="documentos" className="border-none">
@@ -236,14 +288,12 @@ const formatTime = (timeStr) => {
                       return (
                         <li key={doc} className="flex items-center gap-3">
                           <div
-                            className={`w-5 h-5 rounded-full flex items-center justify-center ${
-                              isEnabled ? "bg-green-100" : "bg-red-100"
-                            }`}
+                            className={`w-5 h-5 rounded-full flex items-center justify-center ${isEnabled ? "bg-green-100" : "bg-red-100"
+                              }`}
                           >
                             <div
-                              className={`w-3 h-3 rounded-full ${
-                                isEnabled ? "bg-green-500" : "bg-red-500"
-                              }`}
+                              className={`w-3 h-3 rounded-full ${isEnabled ? "bg-green-500" : "bg-red-500"
+                                }`}
                             />
                           </div>
                           <span className="font-medium">
@@ -289,9 +339,8 @@ const formatTime = (timeStr) => {
                 <div
                   className="bg-[#034ea2] h-3 rounded-full transition-all duration-500"
                   style={{
-                    width: `${
-                      dados.indice_atendimentos.percentual_atendimento * 100
-                    }%`,
+                    width: `${dados.indice_atendimentos.percentual_atendimento * 100
+                      }%`,
                   }}
                 />
               </div>
