@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
+import { useMemo } from "react";
 import {
   MapPin,
   Building2,
@@ -7,9 +8,8 @@ import {
   Clock,
   FileChartPie,
 } from "lucide-react";
-import TemposAnalise from "./TemposAnalise";
 import TreeMap from "../graphs/treeMap";
-import PieCharts from "../graphs/PieCharts";
+import ChartCard from "../graphs/PieCharts";
 import {
   AccordionItem,
   Accordion,
@@ -44,9 +44,9 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
     const btnMes = document.getElementsByClassName("mesEscolha")[0];
     const btnLimparFiltros =
       document.getElementsByClassName("limpar-filtros")[0];
-    const legendaPeriodo = document.getElementsByClassName("legendaPeriodo")[0]
+    const legendaPeriodo = document.getElementsByClassName("legendaPeriodo")[0];
 
-    legendaPeriodo.style.visibility = "visible"
+    legendaPeriodo.style.visibility = "visible";
 
     btnAno.style.visibility = "visible";
     btnMes.style.visibility = "visible";
@@ -113,7 +113,7 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
     tempo_medio_total: "Média de Tempo Total para Registro",
   };
 
-const formatTime = (timeStr) => {
+  const formatTime = (timeStr) => {
     if (!timeStr) return null;
 
     // Aceita de 2 a 4 dígitos para horas
@@ -121,6 +121,36 @@ const formatTime = (timeStr) => {
       return timeStr;
     }
   };
+
+  const naturezasData = useMemo(() => {
+    if (!dados?.naturezas) return [];
+    return Object.entries(dados.naturezas)
+      .filter(([, value]) => value != null && value > 0)
+      .map(([key, value]) => ({
+        label: key.replace(/^\d{3}-\d\s+-\s+/, ""), // Limpa o label
+        value: value,
+      }));
+  }, [dados]);
+
+  const portesData = useMemo(() => {
+    if (!dados?.portes) return [];
+    return Object.entries(dados.portes)
+      .filter(([, value]) => value != null && value > 0)
+      .map(([key, value]) => ({
+        label: key,
+        value: value,
+      }));
+  }, [dados]);
+
+    const setoresData = useMemo(() => {
+    if (!dados?.classificacoes) return [];
+    return Object.entries(dados.classificacoes)
+      .filter(([, value]) => value != null && value > 0)
+      .map(([key, value]) => ({
+        label: key,
+        value: value,
+      }));
+  }, [dados]);
 
   const calcularTotalAbertas = () => {
     if (!dados) return "-";
@@ -251,13 +281,32 @@ const formatTime = (timeStr) => {
               </span>
             </AccordionTrigger>
             <AccordionContent className="p-4 pt-0">
-              <div className="w-full">
-                {dados == null ? (
-                  <p className="text-gray-500">Sem dados</p>
-                ) : (
-                  <PieCharts dados={dados} />
-                )}
-              </div>
+              {!dados ? (
+                <p className="text-gray-500">Sem dados</p>
+              ) : (
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                  <ChartCard title="Naturezas Jurídicas" data={naturezasData} />
+                  <ChartCard title="Portes das Empresas" data={portesData} />
+                </div>
+              )}
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+
+         <Accordion type="single" collapsible className="border rounded-lg">
+          <AccordionItem value="piecharts" className="border-none">
+            <AccordionTrigger className="flex items-center gap-3 p-4 hover:bg-gray-50 text-[#231f20]">
+              <FileChartPie className="h-5 w-5 text-[#034ea2]" />
+              <span className="font-medium">
+                Empresas abertas por setor econômico
+              </span>
+            </AccordionTrigger>
+            <AccordionContent className="p-4 pt-0">
+              {!dados ? (
+                <p className="text-gray-500">Sem dados</p>
+              ) : (
+                  <ChartCard title="Setores Econômicos" data={setoresData} />
+              )}
             </AccordionContent>
           </AccordionItem>
         </Accordion>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   MapPin,
   Building2,
@@ -6,9 +6,8 @@ import {
   Clock2,
   FileChartPie,
 } from "lucide-react";
-import TemposAnalise from "./TemposAnalise";
 import TreeMap from "../graphs/treeMap";
-import PieCharts from "../graphs/PieCharts";
+import ChartCard from "../graphs/PieCharts";
 import {
   AccordionItem,
   Accordion,
@@ -114,6 +113,36 @@ export default function ListaAtivas({ onCidadeSelecionada }) {
   //   );
   // }
 
+    const naturezasData = useMemo(() => {
+      if (!dados?.naturezas) return [];
+      return Object.entries(dados.naturezas)
+        .filter(([, value]) => value != null && value > 0)
+        .map(([key, value]) => ({
+          label: key.replace(/^\d{3}-\d\s+-\s+/, ""), // Limpa o label
+          value: value,
+        }));
+    }, [dados]);
+  
+    const portesData = useMemo(() => {
+      if (!dados?.portes) return [];
+      return Object.entries(dados.portes)
+        .filter(([, value]) => value != null && value > 0)
+        .map(([key, value]) => ({
+          label: key,
+          value: value,
+        }));
+    }, [dados]);
+  
+      const setoresData = useMemo(() => {
+      if (!dados?.classificacoes) return [];
+      return Object.entries(dados.classificacoes)
+        .filter(([, value]) => value != null && value > 0)
+        .map(([key, value]) => ({
+          label: key,
+          value: value,
+        }));
+    }, [dados]);
+
   // Determina o nome do município baseado no tipo de dados
   const municipio =
     onCidadeSelecionada.nome === "Selecione uma localidade"
@@ -202,22 +231,41 @@ export default function ListaAtivas({ onCidadeSelecionada }) {
           </AccordionItem>
         </Accordion>
 
-        <Accordion type="single" collapsible className="border rounded-lg">
+<Accordion type="single" collapsible className="border rounded-lg">
           <AccordionItem value="piecharts" className="border-none">
             <AccordionTrigger className="flex items-center gap-3 p-4 hover:bg-gray-50 text-[#231f20]">
               <FileChartPie className="h-5 w-5 text-[#034ea2]" />
               <span className="font-medium">
-                Empresas ativas por porte e natureza jurídica
+                Empresas abertas por porte e natureza jurídica
               </span>
             </AccordionTrigger>
             <AccordionContent className="p-4 pt-0">
-              <div className="w-full">
-                {dados == null ? (
-                  <p className="text-gray-500">Sem dados</p>
-                ) : (
-                  <PieCharts dados={dados} />
-                )}
-              </div>
+              {!dados ? (
+                <p className="text-gray-500">Sem dados</p>
+              ) : (
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                  <ChartCard title="Naturezas Jurídicas" data={naturezasData} />
+                  <ChartCard title="Portes das Empresas" data={portesData} />
+                </div>
+              )}
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+
+         <Accordion type="single" collapsible className="border rounded-lg">
+          <AccordionItem value="piecharts" className="border-none">
+            <AccordionTrigger className="flex items-center gap-3 p-4 hover:bg-gray-50 text-[#231f20]">
+              <FileChartPie className="h-5 w-5 text-[#034ea2]" />
+              <span className="font-medium">
+                Empresas abertas por setor econômico
+              </span>
+            </AccordionTrigger>
+            <AccordionContent className="p-4 pt-0">
+              {!dados ? (
+                <p className="text-gray-500">Sem dados</p>
+              ) : (
+                  <ChartCard title="Setores Econômicos" data={setoresData} />
+              )}
             </AccordionContent>
           </AccordionItem>
         </Accordion>
