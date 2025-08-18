@@ -105,7 +105,7 @@ export default function Filtros(props) {
 
     props.onMesSelecionado(mesesDict[dataRecente.mes]);
     props.onAnoSelecionado(dataRecente.ano);
-    props.onCidadeSelecionada({ nome: "Selecione a localidade", id: "" });
+    props.onCidadeSelecionada({ nome: "Selecione uma localidade", id: "" });
     highlightCityOnMap();
   };
 
@@ -114,7 +114,7 @@ export default function Filtros(props) {
       <div className="selecao flex w-full">
         <div className="flex items-center gap-4">
 
-        <p>Selecione a localidade</p>
+        <p>Selecione uma localidade</p>
         <ComboboxCidades
           onCidadeSelect={handleCidadeSelect}
           cidadeSelecionada={props.cidadeSelecionada}

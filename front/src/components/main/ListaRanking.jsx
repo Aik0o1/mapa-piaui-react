@@ -132,7 +132,7 @@ export default function ListaRanking({ onCidadeSelecionada, mes, ano }) {
 
 
 const municipio =
-    onCidadeSelecionada?.nome && onCidadeSelecionada.nome !== "Selecione a localidade"
+    onCidadeSelecionada?.nome && onCidadeSelecionada.nome !== "Selecione uma localidade"
       ? onCidadeSelecionada.nome
       : primeiroCidade || "Carregando...";
 
