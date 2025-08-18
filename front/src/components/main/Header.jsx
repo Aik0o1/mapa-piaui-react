@@ -31,7 +31,7 @@ export default function Header() {
   }, []);
 
   return (
-    <header className="header bg-white shadow-md py-4 px-6 flex items-center justify-between">
+    <header className="header bg-white shadow-md py-4 px-6 flex items-center justify-between md:flex-row flex-col">
       <div className="flex items-center justify-center gap-4">
         <img
           src="https://portal.pi.gov.br/jucepi/wp-content/uploads/sites/47/2023/03/jucepi_logo-768x177.jpg"
