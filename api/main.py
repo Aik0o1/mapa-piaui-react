@@ -22,7 +22,7 @@ ativas_db_name = "dados_ativas"
 if abertas_db_name in couch and ativas_db_name in couch:
     db = couch[abertas_db_name]
     db_ativas = couch[ativas_db_name]
-    print(db_ativas)
+    # print(db_ativas)
 
 else:
     print(f"O banco de dados '{abertas_db_name}' não existe.")
@@ -107,13 +107,6 @@ def buscar_municipios():
             )
 
         # Resposta de sucesso - trata tanto códigos IBGE quanto "total"
-        if cidade == "total":
-            return jsonify({
-                "id": doc_id, 
-                "municipio": "total",
-                "tipo": "total",
-                **doc[cidade]
-            })
         else:
             return jsonify({
                 "id": doc_id, 
@@ -142,7 +135,7 @@ def buscar_ultima_atualizacao():
             return jsonify({"error": f"Documento {doc_id} não encontrado"}), 404
         
         doc = db[doc_id]
-        print(doc)
+        # print(doc)
         return jsonify({
                 "id": doc_id, 
                 "ultimaAtualizacao": doc["ultimaAtualizacao"]
@@ -187,7 +180,7 @@ def buscar_empresas_abertas():
             return jsonify({"error": f"Documento {doc_id} não encontrado"}), 404
         
         doc = db[doc_id]
-        print(doc)
+        # print(doc)
         
         # Verifica se a cidade existe no documento
         if cidade not in doc:
@@ -196,14 +189,6 @@ def buscar_empresas_abertas():
                 404,
             )
         
-        # Resposta de sucesso - trata tanto códigos IBGE quanto "total"
-        if cidade == "total":
-            return jsonify({
-                "id": doc_id, 
-                "municipio": "total",
-                "tipo": "total",
-                **doc[cidade]
-            })
         else:
             return jsonify({
                 "id": doc_id, 
@@ -237,18 +222,10 @@ def get_id_nome_cidades():
         # Formatar os dados no formato desejado
         cidades = []
         for cidade_id, cidade_data in doc["cidades"].items():
-            # Se for o total, mantém o ID como string
-            if cidade_id == "total":
-                cidades.append({
-                    "id": cidade_id,
-                    "nome": cidade_data["nome"]
-                })
-            else:
-                # Para cidades normais, converte o ID para inteiro
-                cidades.append({
-                    "id": int(cidade_id),
-                    "nome": cidade_data["nome"]
-                })
+            cidades.append({
+                "id": int(cidade_id),
+                "nome": cidade_data["nome"]
+            })
         
         # Retornar como JSON com encoding UTF-8
         return Response(
