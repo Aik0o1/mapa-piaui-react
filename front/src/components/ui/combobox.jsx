@@ -37,6 +37,8 @@ export function ComboboxCidades({ onCidadeSelect, cidadeSelecionada }) {
           },
         });
         const data = await response.json();
+        console.log(data);
+        
         setCidades(data);
       } catch (error) {
         console.error("Erro ao buscar dados do CouchDB:", error);
@@ -88,7 +90,7 @@ export function ComboboxCidades({ onCidadeSelect, cidadeSelecionada }) {
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0">
         <Command>
-          <CommandInput placeholder="Pesquisar cidade" />
+          <CommandInput placeholder="Pesquisar localidade" />
           <CommandList>
             {cidades.length === 0 && (
               <CommandEmpty>Carregando cidades...</CommandEmpty>

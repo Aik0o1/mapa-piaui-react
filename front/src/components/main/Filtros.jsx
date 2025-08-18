@@ -105,14 +105,14 @@ export default function Filtros(props) {
 
     props.onMesSelecionado(mesesDict[dataRecente.mes]);
     props.onAnoSelecionado(dataRecente.ano);
-    props.onCidadeSelecionada({ nome: "Selecione um município", id: "" });
+    props.onCidadeSelecionada({ nome: "Selecione uma localidade", id: "" });
     highlightCityOnMap();
   };
 
   return (
     <div className="filtros text-[#034ea2]">
       <div className="selecao">
-        <p>Selecione um município ou período</p>
+        <p>Selecione uma localidade ou período</p>
         <ComboboxCidades
           onCidadeSelect={handleCidadeSelect}
           cidadeSelecionada={props.cidadeSelecionada}

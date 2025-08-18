@@ -8,7 +8,7 @@ import PiauiMapa from './components/main/Mapa';
 import Filtros from './components/main/Filtros';
 
 function MainContent() {
-  const [cidade, setCidade] = useState({ nome: 'Selecione um município', id: '' });
+  const [cidade, setCidade] = useState({ nome: 'Selecione uma localidade', id: '' });
   const [mes, setMes] = useState(""); 
   const [ano, setAno] = useState(""); 
   const [loading, setLoading] = useState(true);

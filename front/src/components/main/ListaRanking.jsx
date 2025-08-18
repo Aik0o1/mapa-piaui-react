@@ -98,7 +98,7 @@ export default function ListaRanking({ onCidadeSelecionada, mes, ano }) {
   }, [onCidadeSelecionada, mes, ano]);
 
   const municipio =
-    onCidadeSelecionada?.nome === "Selecione um município"
+    onCidadeSelecionada?.nome === "Selecione uma localidade"
       ? "Teresina"
       : onCidadeSelecionada?.nome || "Teresina";
 
@@ -137,7 +137,7 @@ export default function ListaRanking({ onCidadeSelecionada, mes, ano }) {
   //       <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
   //         <div className="flex items-center gap-3">
   //           <MapPin className="text-[#034ea2]" />
-  //           <p className="font-medium text-[#231f20]">Município</p>
+  //           <p className="font-medium text-[#231f20]">Localidade</p>
   //         </div>
   //         <p className="text-[#034ea2] font-semibold">{municipio}</p>
   //       </div>
@@ -175,7 +175,7 @@ export default function ListaRanking({ onCidadeSelecionada, mes, ano }) {
         <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
           <div className="flex items-center gap-3">
             <MapPin className="text-[#034ea2]" />
-            <p className="font-medium text-[#231f20]">Município</p>
+            <p className="font-medium text-[#231f20]">Localidade</p>
           </div>
           <p className="text-[#034ea2] font-semibold">{municipio}</p>
         </div>

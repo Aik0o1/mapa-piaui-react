@@ -63,7 +63,7 @@ export default function ListaAtivas({ onCidadeSelecionada }) {
         // Corrigindo a URL - removendo o "?" extra
         const url_ativas = onCidadeSelecionada?.id
           ? `${apiUrl}/empresas_ativas?cidade=${id}&mes=${mes}&ano=${ano}`
-          : `${apiUrl}/empresas_ativas?cidade=total&mes=${mes}&ano=${ano}`;
+          : `${apiUrl}/empresas_ativas?cidade=22&mes=${mes}&ano=${ano}`;
 
         // console.log("URL:", url_ativas);
 
@@ -114,8 +114,8 @@ export default function ListaAtivas({ onCidadeSelecionada }) {
 
   // Determina o nome do município baseado no tipo de dados
   const municipio =
-    onCidadeSelecionada.nome === "Selecione um município"
-      ? "Total"
+    onCidadeSelecionada.nome === "Selecione uma localidade"
+      ? "Piauí"
       : onCidadeSelecionada.nome;
 
   // Calcula o total de empresas ativas somando todas as categorias
@@ -162,7 +162,7 @@ export default function ListaAtivas({ onCidadeSelecionada }) {
           <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
             <div className="flex items-center gap-3">
               <MapPin className="text-[#034ea2]" />
-              <p className="font-medium text-[#231f20]">Município</p>
+              <p className="font-medium text-[#231f20]">Localidade</p>
             </div>
             <p className="text-[#034ea2] font-semibold">{municipio}</p>
           </div>
