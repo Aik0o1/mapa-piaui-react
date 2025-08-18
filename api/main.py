@@ -284,6 +284,76 @@ def retorna_data_mais_recente():
     except Exception as e:
         app.logger.error(f"Erro interno: {str(e)}", exc_info=True)
         return jsonify({"error": "Erro interno no servidor"}), 500
+
+@app.route("/primeiro_ranking", methods=["GET"])
+@token_required
+def buscar_primeiro_ranking():
+    try:
+        # Obtém parâmetros da URL
+        mes = request.args.get("mes")  # Ex: "12"
+        ano = request.args.get("ano")  # Ex: "2024"
+
+        # Validação básica
+        if not all([mes, ano]):
+            return (
+                jsonify(
+                    {"error": "Parâmetros 'mes' e 'ano' são obrigatórios"}
+                ),
+                400,
+            )
+
+        # Acessa o banco de dados
+        db_name = "dados_empresariais"
+        if db_name not in couch:
+            return jsonify({"error": f"Banco de dados '{db_name}' não existe"}), 404
+
+        db = couch[db_name]
+        doc_id = f"{mes.zfill(2)}-{ano}"  # Formato "12-2024"
+
+        # Verifica se o documento existe
+        if doc_id not in db:
+            return jsonify({"error": f"Documento {doc_id} não encontrado"}), 404
+
+        doc = db[doc_id]
+
+        # Procura pelo município em primeira posição
+        primeiro_municipio = None
+        codigo_primeiro = None
+        
+        for codigo_municipio, dados_municipio in doc.items():
+            # Ignora campos que não são municípios (como "total" ou outros metadados)
+            if isinstance(dados_municipio, dict) and "ranking" in dados_municipio:
+                ranking = dados_municipio.get("ranking", {})
+                posicao = ranking.get("posicao")
+                
+                if posicao == 1:
+                    primeiro_municipio = dados_municipio
+                    codigo_primeiro = codigo_municipio
+                    break
+
+        # Verifica se encontrou o primeiro colocado
+        if primeiro_municipio is None:
+            return jsonify({
+                "error": f"Nenhum município encontrado em primeiro lugar no ranking para {mes}/{ano}"
+            }), 404
+
+        # Resposta de sucesso
+        return jsonify({
+            "id": doc_id,
+            "municipio": primeiro_municipio["nome"],
+            "tipo": "municipio", 
+            **doc[codigo_primeiro]
+        })
+
+
+
+    except couchdb.http.Unauthorized:
+        return jsonify({"error": "Acesso não autorizado ao CouchDB"}), 401
+    except Exception as e:
+        # Log do erro real (aparece no terminal onde o Flask está rodando)
+        app.logger.error(f"Erro interno: {str(e)}", exc_info=True)
+        return jsonify({"error": "Erro interno no servidor"}), 500
+
     
 if __name__ == "__main__":
     app.run()
