@@ -105,23 +105,29 @@ export default function Filtros(props) {
 
     props.onMesSelecionado(mesesDict[dataRecente.mes]);
     props.onAnoSelecionado(dataRecente.ano);
-    props.onCidadeSelecionada({ nome: "Selecione uma localidade", id: "" });
+    props.onCidadeSelecionada({ nome: "Selecione a localidade", id: "" });
     highlightCityOnMap();
   };
 
   return (
     <div className="filtros text-[#034ea2]">
-      <div className="selecao">
-        <p>Selecione uma localidade ou período</p>
+      <div className="selecao flex w-full">
+        <div className="flex items-center gap-4">
+
+        <p>Selecione a localidade</p>
         <ComboboxCidades
           onCidadeSelect={handleCidadeSelect}
           cidadeSelecionada={props.cidadeSelecionada}
-        />
+          />
+          </div>
+          <div className="flex sm:flex-row flex-col items-center gap-4 justify-end">
+            <p className="legendaPeriodo">Selecione o período</p>
         <Select
           className="anoEscolha"
           onValueChange={handleAnoSelect}
           value={selectedAno}
         >
+
           <SelectTrigger className="anoEscolha w-[250px]">
             <SelectValue placeholder="Selecione um ano" />
           </SelectTrigger>
@@ -136,6 +142,7 @@ export default function Filtros(props) {
             })}
           </SelectContent>
         </Select>
+          
         <Select
           className="mes"
           onValueChange={handleMesSelect}
@@ -159,6 +166,8 @@ export default function Filtros(props) {
         >
           Limpar Filtros
         </Button>
+        </div>
+
       </div>
     </div>
   );
