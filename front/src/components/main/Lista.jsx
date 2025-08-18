@@ -44,6 +44,9 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
     const btnMes = document.getElementsByClassName("mesEscolha")[0];
     const btnLimparFiltros =
       document.getElementsByClassName("limpar-filtros")[0];
+    const legendaPeriodo = document.getElementsByClassName("legendaPeriodo")[0]
+
+    legendaPeriodo.style.visibility = "visible"
 
     btnAno.style.visibility = "visible";
     btnMes.style.visibility = "visible";
