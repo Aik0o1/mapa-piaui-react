@@ -20,9 +20,12 @@ import {
 export default function ListaRanking({ onCidadeSelecionada, mes, ano }) {
   const [dados, setDados] = useState(null);
   const [error, setError] = useState(null);
+  const [primeiroCidade, setPrimeiroCidade] = useState(null); 
+  const [loading, setLoading] = useState(true); // Adicionado estado de loading
 
   const apiUrl = import.meta.env.VITE_URL_API;
   const apiToken = import.meta.env.VITE_API_TOKEN;
+
 
   const meses = {
     Janeiro: "01",
@@ -39,68 +42,99 @@ export default function ListaRanking({ onCidadeSelecionada, mes, ano }) {
     Dezembro: "12",
   };
 
-  // const toggleAccordion = (key) => {
-  //   setOpenAccordions((prev) => ({
-  //     ...prev,
-  //     [key]: !prev[key],
-  //   }));
-  // };
-
   useEffect(() => {
     const btnAno = document.getElementsByClassName("anoEscolha")[0];
     const btnMes = document.getElementsByClassName("mesEscolha")[0];
+    const legendaPeriodo = document.getElementsByClassName("legendaPeriodo")[0]
     const btnLimparFiltros =
       document.getElementsByClassName("limpar-filtros")[0];
-
+    
+    legendaPeriodo.style.visibility = "visible"
     btnAno.style.visibility = "visible";
     btnMes.style.visibility = "visible";
     btnLimparFiltros.style.visibility = "visible";
   }, []);
 
+  // Buscar primeiro lugar quando mes/ano mudarem
   useEffect(() => {
+    const controller = new AbortController();
+    const signal = controller.signal;
     const fetchData = async () => {
+      // Usando um AbortController para limpeza
+
       try {
-        // setLoading(true);
+        setLoading(true); // Inicia o carregamento
+        setDados(null); // Limpa dados antigos
 
         const numero_mes = meses[mes];
-        const id =
-          onCidadeSelecionada.id.length > 6
+        if (!numero_mes || !ano) {
+            setLoading(false);
+            return; // Sai se não tiver mês ou ano
+        }
+
+        // Se uma cidade foi selecionada
+        if (onCidadeSelecionada?.id) {
+          const id = onCidadeSelecionada.id.length > 6
             ? onCidadeSelecionada.id.split("-")[1]
             : onCidadeSelecionada.id;
+          
+          const url = `${apiUrl}/empresas_abertas?cidade=${id}&mes=${numero_mes}&ano=${ano}`;
+          const response = await fetch(url, {
+            method: "GET",
+            headers: { Authorization: `Bearer ${apiToken}` },
+            signal,
+          });
+          const data = await response.json();
 
-        const url = onCidadeSelecionada?.id
-          ? `${apiUrl}/empresas_abertas?cidade=${id}&mes=${numero_mes}&ano=${ano}`
-          : `${apiUrl}/empresas_abertas?cidade=2211001&mes=${numero_mes}&ano=${ano}`;
-
-        const response = await fetch(url, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${apiToken}`,
-          },
-        });
-        const data = await response.json();
-
-        if (!response.ok || !data.ranking) {
-          setDados(null);
+          if (!response.ok) {
+            setDados(null);
+          } else {
+            setDados(data.ranking || null);
+          }
+        // Se NENHUMA cidade foi selecionada, busca o primeiro do ranking
         } else {
-          setDados(data.ranking);
+          setPrimeiroCidade("Carregando..."); // Mostra o feedback aqui
+          const url = `${apiUrl}primeiro_ranking?mes=${numero_mes}&ano=${ano}`;
+          const response = await fetch(url, {
+            method: "GET",
+            headers: { Authorization: `Bearer ${apiToken}` },
+            signal,
+          });
+          const data = await response.json();
+
+          if (!response.ok) {
+            setDados(null);
+            setPrimeiroCidade("Erro ao buscar");
+          } else {
+            // ATUALIZA OS DOIS ESTADOS COM UMA ÚNICA CHAMADA
+            setPrimeiroCidade(data.municipio || "Sem dados");
+            setDados(data.ranking || null);
+          }
         }
       } catch (err) {
-        setError(err.message);
-        // console.error("Erro:", err);
+        if (err.name !== 'AbortError') {
+          setError(err.message);
+          setDados(null);
+          setPrimeiroCidade("Erro");
+        }
+      } finally {
+        setLoading(false); // Finaliza o carregamento
       }
-      // } finally {
-      //   setLoading(false);
-      // }
     };
 
     fetchData();
-  }, [onCidadeSelecionada, mes, ano]);
 
-  const municipio =
-    onCidadeSelecionada?.nome === "Selecione uma localidade"
-      ? "Teresina"
-      : onCidadeSelecionada?.nome || "Teresina";
+    // Função de limpeza para cancelar a requisição se o componente for desmontado
+    return () => {
+      controller.abort();
+    };
+  }, [onCidadeSelecionada, mes, ano]); // Dependências estão corretas
+
+
+const municipio =
+    onCidadeSelecionada?.nome && onCidadeSelecionada.nome !== "Selecione a localidade"
+      ? onCidadeSelecionada.nome
+      : primeiroCidade || "Carregando...";
 
   const documentLabels = {
     al: "Alvará de Localização",
@@ -125,28 +159,6 @@ export default function ListaRanking({ onCidadeSelecionada, mes, ano }) {
 
     return null;
   };
-
-  // const formatTime = (timeString) => {
-  //   if (!timeString || timeString === "0:00:00") return "0:00:00";
-  //   return timeString.split(".")[0]; // Remove microseconds
-  // };
-
-  // if (loading) {
-  //   return (
-  //     <div className="informacoes-municipais p-6 bg-white rounded-lg shadow-md">
-  //       <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-  //         <div className="flex items-center gap-3">
-  //           <MapPin className="text-[#034ea2]" />
-  //           <p className="font-medium text-[#231f20]">Localidade</p>
-  //         </div>
-  //         <p className="text-[#034ea2] font-semibold">{municipio}</p>
-  //       </div>
-  //       <div className="mt-6 space-y-4">
-  //         <p>Carregando dados...</p>
-  //       </div>
-  //     </div>
-  //   );
-  // }
 
   function corPontucao(pontuacao) {
     if (pontuacao > 75) {
@@ -213,8 +225,6 @@ export default function ListaRanking({ onCidadeSelecionada, mes, ano }) {
               </div>
             </AccordionTrigger>
 
-
-
             <AccordionContent className="p-4 pt-0">
               <ul className="space-y-2">
                 <li className="flex justify-between py-2 border-b">
@@ -242,18 +252,10 @@ export default function ListaRanking({ onCidadeSelecionada, mes, ano }) {
 
 <div className="legenda flex flex-co gap-2 justify-end">
 
-
           <span className="flex gap-2 items-center mr-3  ">
             <div className="w-3 h-3 rounded-full bg-[#008000] rigth"></div>
             Mais que 75 pontos
           </span>
-
-
-            {/* <span className="flex gap-2 items-center mr-3  ">
-            <div className="w-3 h-3 rounded-full bg-[#008000]"></div>
-            {">"} 75%
-          </span> */}
-
 
           <span className="flex gap-2 items-center mr-3">
             <div className="w-3 h-3 rounded-full bg-[#FFFF00]"></div>
@@ -270,6 +272,7 @@ export default function ListaRanking({ onCidadeSelecionada, mes, ano }) {
             Igual ou menos que 25 pontos
           </span>
         </div>
+        
         {/* Documentos Habilitados - Accordion */}
         <Accordion type="single" collapsible className="border rounded-lg">
           <AccordionItem value="documentos" className="border-none">
