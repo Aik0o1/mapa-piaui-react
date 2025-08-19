@@ -277,39 +277,24 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
             <AccordionTrigger className="flex items-center gap-3 p-4 hover:bg-gray-50 text-[#231f20]">
               <FileChartPie className="h-5 w-5 text-[#034ea2]" />
               <span className="font-medium">
-                Empresas abertas por porte e natureza jurídica
+                Empresas abertas por porte, natureza jurídica e setor econômico 
               </span>
             </AccordionTrigger>
             <AccordionContent className="p-4 pt-0">
               {!dados ? (
                 <p className="text-gray-500">Sem dados</p>
               ) : (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                   <ChartCard title="Naturezas Jurídicas" data={naturezasData} />
                   <ChartCard title="Portes das Empresas" data={portesData} />
+                  <ChartCard title="Setores Econômicos" data={setoresData} />
+
                 </div>
               )}
             </AccordionContent>
           </AccordionItem>
         </Accordion>
 
-         <Accordion type="single" collapsible className="border rounded-lg">
-          <AccordionItem value="piecharts" className="border-none">
-            <AccordionTrigger className="flex items-center gap-3 p-4 hover:bg-gray-50 text-[#231f20]">
-              <FileChartPie className="h-5 w-5 text-[#034ea2]" />
-              <span className="font-medium">
-                Empresas abertas por setor econômico
-              </span>
-            </AccordionTrigger>
-            <AccordionContent className="p-4 pt-0">
-              {!dados ? (
-                <p className="text-gray-500">Sem dados</p>
-              ) : (
-                  <ChartCard title="Setores Econômicos" data={setoresData} />
-              )}
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
       </div>
     </div>
   );
