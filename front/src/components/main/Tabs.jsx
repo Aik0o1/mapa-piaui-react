@@ -9,7 +9,7 @@ export default function Abas({
   ano,
 }) {
   return (
-    <Tabs className="w-full" defaultValue="ativas">
+    <Tabs className="w-full pr-6" defaultValue="ativas">
       <TabsList className="
         w-full
         place-items-center
