@@ -30,10 +30,10 @@ export default function ListaAtivas({ onCidadeSelecionada }) {
       document.getElementsByClassName("limpar-filtros")[0];
     const legendaPeriodo = document.getElementsByClassName("legendaPeriodo")[0]
 
-    legendaPeriodo.style.visibility = "hidden"
-    if (btnAno) btnAno.style.visibility = "hidden";
-    if (btnMes) btnMes.style.visibility = "hidden";
-    if (btnLimparFiltros) btnLimparFiltros.style.visibility = "hidden";
+    legendaPeriodo.style.display = "none"
+    if (btnAno) btnAno.style.display = "none";
+    if (btnMes) btnMes.style.display = "none";
+    if (btnLimparFiltros) btnLimparFiltros.style.display = "none";
   }, []);
 
   useEffect(() => {

@@ -46,11 +46,11 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
       document.getElementsByClassName("limpar-filtros")[0];
     const legendaPeriodo = document.getElementsByClassName("legendaPeriodo")[0];
 
-    legendaPeriodo.style.visibility = "visible";
+    legendaPeriodo.style.display = "";
 
-    btnAno.style.visibility = "visible";
-    btnMes.style.visibility = "visible";
-    btnLimparFiltros.style.visibility = "visible";
+    btnAno.style.display = "";
+    btnMes.style.display = "";
+    btnLimparFiltros.style.display = "";
   }, []);
 
   useEffect(() => {

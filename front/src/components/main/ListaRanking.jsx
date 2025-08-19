@@ -49,10 +49,10 @@ export default function ListaRanking({ onCidadeSelecionada, mes, ano }) {
     const btnLimparFiltros =
       document.getElementsByClassName("limpar-filtros")[0];
     
-    legendaPeriodo.style.visibility = "visible"
-    btnAno.style.visibility = "visible";
-    btnMes.style.visibility = "visible";
-    btnLimparFiltros.style.visibility = "visible";
+    legendaPeriodo.style.display = ""
+    btnAno.style.display = "";
+    btnMes.style.display = "";
+    btnLimparFiltros.style.display = "";
   }, []);
 
   // Buscar primeiro lugar quando mes/ano mudarem
