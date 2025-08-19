@@ -1,18 +1,16 @@
-// Salve este código como um componente, por exemplo: ChartCard.js
-import React, { useEffect, useRef, useMemo } from "react";
+import React, { useEffect, useRef, useMemo, useState } from "react";
 import * as d3 from "d3";
 
-// Componente "Puro" que apenas renderiza o SVG do gráfico
 function D3PieChart({ data, width, height }) {
   const svgRef = useRef();
 
   useEffect(() => {
-    if (!data || data.length === 0) return;
+    if (!data || data.length === 0 || width === 0 || height === 0) return;
 
-    // Limpa o SVG anterior
     d3.select(svgRef.current).selectAll("*").remove();
 
-    const radius = Math.min(width, height) / 2 - 20;
+    const margin = 10;
+    const radius = Math.min(width, height) / 2 - margin;
     const colors = d3.scaleOrdinal(d3.schemeSet3);
 
     const svg = d3
@@ -29,7 +27,7 @@ function D3PieChart({ data, width, height }) {
     const tooltip = d3
       .select("body")
       .append("div")
-      .attr("class", "chart-tooltip") // Use uma classe única para evitar conflitos
+      .attr("class", "chart-tooltip") 
       .style("position", "absolute")
       .style("opacity", 0)
       .style("background", "rgba(0,0,0,0.8)")
@@ -80,7 +78,7 @@ function D3PieChart({ data, width, height }) {
       .text((d) => {
         const total = d3.sum(data, (d) => d.value);
         const percent = (d.data.value / total) * 100;
-        return percent >= 15 ? `${percent.toFixed(0)}%` : "";
+        return percent >= 10 ? `${percent.toFixed(0)}%` : "";
       });
 
     return () => d3.selectAll(".chart-tooltip").remove();
@@ -89,30 +87,51 @@ function D3PieChart({ data, width, height }) {
   return <svg ref={svgRef}></svg>;
 }
 
-// --- Componente Principal que você vai usar ---
 export default function ChartCard({
   title,
   data,
-  width = 350,
-  height = 280,
 }) {
   const colors = d3.scaleOrdinal(d3.schemeSet3);
 
-  // Prepara dados para a legenda usando React, não manipulação de DOM
-  const legendData = useMemo(() => {
-    if (!data || data.length === 0) return [];
-    const total = d3.sum(data, (d) => d.value);
+  
+  const chartContainerRef = useRef(null);
+  const [dimensions, setDimensions] = useState({ width: 0, height: 280 }); 
 
-    return [...data]
-      .sort((a, b) => b.value - a.value)
-      .map((d, i) => ({
-        ...d,
-        percent: (d.value / total * 100).toFixed(2),
-        color: colors(i),
-      }));
+  useEffect(() => {
+    const container = chartContainerRef.current;
+    if (!container) return;
+
+    const observer = new ResizeObserver(entries => {
+      const entry = entries[0];
+      if (entry) {
+        const newWidth = entry.contentRect.width;
+        setDimensions({ width: newWidth, height: Math.min(newWidth, 280) });
+      }
+    });
+
+    observer.observe(container);
+
+    return () => observer.disconnect();
+  }, []); 
+
+
+
+  const sortedData = useMemo(() => {
+    if (!data || data.length === 0) return [];
+    return [...data].sort((a, b) => b.value - a.value);
   }, [data]);
 
-  if (!data || data.length === 0) {
+  const legendData = useMemo(() => {
+    if (!sortedData || sortedData.length === 0) return [];
+    const total = d3.sum(sortedData, (d) => d.value);
+    return sortedData.map((d, i) => ({
+      ...d,
+      percent: (d.value / total * 100).toFixed(2),
+      color: colors(i),
+    }));
+  }, [sortedData]);
+
+  if (!sortedData || sortedData.length === 0) {
     return (
       <div className="p-6 text-center text-gray-500">
         <h3 className="text-lg font-semibold text-gray-800 mb-4">{title}</h3>
@@ -126,8 +145,15 @@ export default function ChartCard({
       <h3 className="text-lg font-semibold text-gray-800 text-center mb-2">
         {title}
       </h3>
-      <div className="flex justify-center mb-4">
-        <D3PieChart data={data} width={width} height={height} />
+      <div 
+        ref={chartContainerRef} 
+        className="w-full h-[280px] flex justify-center items-center mb-4"
+      >
+        <D3PieChart 
+          data={sortedData} 
+          width={dimensions.width} 
+          height={dimensions.height} 
+        />
       </div>
       <div className="border-t pt-4">
         <h4 className="text-sm font-semibold text-gray-700 mb-3">Legenda</h4>
