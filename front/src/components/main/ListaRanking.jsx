@@ -250,7 +250,7 @@ const municipio =
           </AccordionItem>
         </Accordion>
 
-<div className="legenda flex flex-co gap-2 justify-end">
+<div className="legenda flex flex-col  lg:flex-row gap-2 justify-end">
 
           <span className="flex gap-2 items-center mr-3  ">
             <div className="w-3 h-3 rounded-full bg-[#008000] rigth"></div>
