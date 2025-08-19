@@ -76,7 +76,7 @@ export default function TreeMap({ selectedCity, dados }) {
       // Calcula tamanhos de fonte apropriados
       const minDimension = Math.min(rectWidth, rectHeight);
       const labelFontSize = Math.max(10, Math.min(17, minDimension / 8));
-      const valueFontSize = Math.max(16, Math.min(28, minDimension / 4));
+      const valueFontSize = Math.max(16, Math.min(24, minDimension / 4));
 
       // Quebra o texto do nome em palavras
       const words = d.data.name.split(/[-_\s]+/);
