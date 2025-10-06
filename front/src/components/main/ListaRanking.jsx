@@ -20,12 +20,11 @@ import {
 export default function ListaRanking({ onCidadeSelecionada, mes, ano }) {
   const [dados, setDados] = useState(null);
   const [error, setError] = useState(null);
-  const [primeiroCidade, setPrimeiroCidade] = useState(null); 
+  const [primeiroCidade, setPrimeiroCidade] = useState(null);
   const [loading, setLoading] = useState(true); // Adicionado estado de loading
 
   const apiUrl = import.meta.env.VITE_URL_API;
   const apiToken = import.meta.env.VITE_API_TOKEN;
-
 
   const meses = {
     Janeiro: "01",
@@ -45,11 +44,11 @@ export default function ListaRanking({ onCidadeSelecionada, mes, ano }) {
   useEffect(() => {
     const btnAno = document.getElementsByClassName("anoEscolha")[0];
     const btnMes = document.getElementsByClassName("mesEscolha")[0];
-    const legendaPeriodo = document.getElementsByClassName("legendaPeriodo")[0]
+    const legendaPeriodo = document.getElementsByClassName("legendaPeriodo")[0];
     const btnLimparFiltros =
       document.getElementsByClassName("limpar-filtros")[0];
-    
-    legendaPeriodo.style.display = ""
+
+    legendaPeriodo.style.display = "";
     btnAno.style.display = "";
     btnMes.style.display = "";
     btnLimparFiltros.style.display = "";
@@ -68,16 +67,17 @@ export default function ListaRanking({ onCidadeSelecionada, mes, ano }) {
 
         const numero_mes = meses[mes];
         if (!numero_mes || !ano) {
-            setLoading(false);
-            return; // Sai se não tiver mês ou ano
+          setLoading(false);
+          return; // Sai se não tiver mês ou ano
         }
 
         // Se uma cidade foi selecionada
         if (onCidadeSelecionada?.id) {
-          const id = onCidadeSelecionada.id.length > 6
-            ? onCidadeSelecionada.id.split("-")[1]
-            : onCidadeSelecionada.id;
-          
+          const id =
+            onCidadeSelecionada.id.length > 6
+              ? onCidadeSelecionada.id.split("-")[1]
+              : onCidadeSelecionada.id;
+
           const url = `${apiUrl}/empresas_abertas?cidade=${id}&mes=${numero_mes}&ano=${ano}`;
           const response = await fetch(url, {
             method: "GET",
@@ -91,7 +91,7 @@ export default function ListaRanking({ onCidadeSelecionada, mes, ano }) {
           } else {
             setDados(data.ranking || null);
           }
-        // Se NENHUMA cidade foi selecionada, busca o primeiro do ranking
+          // Se NENHUMA cidade foi selecionada, busca o primeiro do ranking
         } else {
           setPrimeiroCidade("Carregando..."); // Mostra o feedback aqui
           const url = `${apiUrl}primeiro_ranking?mes=${numero_mes}&ano=${ano}`;
@@ -112,7 +112,9 @@ export default function ListaRanking({ onCidadeSelecionada, mes, ano }) {
           }
         }
       } catch (err) {
-        if (err.name !== 'AbortError') {
+        console.log(err);
+
+        if (err.name !== "AbortError") {
           setError(err.message);
           setDados(null);
           setPrimeiroCidade("Erro");
@@ -130,9 +132,9 @@ export default function ListaRanking({ onCidadeSelecionada, mes, ano }) {
     };
   }, [onCidadeSelecionada, mes, ano]); // Dependências estão corretas
 
-
-const municipio =
-    onCidadeSelecionada?.nome && onCidadeSelecionada.nome !== "Selecione uma localidade"
+  const municipio =
+    onCidadeSelecionada?.nome &&
+    onCidadeSelecionada.nome !== "Selecione uma localidade"
       ? onCidadeSelecionada.nome
       : primeiroCidade || "Carregando...";
 
@@ -162,16 +164,11 @@ const municipio =
 
   function corPontucao(pontuacao) {
     if (pontuacao > 75) {
-      return "bg-[#008000]"
-    }
-    else if (pontuacao > 50 && pontuacao <= 75)
-      return "bg-[#FFFF00]"
-
-    else if (pontuacao > 25 && pontuacao <= 50)
-      return "bg-[#D35400]"
-
+      return "bg-[#008000]";
+    } else if (pontuacao > 50 && pontuacao <= 75) return "bg-[#FFFF00]";
+    else if (pontuacao > 25 && pontuacao <= 50) return "bg-[#D35400]";
     else {
-      return "bg-[#FF0000]"
+      return "bg-[#FF0000]";
     }
   }
 
@@ -216,12 +213,12 @@ const municipio =
                 <span className="font-medium">Pontuação Total</span>
                 <span className="flex gap-2 items-center justify-center font-bold text-[#034ea2]">
                   <div
-                    className={`w-3 h-3 rounded-full ${corPontucao(totalPontuacao)}`}
-
+                    className={`w-3 h-3 rounded-full ${corPontucao(
+                      totalPontuacao
+                    )}`}
                   />
                   {totalPontuacao == 0 ? "" : totalPontuacao}
                 </span>
-
               </div>
             </AccordionTrigger>
 
@@ -250,8 +247,7 @@ const municipio =
           </AccordionItem>
         </Accordion>
 
-<div className="legenda flex flex-col  lg:flex-row gap-2 justify-end">
-
+        <div className="legenda flex flex-col  lg:flex-row gap-2 justify-end">
           <span className="flex gap-2 items-center mr-3  ">
             <div className="w-3 h-3 rounded-full bg-[#008000] rigth"></div>
             Mais que 75 pontos
@@ -259,7 +255,7 @@ const municipio =
 
           <span className="flex gap-2 items-center mr-3">
             <div className="w-3 h-3 rounded-full bg-[#FFFF00]"></div>
-        Entre 51 e 75 pontos
+            Entre 51 e 75 pontos
           </span>
 
           <span className="flex gap-2 items-center mr-3">
@@ -272,7 +268,7 @@ const municipio =
             Igual ou menos que 25 pontos
           </span>
         </div>
-        
+
         {/* Documentos Habilitados - Accordion */}
         <Accordion type="single" collapsible className="border rounded-lg">
           <AccordionItem value="documentos" className="border-none">
@@ -291,12 +287,14 @@ const municipio =
                       return (
                         <li key={doc} className="flex items-center gap-3">
                           <div
-                            className={`w-5 h-5 rounded-full flex items-center justify-center ${isEnabled ? "bg-green-100" : "bg-red-100"
-                              }`}
+                            className={`w-5 h-5 rounded-full flex items-center justify-center ${
+                              isEnabled ? "bg-green-100" : "bg-red-100"
+                            }`}
                           >
                             <div
-                              className={`w-3 h-3 rounded-full ${isEnabled ? "bg-green-500" : "bg-red-500"
-                                }`}
+                              className={`w-3 h-3 rounded-full ${
+                                isEnabled ? "bg-green-500" : "bg-red-500"
+                              }`}
                             />
                           </div>
                           <span className="font-medium">
@@ -342,8 +340,9 @@ const municipio =
                 <div
                   className="bg-[#034ea2] h-3 rounded-full transition-all duration-500"
                   style={{
-                    width: `${dados.indice_atendimentos.percentual_atendimento * 100
-                      }%`,
+                    width: `${
+                      dados.indice_atendimentos.percentual_atendimento * 100
+                    }%`,
                   }}
                 />
               </div>
@@ -356,11 +355,15 @@ const municipio =
         {/* Tempos de Análise - Accordion */}
         <Accordion type="single" collapsible className="border rounded-lg">
           <AccordionItem value="tempos" className="border-none">
-            <AccordionTrigger className="flex items-center gap-3 p-4 hover:bg-gray-50 text-[#231f20]">
-              <Clock className="h-5 w-5 text-[#034ea2]" />
-              <span className="font-medium">Tempos de análise</span>
+            <AccordionTrigger className="flex w-full items-center gap-3 p-4 text-left hover:bg-gray-50 text-[#231f20]">
+              <Clock className="h-5 w-5 shrink-0 text-[#034ea2]" />
+              <div className="w-full flex flex-col justify-between">
+                <span className="font-medium">Tempos de análise</span>
+                <p className="text-sm font-normal text-gray-500">
+                  Correspondente aos processos de abertura e alteração
+                </p>
+              </div>
             </AccordionTrigger>
-
             <AccordionContent className="p-4 pt-0">
               {dados?.tempos_analise ? (
                 <ul className="space-y-2">
@@ -386,6 +389,12 @@ const municipio =
             </AccordionContent>
           </AccordionItem>
         </Accordion>
+
+        {/* <div className="legenda flex flex-col  lg:flex-row gap-2 justify-end">
+          <span className="flex gap-2 items-center mr-3  ">
+            Corresponde ao tempo de processos de abertura e alteração{" "}
+          </span>
+        </div> */}
       </div>
     </div>
   );

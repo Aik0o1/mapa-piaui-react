@@ -109,8 +109,8 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
   const labels = {
     tempo_medio_registro: "Média de Tempo para Registro na Junta Comercial",
     tempo_medio_cp_end:
-      "Média de Tempo para Consulta Prévia de Endereço junto ao Localidade",
-    tempo_medio_total: "Média de Tempo Total para Registro",
+      "Média de Tempo para Consulta Prévia de Endereço junto à Localidade",
+    tempo_medio_total: "Média de Tempo Total para Abertura de Empresas",
   };
 
   const formatTime = (timeStr) => {
@@ -217,9 +217,14 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
       <div className="mt-4 space-y-4">
         <Accordion type="single" collapsible className="border rounded-lg">
           <AccordionItem value="tempos" className="border-none">
-            <AccordionTrigger className="flex items-center gap-3 p-4 hover:bg-gray-50 text-[#231f20]">
-              <Clock className="h-5 w-5 text-[#034ea2]" />
-              <span className="font-medium">Tempos de Análise</span>
+            <AccordionTrigger className="text-decorflex w-full items-center gap-3 p-4 text-left hover:bg-gray-50 text-[#231f20]">
+              <Clock className="h-5 w-5 shrink-0 text-[#034ea2]" />
+              <div className="w-full flex flex-col justify-between">
+                <span className="font-medium">Tempos de análise</span>
+                <p className="text-sm font-normal text-gray-500">
+                  Correspondente apenas aos processos de abertura
+                </p>
+              </div>
             </AccordionTrigger>
 
             <AccordionContent className="p-4 pt-0">
