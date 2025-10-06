@@ -164,11 +164,13 @@ export default function ListaRanking({ onCidadeSelecionada, mes, ano }) {
 
   function corPontucao(pontuacao) {
     if (pontuacao > 75) {
-      return "bg-[#008000]";
-    } else if (pontuacao > 50 && pontuacao <= 75) return "bg-[#FFFF00]";
-    else if (pontuacao > 25 && pontuacao <= 50) return "bg-[#D35400]";
+      return "bg-[#008000]"; // verde
+    } else if (pontuacao > 50 && pontuacao <= 75)
+      return "bg-[#FFFF00]"; // amarelo
+    else if (pontuacao > 25 && pontuacao <= 50)
+      return "bg-[#FF991C]"; // laranja
     else {
-      return "bg-[#FF0000]";
+      return "bg-[#FF0000]"; // vermelho
     }
   }
 
@@ -259,7 +261,7 @@ export default function ListaRanking({ onCidadeSelecionada, mes, ano }) {
           </span>
 
           <span className="flex gap-2 items-center mr-3">
-            <div className="w-3 h-3 rounded-full bg-[#D35400]"></div>
+            <div className="w-3 h-3 rounded-full bg-[#FF991C]"></div>
             Entre 26 e 50 pontos
           </span>
 
@@ -269,6 +271,17 @@ export default function ListaRanking({ onCidadeSelecionada, mes, ano }) {
           </span>
         </div>
 
+        <div className="legenda flex flex-col  lg:flex-row gap-2 justify-end">
+          Acesse o{" "}
+          <a
+            className="font-medium text-blue-600 underline hover:text-blue-800"
+            href="https://rankingnacional.jucepi.pi.gov.br/"
+          >
+            Ranking Nacional
+          </a>{" "}
+          para ver os estados mais céleres na abertura de empresas
+        </div>
+        
         {/* Documentos Habilitados - Accordion */}
         <Accordion type="single" collapsible className="border rounded-lg">
           <AccordionItem value="documentos" className="border-none">
