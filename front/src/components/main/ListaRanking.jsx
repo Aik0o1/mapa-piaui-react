@@ -275,11 +275,11 @@ export default function ListaRanking({ onCidadeSelecionada, mes, ano }) {
           Acesse o{" "}
           <a
             className="font-medium text-blue-600 underline hover:text-blue-800"
-            href="https://rankingnacional.jucepi.pi.gov.br/"
+            href="https://www.piauidigital.pi.gov.br/ranking-municipal/"
           >
-            Ranking Nacional
+            Ranking Municipal
           </a>{" "}
-          para ver os estados mais céleres na abertura de empresas
+          para ver os municípios mais céleres na abertura de empresas
         </div>
         
         {/* Documentos Habilitados - Accordion */}

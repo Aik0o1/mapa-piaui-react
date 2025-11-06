@@ -40,7 +40,7 @@ export default function Abas({
           value="ranking"
           className="text-xs sm:text-sm py-2 w-full sm:py-3"
         >
-          Ranking
+          Ranking Municipal
         </TabsTrigger>
       </TabsList>
 
