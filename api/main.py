@@ -31,7 +31,7 @@ else:
 app = Flask(__name__)
 CORS(app)
 
-API_TOKEN = os.getenv("API_TOKEN", "123456789")
+API_TOKEN = os.getenv("API_TOKEN")
 
 def token_required(f):
     @wraps(f)
@@ -121,32 +121,50 @@ def buscar_municipios():
         app.logger.error(f"Erro interno: {str(e)}", exc_info=True)
         return jsonify({"error": "Erro interno no servidor"}), 500
 
-@app.route("/ultima_atualizacao", methods=["GET"])
+@app.route("/data_atualizacao", methods=["GET"])
 @token_required
-def buscar_ultima_atualizacao():
+def buscar_data_atualizacao():
     try:
+        mes = request.args.get("mes")  # Ex: "12"
+        ano = request.args.get("ano")  # Ex: "2025"
+
+        if not all([mes, ano]):
+            return jsonify({
+                "error": "Parâmetros 'mes' e 'ano' são obrigatórios"
+            }), 400
+
         db_name = "dados_ativas"
         if db_name not in couch:
-            return jsonify({"error": f"Banco de dados '{db_name}' não existe"}), 404
+            return jsonify({
+                "error": f"Banco de dados '{db_name}' não existe"
+            }), 404
+
         db = couch[db_name]
-        doc_id = "ultimaAtualizacao"
+        doc_id = f"{mes.zfill(2)}-{ano}"
 
         if doc_id not in db:
-            return jsonify({"error": f"Documento {doc_id} não encontrado"}), 404
-        
+            return jsonify({
+                "error": f"Documento {doc_id} não encontrado"
+            }), 404
+
         doc = db[doc_id]
-        # print(doc)
+
+        if "dataAtualizacao" not in doc:
+            return jsonify({
+                "error": "Campo 'dataAtualizacao' não encontrado no documento"
+            }), 404
+
         return jsonify({
-                "id": doc_id, 
-                "ultimaAtualizacao": doc["ultimaAtualizacao"]
-            })
+            "id": doc_id,
+            "dataAtualizacao": doc["dataAtualizacao"]
+        })
 
     except couchdb.http.Unauthorized:
         return jsonify({"error": "Acesso não autorizado ao CouchDB"}), 401
     except Exception as e:
-        # Log do erro real (aparece no terminal onde o Flask está rodando)
         app.logger.error(f"Erro interno: {str(e)}", exc_info=True)
         return jsonify({"error": "Erro interno no servidor"}), 500
+
 
 
 @app.route("/empresas_ativas", methods=["GET"])
@@ -238,7 +256,7 @@ def get_id_nome_cidades():
     
 @app.route('/data_recente')
 @token_required
-def retorna_data_mais_recente():
+def rtorna_data_mais_recente():
     try:
         db_name = "dados_empresariais"
 

@@ -1,33 +1,51 @@
 import React, { useState, useEffect } from "react";
 
 export default function Header() {
-
   const apiUrl = import.meta.env.VITE_URL_API;
   const apiToken = import.meta.env.VITE_API_TOKEN;
 
-  const [data_atualizacao, setDataAtualizacao] = useState()
+  const [dataAtualizacao, setDataAtualizacao] = useState("Carregando...");
+
   useEffect(() => {
-    const fetchUltimaAtualizacao = async () => {
+    const fetchDataAtualizacao = async () => {
       try {
-        const url = `${apiUrl}/ultima_atualizacao`;
-        const response = await fetch(url, {
-          method: "GET",
+        // 1️⃣ Buscar mês e ano mais recentes
+        const responseRecente = await fetch(`${apiUrl}/data_recente`, {
           headers: {
             Authorization: `Bearer ${apiToken}`,
           },
         });
-        const data = await response.json();
-        if (!response.ok) {
-          setDataAtualizacao(null);
-        } else {
-          setDataAtualizacao(data.ultimaAtualizacao);
+
+        if (!responseRecente.ok) {
+          throw new Error("Erro ao buscar data recente");
         }
+
+        const { mes, ano } = await responseRecente.json();
+
+        // 2️⃣ Buscar dataAtualizacao usando o mês/ano mais recente
+        const responseAtualizacao = await fetch(
+          `${apiUrl}/data_atualizacao?mes=${mes}&ano=${ano}`,
+          {
+            headers: {
+              Authorization: `Bearer ${apiToken}`,
+            },
+          }
+        );
+
+        if (!responseAtualizacao.ok) {
+          throw new Error("Erro ao buscar data de atualização");
+        }
+
+        const data = await responseAtualizacao.json();
+        setDataAtualizacao(data.dataAtualizacao);
+
       } catch (error) {
-        console.error("Erro ao buscar dados do servidor:", error);
+        console.error("Erro ao buscar última atualização:", error);
+        setDataAtualizacao("Não disponível");
       }
     };
 
-    fetchUltimaAtualizacao();
+    fetchDataAtualizacao();
   }, []);
 
   return (
@@ -42,7 +60,10 @@ export default function Header() {
           Dados Empresariais
         </h1>
       </div>
-      <span className="text-[#034ea2] font-bold">Última Atualização: {data_atualizacao}</span>
+
+      <span className="text-[#034ea2] font-bold">
+        Última Atualização: {dataAtualizacao}
+      </span>
     </header>
   );
-};
+}
