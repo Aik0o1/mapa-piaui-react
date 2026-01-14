@@ -27,7 +27,7 @@ const Footer = () => {
             <h3 className="font-semibold mb-4">Órgão</h3>
             <p className="text-sm">
               Junta Comercial do Estado do Piauí<br />
-              CNPJ 06.090.994/0001-00<br /><br />
+              CNPJ 06.690.994/0001-00<br /><br />
               Rua General Osório, 3002 - Cabral<br />
               Teresina/PI CEP: 64000-580<br /><br />
               jucepi@jucepi.pi.gov.br
