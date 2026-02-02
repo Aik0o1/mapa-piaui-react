@@ -108,7 +108,7 @@ export default function Filtros(props) {
                 <SelectValue placeholder="Ano" />
               </SelectTrigger>
               <SelectContent>
-                {Array.from({ length: 7 }, (_, i) => {
+                {Array.from({ length: 8 }, (_, i) => {
                   const ano = 2019 + i;
                   return (
                     <SelectItem key={ano} value={ano.toString()}>
