@@ -275,7 +275,7 @@ export default function ListaRanking({ onCidadeSelecionada, mes, ano }) {
           Acesse o{" "}
           <a
             className="font-medium text-blue-600 underline hover:text-blue-800"
-            href="https://www.piauidigital.pi.gov.br/ranking-municipal/"
+            href="https://www.piauidigital.pi.gov.br/mapa-empresas/ranking-municipal"
           >
             Ranking Municipal
           </a>{" "}
