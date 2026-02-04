@@ -142,9 +142,10 @@ export default function ChartCard({
 
   return (
     <div className=" border rounded-lg shadow-sm ">
-      <h3 className="text-lg font-semibold text-gray-800 text-center mb-2 bg-gray-100 ">
-        {title}
-      </h3>
+
+      <h3 className="text-sm font-bold text-gray-700 uppercase p-2 text-center mb-2 bg-gray-100">
+  {title}
+</h3>
       <div 
         ref={chartContainerRef} 
         className="w-full h-[280px] flex justify-center items-center mb-4"
