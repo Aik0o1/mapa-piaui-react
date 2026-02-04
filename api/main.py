@@ -28,6 +28,80 @@ else:
     print(f"O banco de dados '{abertas_db_name}' não existe.")
     exit()
 
+# Mapeamento de seções de atividades para classificações
+MAPEAMENTO_SECOES = {
+    "COMÉRCIO": "Comércio",
+    "ÁGUA, ESGOTO, ATIVIDADES DE GESTÃO DE RESÍDUOS E DESCONTAMINAÇÃO": "Indústria",
+    "CONSTRUÇÃO": "Indústria",
+    "ELETRICIDADE E GÁS": "Indústria",
+    "INDÚSTRIAS DE TRANSFORMAÇÃO": "Indústria",
+    "INDÚSTRIAS EXTRATIVAS": "Indústria",
+    "ADMINISTRAÇÃO PÚBLICA, DEFESA E SEGURIDADE SOCIAL": "Serviço",
+    "AGRICULTURA, PECUÁRIA, PRODUÇÃO FLORESTAL, PESCA E AQÜICULTURA": "Serviço",
+    "ALOJAMENTO E ALIMENTAÇÃO": "Serviço",
+    "ARTES, CULTURA, ESPORTE E RECREAÇÃO": "Serviço",
+    "ATIVIDADES ADMINISTRATIVAS E SERVIÇOS COMPLEMENTARES": "Serviço",
+    "ATIVIDADES FINANCEIRAS, DE SEGUROS E SERVIÇOS RELACIONADOS": "Serviço",
+    "ATIVIDADES IMOBILIÁRIAS": "Serviço",
+    "ATIVIDADES PROFISSIONAIS, CIENTÍFICAS E TÉCNICAS": "Serviço",
+    "EDUCAÇÃO": "Serviço",
+    "INFORMAÇÃO E COMUNICAÇÃO": "Serviço",
+    "OUTRAS ATIVIDADES DE SERVIÇOS": "Serviço",
+    "SAÚDE HUMANA E SERVIÇOS SOCIAIS": "Serviço",
+    "SERVIÇOS DOMÉSTICOS": "Serviço",
+    "TRANSPORTE, ARMAZENAGEM E CORREIO": "Serviço"
+}
+
+def mapear_secoes_para_classificacoes(secoes_atividades):
+    """
+    Agrupa as seções de atividades por suas respectivas classificações.
+    Retorna um dicionário onde cada classificação contém suas seções com quantidades.
+    """
+    if not secoes_atividades or not isinstance(secoes_atividades, dict):
+        return {}
+    
+    classificacoes_agrupadas = {}
+    
+    for secao, quantidade in secoes_atividades.items():
+        classificacao = MAPEAMENTO_SECOES.get(secao, "-")
+        
+        # Inicializa a classificação se não existir
+        if classificacao not in classificacoes_agrupadas:
+            classificacoes_agrupadas[classificacao] = {}
+        
+        # Adiciona a seção dentro da classificação
+        classificacoes_agrupadas[classificacao][secao] = quantidade
+    
+    return classificacoes_agrupadas
+
+def processar_dados_cidade(dados_cidade):
+    """
+    Processa os dados de uma cidade, adicionando as seções agrupadas por classificação.
+    Funciona tanto para 'ativas' quanto para 'abertas'.
+    """
+    dados_processados = dados_cidade.copy()
+    
+    # Caso 1: Estrutura com 'ativas' (empresas ativas)
+    if 'ativas' in dados_processados and 'secoes_atividades' in dados_processados['ativas']:
+        secoes = dados_processados['ativas']['secoes_atividades']
+        secoes_agrupadas = mapear_secoes_para_classificacoes(secoes)
+        dados_processados['ativas']['secoes_por_classificacao'] = secoes_agrupadas
+    
+    # Caso 2: Estrutura com 'abertas' (empresas abertas)
+    if 'abertas' in dados_processados and 'secoes_atividades' in dados_processados['abertas']:
+        secoes = dados_processados['abertas']['secoes_atividades']
+        secoes_agrupadas = mapear_secoes_para_classificacoes(secoes)
+        dados_processados['abertas']['secoes_por_classificacao'] = secoes_agrupadas
+    
+    # Caso 3: Para dados que vêm no formato direto
+    elif 'secoes_atividades' in dados_processados:
+        secoes = dados_processados['secoes_atividades']
+        secoes_agrupadas = mapear_secoes_para_classificacoes(secoes)
+        dados_processados['secoes_por_classificacao'] = secoes_agrupadas
+    
+    return dados_processados
+
+
 app = Flask(__name__)
 CORS(app)
 
@@ -65,7 +139,6 @@ def token_required(f):
         return f(*args, **kwargs)
     
     return decorated
-
 
 @app.route("/empresas_abertas", methods=["GET"])
 @token_required
@@ -106,20 +179,24 @@ def buscar_municipios():
                 404,
             )
 
+        # Processa os dados da cidade com mapeamento
+        dados_cidade = doc[cidade]
+        dados_processados = processar_dados_cidade(dados_cidade)
+
         # Resposta de sucesso - trata tanto códigos IBGE quanto "total"
-        else:
-            return jsonify({
-                "id": doc_id, 
-                "municipio": cidade,
-                "tipo": "municipio", 
-                **doc[cidade]
-            })
+        return jsonify({
+            "id": doc_id, 
+            "municipio": cidade,
+            "tipo": "municipio", 
+            **dados_processados
+        })
     except couchdb.http.Unauthorized:
         return jsonify({"error": "Acesso não autorizado ao CouchDB"}), 401
     except Exception as e:
         # Log do erro real (aparece no terminal onde o Flask está rodando)
         app.logger.error(f"Erro interno: {str(e)}", exc_info=True)
         return jsonify({"error": "Erro interno no servidor"}), 500
+    
 
 @app.route("/data_atualizacao", methods=["GET"])
 @token_required
@@ -164,8 +241,7 @@ def buscar_data_atualizacao():
     except Exception as e:
         app.logger.error(f"Erro interno: {str(e)}", exc_info=True)
         return jsonify({"error": "Erro interno no servidor"}), 500
-
-
+    
 
 @app.route("/empresas_ativas", methods=["GET"])
 @token_required
@@ -198,7 +274,6 @@ def buscar_empresas_abertas():
             return jsonify({"error": f"Documento {doc_id} não encontrado"}), 404
         
         doc = db[doc_id]
-        # print(doc)
         
         # Verifica se a cidade existe no documento
         if cidade not in doc:
@@ -207,13 +282,16 @@ def buscar_empresas_abertas():
                 404,
             )
         
-        else:
-            return jsonify({
-                "id": doc_id, 
-                "municipio": cidade,
-                "tipo": "municipio", 
-                **doc[cidade]
-            })
+        # Processa os dados da cidade com mapeamento
+        dados_cidade = doc[cidade]
+        dados_processados = processar_dados_cidade(dados_cidade)
+        
+        return jsonify({
+            "id": doc_id, 
+            "municipio": cidade,
+            "tipo": "municipio", 
+            **dados_processados
+        })
             
     except couchdb.http.Unauthorized:
         return jsonify({"error": "Acesso não autorizado ao CouchDB"}), 401
@@ -395,13 +473,21 @@ def buscar_ranking_completo():
         return jsonify({"error": "Dados não encontrados"}), 404
 
     ranking = []
+    quantidade_total_piaui = 0
+
     for chave, valor in doc.items():
+        if isinstance(valor, dict) and "nome" in valor and valor["nome"].lower() == "piauí":
+            quantidade_total_piaui = sum(valor.get("abertas", {}).get("portes", {}).values())
+            continue  
+
         # Filtra apenas o que for município (ignora campos de sistema do CouchDB)
         if isinstance(valor, dict) and "ranking" in valor:
+            quantidade = sum(valor.get("abertas", {}).get("portes", {}).values())
             ranking.append({
                 "municipio": valor.get("nome"),
                 "codigo": chave,
-                "quantidade": sum(valor.get("abertas", {}).get("portes", {}).values()), 
+                "quantidade": quantidade,
+                "percentual": round((quantidade / quantidade_total_piaui) * 100, 2) if quantidade_total_piaui > 0 else 0
             })
 
     # Ordena pela quantidade de aberturas
@@ -412,7 +498,7 @@ def buscar_ranking_completo():
         {**item, "posicao": idx + 1} for idx, item in enumerate(ranking_ordenado)
     ]
     
-    return jsonify(ranking_ordenado)
+    return jsonify(ranking_ordenado)    
 
     
 @app.route("/ranking_ativas", methods=["GET"])
@@ -429,7 +515,13 @@ def buscar_ranking_ativas():
         return jsonify({"error": "Dados não encontrados"}), 404
 
     ranking = []
+    quantidade_total_piaui = 0
+
     for chave, valor in doc.items():
+        if isinstance(valor, dict) and "nome" in valor and valor["nome"].lower() == "piauí":
+            quantidade_total_piaui = sum(valor.get("ativas", {}).get("portes", {}).values())
+            continue  
+
         # Verifica se é um objeto de município válido
         if isinstance(valor, dict) and "nome" in valor and valor["nome"].lower() != "piauí":
             # Soma o estoque de ATIVAS
@@ -439,6 +531,7 @@ def buscar_ranking_ativas():
                 "municipio": valor.get("nome"),
                 "codigo": chave,
                 "quantidade": quantidade, 
+                "percentual": round((quantidade / quantidade_total_piaui) * 100, 2) if quantidade_total_piaui > 0 else 0
             })
 
     # Ordena pelo estoque (maior para menor)
@@ -450,4 +543,4 @@ def buscar_ranking_ativas():
     return jsonify(ranking_final)
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host="0.0.0.0", port=5000)
