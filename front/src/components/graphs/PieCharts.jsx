@@ -141,8 +141,8 @@ export default function ChartCard({
   }
 
   return (
-    <div className="p-6">
-      <h3 className="text-lg font-semibold text-gray-800 text-center mb-2">
+    <div className=" border rounded-lg shadow-sm ">
+      <h3 className="text-lg font-semibold text-gray-800 text-center mb-2 bg-gray-100 ">
         {title}
       </h3>
       <div 
@@ -155,7 +155,9 @@ export default function ChartCard({
           height={dimensions.height} 
         />
       </div>
-      <div className="border-t pt-4">
+
+      <div className=" pt-4 p-6">
+      <div className="border-t pt-4 p-6"/>
         <h4 className="text-sm font-semibold text-gray-700 mb-3">Legenda</h4>
         <div className="space-y-1 max-h-48 overflow-y-auto">
           {legendData.map((item) => (
