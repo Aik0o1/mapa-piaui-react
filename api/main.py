@@ -371,7 +371,83 @@ def buscar_primeiro_ranking():
         # Log do erro real (aparece no terminal onde o Flask está rodando)
         app.logger.error(f"Erro interno: {str(e)}", exc_info=True)
         return jsonify({"error": "Erro interno no servidor"}), 500
+    
+
+@app.route("/ranking_aberturas", methods=["GET"])
+@token_required
+def buscar_ranking_completo():
+    """
+        "portes": {
+        "Microempreendedor Individual": 3507,
+        "Microempresa": 817,
+        "Empresa de pequeno porte": 156,
+        "Demais": 46
+      },
+    """
+    mes = request.args.get("mes")
+    ano = request.args.get("ano")
+    
+    db = couch["dados_empresariais"]
+    doc_id = f"{mes.zfill(2)}-{ano}"
+    doc = db.get(doc_id)
+
+    if not doc:
+        return jsonify({"error": "Dados não encontrados"}), 404
+
+    ranking = []
+    for chave, valor in doc.items():
+        # Filtra apenas o que for município (ignora campos de sistema do CouchDB)
+        if isinstance(valor, dict) and "ranking" in valor:
+            ranking.append({
+                "municipio": valor.get("nome"),
+                "codigo": chave,
+                "quantidade": sum(valor.get("abertas", {}).get("portes", {}).values()), 
+            })
+
+    # Ordena pela quantidade de aberturas
+    ranking_ordenado = sorted(ranking, key=lambda x: x['quantidade'], reverse=True)
+
+    # Adiciona a posição no ranking
+    ranking_ordenado = [
+        {**item, "posicao": idx + 1} for idx, item in enumerate(ranking_ordenado)
+    ]
+    
+    return jsonify(ranking_ordenado)
 
     
+@app.route("/ranking_ativas", methods=["GET"])
+@token_required
+def buscar_ranking_ativas():
+    mes = request.args.get("mes")
+    ano = request.args.get("ano")
+    
+    db = couch["dados_ativas"]
+    doc_id = f"{mes.zfill(2)}-{ano}"
+    doc = db.get(doc_id)
+
+    if not doc:
+        return jsonify({"error": "Dados não encontrados"}), 404
+
+    ranking = []
+    for chave, valor in doc.items():
+        # Verifica se é um objeto de município válido
+        if isinstance(valor, dict) and "nome" in valor and valor["nome"].lower() != "piauí":
+            # Soma o estoque de ATIVAS
+            quantidade = sum(valor.get("ativas", {}).get("portes", {}).values())
+            
+            ranking.append({
+                "municipio": valor.get("nome"),
+                "codigo": chave,
+                "quantidade": quantidade, 
+            })
+
+    # Ordena pelo estoque (maior para menor)
+    ranking_ordenado = sorted(ranking, key=lambda x: x['quantidade'], reverse=True)
+    
+    # Adiciona a posição 1º, 2º...
+    ranking_final = [{**item, "posicao": idx + 1} for idx, item in enumerate(ranking_ordenado)]
+    
+    return jsonify(ranking_final)
+
 if __name__ == "__main__":
     app.run()
