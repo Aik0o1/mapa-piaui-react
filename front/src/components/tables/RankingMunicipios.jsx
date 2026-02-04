@@ -1,4 +1,4 @@
-import { FileChartPie } from "lucide-react";
+import { Trophy } from "lucide-react";
 import {
   AccordionItem,
   Accordion,
@@ -23,22 +23,24 @@ export default function RankingMunicipios({ municipio, ranking, tipo = "abertas"
   // Define os textos baseados no tipo
   const textos = {
     abertas: {
-      titulo: "Ranking de Empresas Abertas por Município",
+      titulo: "Empresas Abertas por Município",
       coluna: "Qtd. Abertas",
+      percentual: "% Abertas",
     },
     ativas: {
-      titulo: "Ranking de Empresas Ativas por Município",
+      titulo: "Empresas Ativas por Município",
       coluna: "Qtd. Ativas",
+      percentual: "% Ativas",
     },
   };
 
-  const { titulo, coluna } = textos[tipo] || textos.abertas;
+  const { titulo, coluna, percentual } = textos[tipo] || textos.abertas;
 
   return (
     <Accordion type="single" collapsible className="border rounded-lg">
       <AccordionItem value="ranking" className="border-none">
         <AccordionTrigger className="flex items-center gap-3 p-4 hover:bg-gray-50 text-[#231f20]">
-          <FileChartPie className="h-5 w-5 text-[#034ea2]" />
+          <Trophy className="h-5 w-5 text-[#034ea2]" />
           <span className="font-medium">{titulo}</span>
         </AccordionTrigger>
         <AccordionContent className="p-4 pt-0">
@@ -54,6 +56,7 @@ export default function RankingMunicipios({ municipio, ranking, tipo = "abertas"
                     <th className="px-4 py-3 text-center">Posição</th>
                     <th className="px-4 py-3">Município</th>
                     <th className="px-4 py-3 text-right">{coluna}</th>
+                    <th className="px-4 py-3 text-right">{percentual}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
@@ -82,7 +85,7 @@ export default function RankingMunicipios({ municipio, ranking, tipo = "abertas"
                           <span
                             className={`inline-flex items-center justify-center w-8 h-8 rounded-full font-bold text-xs ${bgPosicao} ${textColorPosicao}`}
                           >
-                            {item.posicao}º
+                            {item.posicao}
                           </span>
                         </td>
                         <td className="px-4 py-3 font-medium text-gray-900 uppercase tracking-tight">
@@ -90,6 +93,9 @@ export default function RankingMunicipios({ municipio, ranking, tipo = "abertas"
                         </td>
                         <td className="px-4 py-3 text-right font-bold text-[#034ea2]">
                           {item.quantidade.toLocaleString("pt-BR")}
+                        </td>
+                        <td className="px-4 py-3 text-right font-semibold text-gray-700">
+                          {item.percentual ? `${item.percentual.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%` : "-"}
                         </td>
                       </tr>
                     );

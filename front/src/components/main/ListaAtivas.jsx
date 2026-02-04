@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import TreeMap from "../graphs/treeMap";
 import ChartCard from "../graphs/PieCharts";
+import RankingMunicipios from "./../tables/RankingMunicipios";
 import {
   AccordionItem,
   Accordion,
@@ -21,6 +22,7 @@ export default function ListaAtivas({ onCidadeSelecionada }) {
   const apiUrl = import.meta.env.VITE_URL_API;
   const apiToken = import.meta.env.VITE_API_TOKEN;
 
+  const [ranking, setRanking] = useState([]);
   const [selectedCity, setSelectedCity] = useState("");
 
   useEffect(() => {
@@ -28,9 +30,9 @@ export default function ListaAtivas({ onCidadeSelecionada }) {
     const btnMes = document.getElementsByClassName("mesEscolha")[0];
     const btnLimparFiltros =
       document.getElementsByClassName("limpar-filtros")[0];
-    const legendaPeriodo = document.getElementsByClassName("legendaPeriodo")[0]
+    const legendaPeriodo = document.getElementsByClassName("legendaPeriodo")[0];
 
-    legendaPeriodo.style.display = "none"
+    legendaPeriodo.style.display = "none";
     if (btnAno) btnAno.style.display = "none";
     if (btnMes) btnMes.style.display = "none";
     if (btnLimparFiltros) btnLimparFiltros.style.display = "none";
@@ -66,15 +68,25 @@ export default function ListaAtivas({ onCidadeSelecionada }) {
           ? `${apiUrl}/empresas_ativas?cidade=${id}&mes=${mes}&ano=${ano}`
           : `${apiUrl}/empresas_ativas?cidade=22&mes=${mes}&ano=${ano}`;
 
+        // URL para o ranking de ativas
+        const urlRanking = `${apiUrl}/ranking_ativas?mes=${mes}&ano=${ano}`;
+
         // console.log("URL:", url_ativas);
 
-        const response = await fetch(url_ativas, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${apiToken}`,
-          },
-        });
+        const [response, resRanking] = await Promise.all([
+          fetch(url_ativas, {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${apiToken}`,
+            },
+          }),
+          fetch(urlRanking, {
+            headers: { Authorization: `Bearer ${apiToken}` },
+          }),
+        ]);
+
         const data = await response.json();
+        const dataRanking = await resRanking.json();
 
         // console.log(data);
 
@@ -85,6 +97,8 @@ export default function ListaAtivas({ onCidadeSelecionada }) {
 
           setDados(data.ativas);
         }
+
+        setRanking(resRanking.ok ? dataRanking : []);
 
         if (onCidadeSelecionada?.id) {
           setSelectedCity(onCidadeSelecionada.id);
@@ -141,6 +155,33 @@ export default function ListaAtivas({ onCidadeSelecionada }) {
         label: key,
         value: value,
       }));
+  }, [dados]);
+
+  const secoesClassificacaoData = useMemo(() => {
+    if (!dados?.secoes_por_classificacao) {
+      return {
+        comercio: [],
+        industria: [],
+        servico: [],
+      };
+    }
+
+    const formatarSecoes = (classificacao) => {
+      if (!dados.secoes_por_classificacao[classificacao]) return [];
+
+      return Object.entries(dados.secoes_por_classificacao[classificacao])
+        .filter(([, value]) => value != null && value > 0)
+        .map(([key, value]) => ({
+          label: key,
+          value: value,
+        }));
+    };
+
+    return {
+      comercio: formatarSecoes("Comércio"),
+      industria: formatarSecoes("Indústria"),
+      servico: formatarSecoes("Serviço"),
+    };
   }, [dados]);
 
   // Determina o nome do município baseado no tipo de dados
@@ -213,30 +254,19 @@ export default function ListaAtivas({ onCidadeSelecionada }) {
       </ul>
 
       <div className="mt-4 space-y-4">
-        <Accordion type="single" collapsible className="border rounded-lg">
-          <AccordionItem value="treemap" className="border-none">
-            <AccordionTrigger className="flex items-center gap-3 p-4 hover:bg-gray-50 text-[#231f20]">
-              <LandPlot className="h-5 w-5 text-[#034ea2]" />
-              <span className="font-medium">
-                Empresas ativas por atividades
-              </span>
-            </AccordionTrigger>
-            <AccordionContent className="p-4 pt-0">
-              {dados == null ? (
-                <p className="text-gray-500">Sem dados</p>
-              ) : (
-                <TreeMap dados={dados} />
-              )}
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
+        {/* Ranking de Empresas Ativas por Município */}
+        <RankingMunicipios
+          municipio={municipio}
+          ranking={ranking}
+          tipo="ativas"
+        />
 
         <Accordion type="single" collapsible className="border rounded-lg">
           <AccordionItem value="piecharts" className="border-none">
             <AccordionTrigger className="flex items-center gap-3 p-4 hover:bg-gray-50 text-[#231f20]">
               <FileChartPie className="h-5 w-5 text-[#034ea2]" />
               <span className="font-medium">
-                Empresas ativas por porte, natureza jurídica e setor econômico 
+                Empresas ativas por porte, natureza jurídica e setor econômico
               </span>
             </AccordionTrigger>
             <AccordionContent className="p-4 pt-0">
@@ -247,14 +277,42 @@ export default function ListaAtivas({ onCidadeSelecionada }) {
                   <ChartCard title="Naturezas Jurídicas" data={naturezasData} />
                   <ChartCard title="Portes das Empresas" data={portesData} />
                   <ChartCard title="Setores Econômicos" data={setoresData} />
-
                 </div>
               )}
             </AccordionContent>
           </AccordionItem>
         </Accordion>
 
-
+        <Accordion type="single" collapsible className="border rounded-lg">
+          <AccordionItem value="piecharts" className="border-none">
+            <AccordionTrigger className="flex items-center gap-3 p-4 hover:bg-gray-50 text-[#231f20]">
+              <FileChartPie className="h-5 w-5 text-[#034ea2]" />
+              <span className="font-medium">
+                Detalhes dos Setores Econômicos
+              </span>
+            </AccordionTrigger>
+            <AccordionContent className="p-4 pt-0">
+              {!dados ? (
+                <p className="text-gray-500">Sem dados</p>
+              ) : (
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                  <ChartCard
+                    title="Comércio"
+                    data={secoesClassificacaoData.comercio}
+                  />
+                  <ChartCard
+                    title="Indústria"
+                    data={secoesClassificacaoData.industria}
+                  />
+                  <ChartCard
+                    title="Serviços"
+                    data={secoesClassificacaoData.servico}
+                  />
+                </div>
+              )}
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
       </div>
     </div>
   );

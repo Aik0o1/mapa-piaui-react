@@ -1,27 +1,23 @@
 import { useState, useEffect } from "react";
 import { useMemo } from "react";
-import {
-  MapPin,
-  Building2,
-  LandPlot,
-  Clock2,
-  Clock,
-  FileChartPie,
-} from "lucide-react";
-import TreeMap from "../graphs/treeMap";
+import { MapPin, Building2, Clock, FileChartPie } from "lucide-react";
 import ChartCard from "../graphs/PieCharts";
+import RankingMunicipios from "./../tables/RankingMunicipios";
 import {
   AccordionItem,
   Accordion,
   AccordionTrigger,
   AccordionContent,
 } from "../ui/accordion";
+
 export default function Lista({ onCidadeSelecionada, mes, ano }) {
   const [dados, setDados] = useState(null);
   // console.log(dados);
 
   const apiUrl = import.meta.env.VITE_URL_API;
   const apiToken = import.meta.env.VITE_API_TOKEN;
+
+  const [ranking, setRanking] = useState([]);
 
   const [selectedCity, setSelectedCity] = useState("");
   const meses = {
@@ -55,52 +51,38 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
 
   useEffect(() => {
     const fetchData = async () => {
-      // console.log(dados);
-
       try {
-        // let url = "";
-
-        // if (onCidadeSelecionada) {
         const numero_mes = meses[mes];
-        const id =
-          onCidadeSelecionada.id.length > 6
-            ? onCidadeSelecionada.id.split("-")[1]
-            : onCidadeSelecionada.id;
-        //   url = `${apiUrl}/municipios?cidade=${id}&mes=${numero_mes}&ano=${ano}`;
-        // } else {
-        //   const numero_mes = meses[mes];
-        //   url = `${apiUrl}/municipios?cidade=2211001&mes=${numero_mes}&ano=${ano}`;
-        // }
 
-        const url = onCidadeSelecionada?.id
+        // Chamada existente para 'empresas_abertas'
+        const urlAbertas = onCidadeSelecionada?.id
           ? `${apiUrl}/empresas_abertas?cidade=${id}&mes=${numero_mes}&ano=${ano}`
           : `${apiUrl}/empresas_abertas?cidade=22&mes=${numero_mes}&ano=${ano}`;
 
-        const response = await fetch(url, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${apiToken}`,
-          },
-        });
-        const data = await response.json();
+        // NOVA chamada para 'ranking_aberturas'
+        // Geralmente rankings são por estado, então usamos o código '22' (Piauí) ou conforme sua lógica
+        const urlRanking = `${apiUrl}/ranking_aberturas?mes=${numero_mes}&ano=${ano}`;
 
-        if (!response.ok || !data.abertas) {
-          setDados(null);
-        } else {
-          setDados(data.abertas);
-        }
+        const [resAbertas, resRanking] = await Promise.all([
+          fetch(urlAbertas, {
+            headers: { Authorization: `Bearer ${apiToken}` },
+          }),
+          fetch(urlRanking, {
+            headers: { Authorization: `Bearer ${apiToken}` },
+          }),
+        ]);
 
-        if (onCidadeSelecionada?.id) {
-          setSelectedCity(onCidadeSelecionada.id);
-        }
+        const dataAbertas = await resAbertas.json();
+        const dataRanking = await resRanking.json();
+
+        setDados(resAbertas.ok ? dataAbertas.abertas : null);
+        setRanking(resRanking.ok ? dataRanking : []);
       } catch (error) {
-        console.error("Erro ao buscar dados do servidor:", error);
+        console.error("Erro ao buscar dados:", error);
       }
     };
-
     fetchData();
   }, [onCidadeSelecionada, mes, ano]);
-
   const municipio =
     onCidadeSelecionada.nome == "Selecione uma localidade"
       ? "Piauí"
@@ -142,7 +124,7 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
       }));
   }, [dados]);
 
-    const setoresData = useMemo(() => {
+  const setoresData = useMemo(() => {
     if (!dados?.classificacoes) return [];
     return Object.entries(dados.classificacoes)
       .filter(([, value]) => value != null && value > 0)
@@ -150,6 +132,33 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
         label: key,
         value: value,
       }));
+  }, [dados]);
+
+  const secoesClassificacaoData = useMemo(() => {
+    if (!dados?.secoes_por_classificacao) {
+      return {
+        comercio: [],
+        industria: [],
+        servico: [],
+      };
+    }
+
+    const formatarSecoes = (classificacao) => {
+      if (!dados.secoes_por_classificacao[classificacao]) return [];
+
+      return Object.entries(dados.secoes_por_classificacao[classificacao])
+        .filter(([, value]) => value != null && value > 0)
+        .map(([key, value]) => ({
+          label: key,
+          value: value,
+        }));
+    };
+
+    return {
+      comercio: formatarSecoes("Comércio"),
+      industria: formatarSecoes("Indústria"),
+      servico: formatarSecoes("Serviço"),
+    };
   }, [dados]);
 
   const calcularTotalAbertas = () => {
@@ -215,6 +224,13 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
       </ul>
 
       <div className="mt-4 space-y-4">
+        {/* Ranking de Aberturas por Município */}
+        <RankingMunicipios
+          municipio={municipio}
+          ranking={ranking}
+          tipo="abertas"
+        />
+
         <Accordion type="single" collapsible className="border rounded-lg">
           <AccordionItem value="tempos" className="border-none">
             <AccordionTrigger className="text-decorflex w-full items-center gap-3 p-4 text-left hover:bg-gray-50 text-[#231f20]">
@@ -260,29 +276,11 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
         </Accordion>
 
         <Accordion type="single" collapsible className="border rounded-lg">
-          <AccordionItem value="treemap" className="border-none">
-            <AccordionTrigger className="flex items-center gap-3 p-4 hover:bg-gray-50 text-[#231f20]">
-              <LandPlot className="h-5 w-5 text-[#034ea2]" />
-              <span className="font-medium">
-                Empresas abertas por atividades
-              </span>
-            </AccordionTrigger>
-            <AccordionContent className="p-4 pt-0">
-              {dados == null ? (
-                <p className="text-gray-500">Sem dados</p>
-              ) : (
-                <TreeMap dados={dados} />
-              )}
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
-
-        <Accordion type="single" collapsible className="border rounded-lg">
           <AccordionItem value="piecharts" className="border-none">
             <AccordionTrigger className="flex items-center gap-3 p-4 hover:bg-gray-50 text-[#231f20]">
               <FileChartPie className="h-5 w-5 text-[#034ea2]" />
               <span className="font-medium">
-                Empresas abertas por porte, natureza jurídica e setor econômico 
+                Empresas abertas por porte, natureza jurídica e setor econômico
               </span>
             </AccordionTrigger>
             <AccordionContent className="p-4 pt-0">
@@ -293,13 +291,42 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
                   <ChartCard title="Naturezas Jurídicas" data={naturezasData} />
                   <ChartCard title="Portes das Empresas" data={portesData} />
                   <ChartCard title="Setores Econômicos" data={setoresData} />
-
                 </div>
               )}
             </AccordionContent>
           </AccordionItem>
         </Accordion>
 
+        <Accordion type="single" collapsible className="border rounded-lg">
+          <AccordionItem value="piecharts" className="border-none">
+            <AccordionTrigger className="flex items-center gap-3 p-4 hover:bg-gray-50 text-[#231f20]">
+              <FileChartPie className="h-5 w-5 text-[#034ea2]" />
+              <span className="font-medium">
+                Detalhes dos Setores Econômicos
+              </span>
+            </AccordionTrigger>
+            <AccordionContent className="p-4 pt-0">
+              {!dados ? (
+                <p className="text-gray-500">Sem dados</p>
+              ) : (
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                  <ChartCard
+                    title="Comércio"
+                    data={secoesClassificacaoData.comercio}
+                  />
+                  <ChartCard
+                    title="Indústria"
+                    data={secoesClassificacaoData.industria}
+                  />
+                  <ChartCard
+                    title="Serviços"
+                    data={secoesClassificacaoData.servico}
+                  />
+                </div>
+              )}
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
       </div>
     </div>
   );
