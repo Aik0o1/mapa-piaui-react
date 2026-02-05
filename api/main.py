@@ -30,6 +30,7 @@ else:
 
 # Mapeamento de seções de atividades para classificações
 MAPEAMENTO_SECOES = {
+    "-": "-",
     "COMÉRCIO": "Comércio",
     "ÁGUA, ESGOTO, ATIVIDADES DE GESTÃO DE RESÍDUOS E DESCONTAMINAÇÃO": "Indústria",
     "CONSTRUÇÃO": "Indústria",

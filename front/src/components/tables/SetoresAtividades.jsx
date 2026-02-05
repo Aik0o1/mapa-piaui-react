@@ -4,7 +4,7 @@ export default function TabelaSetorizadaAtividades({ secoesData }) {
   // 1. Prepara os dados agrupados e calcula totais por setor com ordenação decrescente
   const { grupos, totalGeral } = useMemo(() => {
     if (!secoesData) return { grupos: [], totalGeral: 0 };
-    
+    console.log("Dados recebidos em SetoresAtividades:", secoesData);
     // Função para garantir que a lista seja um array e ordenar do maior para o menor
     const prepararSetor = (lista) => 
       (Array.isArray(lista) ? [...lista] : []).sort((a, b) => b.value - a.value);
@@ -13,6 +13,7 @@ export default function TabelaSetorizadaAtividades({ secoesData }) {
       { nome: "Serviços", dados: prepararSetor(secoesData.servico), cor: "bg-blue-600", textoCor: "text-blue-700" },
       { nome: "Comércio", dados: prepararSetor(secoesData.comercio), cor: "bg-green-600", textoCor: "text-green-700" },
       { nome: "Indústria", dados: prepararSetor(secoesData.industria), cor: "bg-orange-600", textoCor: "text-orange-700" },
+      { nome: "-", dados: prepararSetor(secoesData["-"]), cor: "bg-gray-600", textoCor: "text-gray-700" },
     ];
 
     // Calcula o total geral somando todos os setores

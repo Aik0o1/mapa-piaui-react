@@ -1,9 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
-import {
-  MapPin,
-  Building2,
-  FileChartPie,
-} from "lucide-react";
+import { MapPin, Building2, FileChartPie } from "lucide-react";
 import ChartCard from "../graphs/PieCharts";
 import TabelaSetorizadaAtividades from "../tables/SetoresAtividades";
 import RankingMunicipios from "./../tables/RankingMunicipios";
@@ -161,6 +157,7 @@ export default function ListaAtivas({ onCidadeSelecionada }) {
         comercio: [],
         industria: [],
         servico: [],
+        "-": [],
       };
     }
 
@@ -179,6 +176,7 @@ export default function ListaAtivas({ onCidadeSelecionada }) {
       comercio: formatarSecoes("Comércio"),
       industria: formatarSecoes("Indústria"),
       servico: formatarSecoes("Serviço"),
+      "-": formatarSecoes("-"),
     };
   }, [dados]);
 

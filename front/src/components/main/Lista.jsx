@@ -141,6 +141,7 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
         comercio: [],
         industria: [],
         servico: [],
+        "-": [],
       };
     }
 
@@ -159,6 +160,7 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
       comercio: formatarSecoes("Comércio"),
       industria: formatarSecoes("Indústria"),
       servico: formatarSecoes("Serviço"),
+      "-": formatarSecoes("-"),
     };
   }, [dados]);
 
