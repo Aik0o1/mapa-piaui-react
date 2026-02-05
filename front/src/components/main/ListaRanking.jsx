@@ -239,7 +239,7 @@ export default function ListaRanking({ onCidadeSelecionada, mes, ano }) {
                   </span>
                 </li>
                 <li className="flex justify-between py-2">
-                  <span className="font-medium">Tempo de análise</span>
+                  <span className="font-medium">Tempo de Análise</span>
                   <span className="text-[#034ea2]">
                     {dados?.tempos_analise?.pontuacao ?? "-"}
                   </span>
@@ -371,7 +371,7 @@ export default function ListaRanking({ onCidadeSelecionada, mes, ano }) {
             <AccordionTrigger className="flex w-full items-center gap-3 p-4 text-left hover:bg-gray-50 text-[#231f20]">
               <Clock className="h-5 w-5 shrink-0 text-[#034ea2]" />
               <div className="w-full flex flex-col justify-between">
-                <span className="font-medium">Tempos de análise</span>
+                <span className="font-medium">Tempos de Análise</span>
                 <p className="text-sm font-normal text-gray-500">
                   Correspondente aos processos de abertura e alteração
                 </p>

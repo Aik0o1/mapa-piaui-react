@@ -23,14 +23,14 @@ export default function RankingMunicipios({ municipio, ranking, tipo = "abertas"
   // Define os textos baseados no tipo
   const textos = {
     abertas: {
-      titulo: "Empresas Abertas por Município",
-      coluna: "Qtd. Abertas",
-      percentual: "% Abertas",
+      titulo: "Abertura de Empresas por Município (no mês)",
+      coluna: "Qtd. Aberturas",
+      percentual: "% Aberturas em Relação ao Total",
     },
     ativas: {
       titulo: "Empresas Ativas por Município",
       coluna: "Qtd. Ativas",
-      percentual: "% Ativas",
+      percentual: "% Ativas em Relação ao Total",
     },
   };
 

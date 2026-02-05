@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useMemo } from "react";
 import { MapPin, Building2, Clock, FileChartPie } from "lucide-react";
 import ChartCard from "../graphs/PieCharts";
+import TabelaSetorizadaAtividades from "../tables/SetoresAtividades";
 import RankingMunicipios from "./../tables/RankingMunicipios";
 import {
   AccordionItem,
@@ -215,7 +216,7 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
             <div className="flex items-center gap-3">
               <Building2 className="text-[#034ea2]" />
               <p className="font-medium text-[#231f20]">
-                Quantidade de empresas abertas
+                Total de Abertura de Empresas (no mês)
               </p>
             </div>
             <p className="text-[#034ea2] font-semibold">{qtd_abertas}</p>
@@ -236,7 +237,7 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
             <AccordionTrigger className="text-decorflex w-full items-center gap-3 p-4 text-left hover:bg-gray-50 text-[#231f20]">
               <Clock className="h-5 w-5 shrink-0 text-[#034ea2]" />
               <div className="w-full flex flex-col justify-between">
-                <span className="font-medium">Tempos de análise</span>
+                <span className="font-medium">Tempos de Análise (no mês)</span>
                 <p className="text-sm font-normal text-gray-500">
                   Correspondente apenas aos processos de abertura
                 </p>
@@ -280,17 +281,17 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
             <AccordionTrigger className="flex items-center gap-3 p-4 hover:bg-gray-50 text-[#231f20]">
               <FileChartPie className="h-5 w-5 text-[#034ea2]" />
               <span className="font-medium">
-                Empresas abertas por porte, natureza jurídica e setor econômico
+                Abertura de Empresas por Portes e Naturezas Jurídicas (no mês)
               </span>
             </AccordionTrigger>
             <AccordionContent className="p-4 pt-0">
               {!dados ? (
                 <p className="text-gray-500">Sem dados</p>
               ) : (
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                  <ChartCard title="Naturezas Jurídicas" data={naturezasData} />
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                   <ChartCard title="Portes das Empresas" data={portesData} />
-                  <ChartCard title="Setores Econômicos" data={setoresData} />
+                  <ChartCard title="Naturezas Jurídicas" data={naturezasData} />
+                  {/* <ChartCard title="Setores Econômicos" data={setoresData} /> */}
                 </div>
               )}
             </AccordionContent>
@@ -302,7 +303,27 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
             <AccordionTrigger className="flex items-center gap-3 p-4 hover:bg-gray-50 text-[#231f20]">
               <FileChartPie className="h-5 w-5 text-[#034ea2]" />
               <span className="font-medium">
-                Detalhes dos Setores Econômicos
+                Abertura de Empresas por Setor Econômico (no mês)
+              </span>
+            </AccordionTrigger>
+            <AccordionContent className="p-4 pt-0">
+              {!dados ? (
+                <p className="text-gray-500 text-center py-4">Sem dados</p>
+              ) : (
+                <TabelaSetorizadaAtividades
+                  secoesData={secoesClassificacaoData}
+                />
+              )}
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+
+        {/* <Accordion type="single" collapsible className="border rounded-lg">
+          <AccordionItem value="piecharts" className="border-none">
+            <AccordionTrigger className="flex items-center gap-3 p-4 hover:bg-gray-50 text-[#231f20]">
+              <FileChartPie className="h-5 w-5 text-[#034ea2]" />
+              <span className="font-medium">
+                Detalhes dos Setores Econômicos (no mês)
               </span>
             </AccordionTrigger>
             <AccordionContent className="p-4 pt-0">
@@ -326,7 +347,7 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
               )}
             </AccordionContent>
           </AccordionItem>
-        </Accordion>
+        </Accordion> */}
       </div>
     </div>
   );

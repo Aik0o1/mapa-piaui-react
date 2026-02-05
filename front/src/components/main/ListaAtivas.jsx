@@ -2,12 +2,10 @@ import { useState, useMemo, useEffect } from "react";
 import {
   MapPin,
   Building2,
-  LandPlot,
-  Clock2,
   FileChartPie,
 } from "lucide-react";
-import TreeMap from "../graphs/treeMap";
 import ChartCard from "../graphs/PieCharts";
+import TabelaSetorizadaAtividades from "../tables/SetoresAtividades";
 import RankingMunicipios from "./../tables/RankingMunicipios";
 import {
   AccordionItem,
@@ -245,7 +243,7 @@ export default function ListaAtivas({ onCidadeSelecionada }) {
             <div className="flex items-center gap-3">
               <Building2 className="text-[#034ea2]" />
               <p className="font-medium text-[#231f20]">
-                Quantidade de empresas ativas
+                Total de Empresas Ativas
               </p>
             </div>
             <p className="text-[#034ea2] font-semibold">{qtd_ativas_no_mes}</p>
@@ -266,17 +264,17 @@ export default function ListaAtivas({ onCidadeSelecionada }) {
             <AccordionTrigger className="flex items-center gap-3 p-4 hover:bg-gray-50 text-[#231f20]">
               <FileChartPie className="h-5 w-5 text-[#034ea2]" />
               <span className="font-medium">
-                Empresas ativas por porte, natureza jurídica e setor econômico
+                Empresas Ativas por Portes e Naturezas Jurídicas
               </span>
             </AccordionTrigger>
             <AccordionContent className="p-4 pt-0">
               {!dados ? (
                 <p className="text-gray-500">Sem dados</p>
               ) : (
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                  <ChartCard title="Naturezas Jurídicas" data={naturezasData} />
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                   <ChartCard title="Portes das Empresas" data={portesData} />
-                  <ChartCard title="Setores Econômicos" data={setoresData} />
+                  <ChartCard title="Naturezas Jurídicas" data={naturezasData} />
+                  {/* <ChartCard title="Setores Econômicos" data={setoresData} /> */}
                 </div>
               )}
             </AccordionContent>
@@ -284,6 +282,26 @@ export default function ListaAtivas({ onCidadeSelecionada }) {
         </Accordion>
 
         <Accordion type="single" collapsible className="border rounded-lg">
+          <AccordionItem value="piecharts" className="border-none">
+            <AccordionTrigger className="flex items-center gap-3 p-4 hover:bg-gray-50 text-[#231f20]">
+              <FileChartPie className="h-5 w-5 text-[#034ea2]" />
+              <span className="font-medium">
+                Empresas Ativas por Setor Econômico (no mês)
+              </span>
+            </AccordionTrigger>
+            <AccordionContent className="p-4 pt-0">
+              {!dados ? (
+                <p className="text-gray-500 text-center py-4">Sem dados</p>
+              ) : (
+                <TabelaSetorizadaAtividades
+                  secoesData={secoesClassificacaoData}
+                />
+              )}
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+
+        {/* <Accordion type="single" collapsible className="border rounded-lg">
           <AccordionItem value="piecharts" className="border-none">
             <AccordionTrigger className="flex items-center gap-3 p-4 hover:bg-gray-50 text-[#231f20]">
               <FileChartPie className="h-5 w-5 text-[#034ea2]" />
@@ -312,7 +330,7 @@ export default function ListaAtivas({ onCidadeSelecionada }) {
               )}
             </AccordionContent>
           </AccordionItem>
-        </Accordion>
+        </Accordion> */}
       </div>
     </div>
   );
