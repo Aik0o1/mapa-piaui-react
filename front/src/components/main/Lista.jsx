@@ -10,6 +10,7 @@ import {
   AccordionTrigger,
   AccordionContent,
 } from "../ui/accordion";
+import SunburstCard from "../graphs/SunburstChart";
 
 export default function Lista({ onCidadeSelecionada, mes, ano }) {
   const [dados, setDados] = useState(null);
@@ -309,6 +310,14 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
               </span>
             </AccordionTrigger>
             <AccordionContent className="p-4 pt-0">
+
+              <div className="mb-2">
+                <SunburstCard
+                  title="Setores por Classificação"
+                  rawData={secoesClassificacaoData}
+                />
+              </div>
+
               {!dados ? (
                 <p className="text-gray-500 text-center py-4">Sem dados</p>
               ) : (

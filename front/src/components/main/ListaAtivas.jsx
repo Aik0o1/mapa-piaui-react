@@ -9,6 +9,7 @@ import {
   AccordionTrigger,
   AccordionContent,
 } from "../ui/accordion";
+import SunburstCard from "../graphs/SunburstChart";
 
 export default function ListaAtivas({ onCidadeSelecionada }) {
   const [dados, setDados] = useState(null);
@@ -180,6 +181,8 @@ export default function ListaAtivas({ onCidadeSelecionada }) {
     };
   }, [dados]);
 
+  console.log(secoesClassificacaoData)
+
   // Determina o nome do município baseado no tipo de dados
   const municipio =
     onCidadeSelecionada.nome === "Selecione uma localidade"
@@ -281,6 +284,7 @@ export default function ListaAtivas({ onCidadeSelecionada }) {
 
         <Accordion type="single" collapsible className="border rounded-lg">
           <AccordionItem value="piecharts" className="border-none">
+
             <AccordionTrigger className="flex items-center gap-3 p-4 hover:bg-gray-50 text-[#231f20]">
               <FileChartPie className="h-5 w-5 text-[#034ea2]" />
               <span className="font-medium">
@@ -288,6 +292,13 @@ export default function ListaAtivas({ onCidadeSelecionada }) {
               </span>
             </AccordionTrigger>
             <AccordionContent className="p-4 pt-0">
+              <div className="mb-2">
+                <SunburstCard
+                  title="Setores por Classificação"
+                  rawData={secoesClassificacaoData}
+                />
+              </div>
+
               {!dados ? (
                 <p className="text-gray-500 text-center py-4">Sem dados</p>
               ) : (
