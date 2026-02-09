@@ -10,8 +10,7 @@ import {
   AccordionTrigger,
   AccordionContent,
 } from "../ui/accordion";
-import SunburstCard from "../graphs/SunburstChart";
-
+import HierarchicalTreeMap from "../graphs/treeMap";
 export default function Lista({ onCidadeSelecionada, mes, ano }) {
   const [dados, setDados] = useState(null);
   // console.log(dados);
@@ -54,6 +53,10 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        const id =
+          onCidadeSelecionada.id.length > 6
+            ? onCidadeSelecionada.id.split("-")[1]
+            : onCidadeSelecionada.id;
         const numero_mes = meses[mes];
 
         // Chamada existente para 'empresas_abertas'
@@ -311,12 +314,13 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
             </AccordionTrigger>
             <AccordionContent className="p-4 pt-0">
 
-              <div className="mb-2">
-                <SunburstCard
-                  title="Setores por Classificação"
-                  rawData={secoesClassificacaoData}
-                />
-              </div>
+              <div className="space-y-4">
+                              <HierarchicalTreeMap
+                                secoesData={secoesClassificacaoData}
+                                title="EMPRESAS ATIVAS POR ATIVIDADE E POR SETOR"
+                              />
+              
+                            </div>
 
               {!dados ? (
                 <p className="text-gray-500 text-center py-4">Sem dados</p>

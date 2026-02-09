@@ -10,6 +10,7 @@ import {
   AccordionContent,
 } from "../ui/accordion";
 import SunburstCard from "../graphs/SunburstChart";
+import HierarchicalTreeMap from "../graphs/treeMap";
 
 export default function ListaAtivas({ onCidadeSelecionada }) {
   const [dados, setDados] = useState(null);
@@ -181,7 +182,6 @@ export default function ListaAtivas({ onCidadeSelecionada }) {
     };
   }, [dados]);
 
-  console.log(secoesClassificacaoData)
 
   // Determina o nome do município baseado no tipo de dados
   const municipio =
@@ -291,12 +291,13 @@ export default function ListaAtivas({ onCidadeSelecionada }) {
                 Empresas Ativas por Setor Econômico (no mês)
               </span>
             </AccordionTrigger>
-            <AccordionContent className="p-4 pt-0">
-              <div className="mb-2">
-                <SunburstCard
-                  title="Setores por Classificação"
-                  rawData={secoesClassificacaoData}
+            <AccordionContent className="p-1 pt-0">
+              <div className="space-y-4">
+                <HierarchicalTreeMap
+                  secoesData={secoesClassificacaoData}
+                  title="EMPRESAS ATIVAS POR ATIVIDADE E POR SETOR"
                 />
+
               </div>
 
               {!dados ? (
@@ -309,37 +310,6 @@ export default function ListaAtivas({ onCidadeSelecionada }) {
             </AccordionContent>
           </AccordionItem>
         </Accordion>
-
-        {/* <Accordion type="single" collapsible className="border rounded-lg">
-          <AccordionItem value="piecharts" className="border-none">
-            <AccordionTrigger className="flex items-center gap-3 p-4 hover:bg-gray-50 text-[#231f20]">
-              <FileChartPie className="h-5 w-5 text-[#034ea2]" />
-              <span className="font-medium">
-                Detalhes dos Setores Econômicos
-              </span>
-            </AccordionTrigger>
-            <AccordionContent className="p-4 pt-0">
-              {!dados ? (
-                <p className="text-gray-500">Sem dados</p>
-              ) : (
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                  <ChartCard
-                    title="Comércio"
-                    data={secoesClassificacaoData.comercio}
-                  />
-                  <ChartCard
-                    title="Indústria"
-                    data={secoesClassificacaoData.industria}
-                  />
-                  <ChartCard
-                    title="Serviços"
-                    data={secoesClassificacaoData.servico}
-                  />
-                </div>
-              )}
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion> */}
       </div>
     </div>
   );
