@@ -62,19 +62,10 @@ export default function RankingMunicipios({ municipio, ranking, tipo = "abertas"
                 <tbody className="divide-y divide-gray-100">
                   {ranking.map((item) => {
                     // Lógica para cores do Top 3
-                    const isTop3 = item.posicao <= 3;
-                    const bgPosicao =
-                      item.posicao === 1
-                        ? "bg-yellow-400"
-                        : item.posicao === 2
-                          ? "bg-gray-400"
-                          : item.posicao === 3
-                            ? "bg-orange-400"
-                            : "bg-gray-100";
+                    const bgPosicao = "bg-gray-100";
 
-                    const textColorPosicao = isTop3
-                      ? "text-white"
-                      : "text-gray-600";
+                    const textColorPosicao = "text-gray-600"
+                     
 
                     return (
                       <tr
