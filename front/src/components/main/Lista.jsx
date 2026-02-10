@@ -13,7 +13,6 @@ import {
 import HierarchicalTreeMap from "../graphs/treeMap";
 export default function Lista({ onCidadeSelecionada, mes, ano }) {
   const [dados, setDados] = useState(null);
-  // console.log(dados);
 
   const apiUrl = import.meta.env.VITE_URL_API;
   const apiToken = import.meta.env.VITE_API_TOKEN;

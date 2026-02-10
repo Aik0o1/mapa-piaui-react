@@ -4,7 +4,6 @@ export default function TabelaSetorizadaAtividades({ secoesData }) {
   // 1. Prepara os dados agrupados e calcula totais por setor com ordenação decrescente
   const { grupos, totalGeral } = useMemo(() => {
     if (!secoesData) return { grupos: [], totalGeral: 0 };
-    console.log("Dados recebidos em SetoresAtividades:", secoesData);
     // Função para garantir que a lista seja um array e ordenar do maior para o menor
     const prepararSetor = (lista) => 
       (Array.isArray(lista) ? [...lista] : []).sort((a, b) => b.value - a.value);

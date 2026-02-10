@@ -37,7 +37,6 @@ export function ComboboxCidades({ onCidadeSelect, cidadeSelecionada }) {
           },
         });
         const data = await response.json();
-        console.log(data);
         
         setCidades(data);
       } catch (error) {

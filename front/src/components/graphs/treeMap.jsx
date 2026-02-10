@@ -7,7 +7,6 @@ export default function HierarchicalTreeMap({ secoesData, title }) {
   useEffect(() => {
     if (!secoesData) return;
     
-    console.log("Dados para TreeMap Hierárquico:", secoesData);
     
     // Limpa o SVG anterior
     d3.select(svgRef.current).selectAll("*").remove();
