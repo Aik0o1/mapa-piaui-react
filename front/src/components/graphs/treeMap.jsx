@@ -3,11 +3,11 @@ import * as d3 from "d3";
 
 export default function HierarchicalTreeMap({ secoesData, title }) {
   const svgRef = useRef();
-  
+
   useEffect(() => {
     if (!secoesData) return;
-    
-    
+
+
     // Limpa o SVG anterior
     d3.select(svgRef.current).selectAll("*").remove();
 
@@ -85,10 +85,10 @@ export default function HierarchicalTreeMap({ secoesData, title }) {
           const siblings = parent.children || [];
           const index = siblings.indexOf(d);
           const totalSiblings = siblings.length;
-          
+
           const baseColor = d3.rgb(parent.data.color);
           const darkenFactor = index / Math.max(totalSiblings - 1, 1);
-          
+
           return baseColor.darker(darkenFactor * 1.2).toString();
         }
       }
@@ -98,10 +98,10 @@ export default function HierarchicalTreeMap({ secoesData, title }) {
 
     // Renderiza apenas os nós folha (atividades) e os setores principais sem subdivisões
     const leaves = root.leaves();
-    const sectorsWithoutChildren = root.descendants().filter(d => 
+    const sectorsWithoutChildren = root.descendants().filter(d =>
       d.depth === 1 && (!d.children || d.children.length === 0)
     );
-    
+
     const nodesToRender = [...leaves, ...sectorsWithoutChildren];
 
     const cell = svg
@@ -121,7 +121,7 @@ export default function HierarchicalTreeMap({ secoesData, title }) {
       .attr("stroke-width", 2);
 
     // Adiciona texto
-    cell.each(function(d) {
+    cell.each(function (d) {
       const rectWidth = d.x1 - d.x0;
       const rectHeight = d.y1 - d.y0;
       const cellGroup = d3.select(this);
@@ -133,7 +133,7 @@ export default function HierarchicalTreeMap({ secoesData, title }) {
 
       // Nome da atividade ou setor
       const displayName = d.data.name;
-      
+
       // Quebra o texto em palavras
       const words = displayName.split(/[,\s]+/);
       const maxCharsPerLine = Math.floor(rectWidth / (labelFontSize * 0.70));
@@ -183,8 +183,8 @@ export default function HierarchicalTreeMap({ secoesData, title }) {
       if (d.value) {
         textGroup
           .append("text")
-          .attr("x", 8) 
-          .attr("y", 18 + (finalLines.length * lineHeight) + 18) 
+          .attr("x", 8)
+          .attr("y", 18 + (finalLines.length * lineHeight) + 18)
           .attr("text-anchor", "start")
           .attr("fill", "#FFFFFF")
           .style("font-size", `${valueFontSize}px`)
@@ -211,14 +211,14 @@ export default function HierarchicalTreeMap({ secoesData, title }) {
     cell
       .on("mouseover", (event, d) => {
         d3.select(event.currentTarget).select("rect").attr("opacity", 1);
-        
+
         // Descobre o setor pai
         let parent = d.parent;
         while (parent && parent.depth > 1) {
           parent = parent.parent;
         }
         const setorNome = parent && parent.depth === 1 ? parent.data.name : "Total";
-        
+
         tooltip
           .style("visibility", "visible")
           .html(
@@ -228,9 +228,18 @@ export default function HierarchicalTreeMap({ secoesData, title }) {
           );
       })
       .on("mousemove", (event) => {
+        const tooltipNode = tooltip.node();
+        const tooltipWidth = tooltipNode ? tooltipNode.offsetWidth : 200;
+        const windowWidth = window.innerWidth;
+
+        // Se o tooltip ultrapassar a borda direita, mostra à esquerda
+        const leftPosition = event.pageX + tooltipWidth + 30 > windowWidth
+          ? event.pageX - tooltipWidth - 15
+          : event.pageX + 15;
+
         tooltip
           .style("top", `${event.pageY + 15}px`)
-          .style("left", `${event.pageX + 15}px`);
+          .style("left", `${leftPosition}px`);
       })
       .on("mouseout", (event) => {
         d3.select(event.currentTarget).select("rect").attr("opacity", 0.85);
@@ -239,9 +248,9 @@ export default function HierarchicalTreeMap({ secoesData, title }) {
 
     // Cleanup
     return () => {
-      d3.select("body").selectAll("div").filter(function() {
+      d3.select("body").selectAll("div").filter(function () {
         return d3.select(this).style("position") === "absolute" &&
-               d3.select(this).style("background").includes("rgba(0, 0, 0, 0.9)");
+          d3.select(this).style("background").includes("rgba(0, 0, 0, 0.9)");
       }).remove();
     };
   }, [secoesData]);
@@ -249,7 +258,7 @@ export default function HierarchicalTreeMap({ secoesData, title }) {
   return (
     <div className="w-full">
       <div className="">
-        
+
         <div className=" overflow-hidden">
           <svg ref={svgRef} style={{ width: "100%" }}></svg>
         </div>
