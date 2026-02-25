@@ -73,7 +73,7 @@ function MainContent() {
   };
 
   return (
-    <div className="bg-gray-50">
+    <div className="bg-gray-50 min-h-screen flex flex-col">
 
       <Header />
       <Filtros
@@ -85,7 +85,7 @@ function MainContent() {
         cidadeSelecionada={cidade}
         activeTab={activeTab}
       />
-      <div className="conteudo">
+      <div className="conteudo flex-1">
         <PiauiMapa
           onCidadeSelecionada={handleCidade}
           cidadeSelecionada={cidade}
