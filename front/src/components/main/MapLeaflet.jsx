@@ -41,7 +41,7 @@ const MapAutoZoom = ({ cidadeSelecionada, geoJsonData }) => {
                 if (l.feature && l.setStyle) {
                     l.setStyle({
                         weight: 1,
-                        color: 'white',
+                        color: 'black',
                         dashArray: '',
                         fillOpacity: 1
                     });
@@ -85,7 +85,7 @@ const MapAutoZoom = ({ cidadeSelecionada, geoJsonData }) => {
                         if (l.setStyle) {
                             l.setStyle({
                                 weight: 1,
-                                color: 'white',
+                                color: 'black',
                                 dashArray: '',
                                 fillOpacity: 0.4
                             });
@@ -205,7 +205,7 @@ const MapLeaflet = ({ onCidadeSelecionada, cidades, cidadeSelecionada }) => {
                         fillColor: feature.properties.color,
                         weight: isSelected ? 3 : 1,
                         opacity: 1,
-                        color: isSelected ? '#000' : 'white',
+                        color: 'black',
                         dashArray: '',
                         fillOpacity: targetIds.length > 0 && !isSelected ? 0.4 : 1
                     };
@@ -270,7 +270,7 @@ const MapLeaflet = ({ onCidadeSelecionada, cidades, cidadeSelecionada }) => {
                             } else {
                                 l.setStyle({
                                     weight: 1,
-                                    color: 'white',
+                                    color: 'black',
                                     dashArray: '',
                                     fillOpacity: mapHasSelection ? 0.4 : 1
                                 });
