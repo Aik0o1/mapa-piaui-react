@@ -99,13 +99,15 @@ export function ComboboxCidades({ onCidadeSelect, cidadeSelecionada }) {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-[250px] justify-between"
+          className="w-[250px] justify-between h-auto py-2"
         >
-          {value || "Selecione uma localidade"}
-          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          <span className="text-left flex-1 break-words mr-2 whitespace-normal">
+            {value || "Selecione uma localidade"}
+          </span>
+          <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0">
+      <PopoverContent className="w-[250px] p-0">
         <Command>
           <CommandInput placeholder="Pesquisar localidade" />
           <CommandList>
