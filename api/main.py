@@ -7,6 +7,7 @@ from flask_cors import CORS
 from dotenv import load_dotenv
 from urllib.parse import quote
 from flask import Flask, jsonify, Response, request
+import unicodedata
 
 load_dotenv()  # take environment variables
 
@@ -99,9 +100,100 @@ def processar_dados_cidade(dados_cidade):
         secoes = dados_processados['secoes_atividades']
         secoes_agrupadas = mapear_secoes_para_classificacoes(secoes)
         dados_processados['secoes_por_classificacao'] = secoes_agrupadas
-    
+        
     return dados_processados
 
+def get_cidades_por_regiao(couch_instance, nome_regiao):
+
+    clean_region = nome_regiao.replace("Território:", "").strip()
+    print(f"DEBUG get_cidades_por_regiao: clean_region='{clean_region}'")
+    
+    try:
+        # Load the mapping from the local JSON file
+        with open('municipios_regioes.json', 'r', encoding='utf-8') as f:
+            regioes_data = json.load(f)
+            
+        # Find all city names that belong to this region
+        cidades_da_regiao = []
+        for city_name, reg_name in regioes_data.items():
+            if reg_name == clean_region:
+                cidades_da_regiao.append(city_name)
+                
+        if not cidades_da_regiao:
+            print(f"DEBUG get_cidades_por_regiao: No cities found for '{clean_region}' in JSON")
+            return ""
+            
+        print(f"DEBUG get_cidades_por_regiao: Found {len(cidades_da_regiao)} cities: {cidades_da_regiao}")
+        
+        # Map city names to IBGE codes using CouchDB
+        db_filtros = couch_instance['filtros']
+        doc_cidades = db_filtros.get('cidades_piaui')
+        
+        if not doc_cidades or "cidades" not in doc_cidades:
+            return ""
+            
+        # Build reverse lookup map: normalized_name -> ibge_id
+        def normalize_str(text):
+            return ''.join(c for c in unicodedata.normalize('NFD', text)
+                           if unicodedata.category(c) != 'Mn').lower()
+                           
+        name_to_id = {}
+        for cid_id, cid_data in doc_cidades["cidades"].items():
+            name_to_id[normalize_str(cid_data["nome"])] = cid_id
+            
+        # Match cities and collect IDs
+        matched_ids = []
+        for city_name in cidades_da_regiao:
+            norm_name = normalize_str(city_name)
+            if norm_name in name_to_id:
+                matched_ids.append(name_to_id[norm_name])
+                
+        print(f"DEBUG get_cidades_por_regiao: matched_ids list = {matched_ids}")
+        return ",".join(matched_ids)
+        
+    except Exception as e:
+        print(f"Erro processando região {nome_regiao}: {e}")
+        return ""
+
+def agregar_cidades(doc, cidades_str, tipo_dado):
+    """
+    Soma os dados de múltiplas cidades e retorna um único dicionário agregado.
+    `cidades_str` é uma string com códigos separados por vírgula.
+    `tipo_dado` é 'ativas' ou 'abertas'.
+    """
+    codigos = [c.strip() for c in cidades_str.split(',')]
+    
+    agregado = {
+        "nome": "Território Agregado",
+        tipo_dado: {
+            "naturezas": {},
+            "portes": {},
+            "secoes_atividades": {}
+        }
+    }
+    
+    for cod in codigos:
+        if cod in doc:
+            dados = doc[cod]
+            if tipo_dado in dados:
+                alvo = dados[tipo_dado]
+                # Somar naturezas
+                if "naturezas" in alvo:
+                    for nat, qtd in alvo["naturezas"].items():
+                        if qtd:
+                            agregado[tipo_dado]["naturezas"][nat] = agregado[tipo_dado]["naturezas"].get(nat, 0) + qtd
+                # Somar portes
+                if "portes" in alvo:
+                    for porte, qtd in alvo["portes"].items():
+                        if qtd:
+                            agregado[tipo_dado]["portes"][porte] = agregado[tipo_dado]["portes"].get(porte, 0) + qtd
+                # Somar seções
+                if "secoes_atividades" in alvo:
+                    for sec, qtd in alvo["secoes_atividades"].items():
+                        if qtd:
+                            agregado[tipo_dado]["secoes_atividades"][sec] = agregado[tipo_dado]["secoes_atividades"].get(sec, 0) + qtd
+                            
+    return agregado
 
 app = Flask(__name__)
 CORS(app)
@@ -173,16 +265,25 @@ def buscar_municipios():
 
         doc = db[doc_id]
 
-        # Verifica se a cidade existe no documento
-        if cidade not in doc:
-            return (
-                jsonify({"error": f"Cidade {cidade} não encontrada no documento"}),
-                404,
-            )
+        # Converte nome de região para string de IDs separados por vírgula
+        if cidade.startswith("Território:"):
+            cidades_str = get_cidades_por_regiao(couch, cidade)
+            if not cidades_str:
+                return jsonify({"error": f"Nenhum município encontrado para {cidade}"}), 404
+            cidade = cidades_str
 
-        # Processa os dados da cidade com mapeamento
-        dados_cidade = doc[cidade]
-        dados_processados = processar_dados_cidade(dados_cidade)
+        # Verifica se a cidade existe no documento ou se é uma agregação
+        if ',' in cidade:
+            dados_cidade = agregar_cidades(doc, cidade, 'abertas')
+            dados_processados = processar_dados_cidade(dados_cidade)
+        else:
+            if cidade not in doc:
+                return (
+                    jsonify({"error": f"Cidade {cidade} não encontrada no documento"}),
+                    404,
+                )
+            dados_cidade = doc[cidade]
+            dados_processados = processar_dados_cidade(dados_cidade)
 
         # Resposta de sucesso - trata tanto códigos IBGE quanto "total"
         return jsonify({
@@ -276,16 +377,25 @@ def buscar_empresas_abertas():
         
         doc = db[doc_id]
         
-        # Verifica se a cidade existe no documento
-        if cidade not in doc:
-            return (
-                jsonify({"error": f"Cidade {cidade} não encontrada no documento"}),
-                404,
-            )
+        # Converte nome de região para string de IDs separados por vírgula
+        if cidade.startswith("Território:"):
+            cidades_str = get_cidades_por_regiao(couch, cidade)
+            if not cidades_str:
+                return jsonify({"error": f"Nenhum município encontrado para {cidade}"}), 404
+            cidade = cidades_str
         
-        # Processa os dados da cidade com mapeamento
-        dados_cidade = doc[cidade]
-        dados_processados = processar_dados_cidade(dados_cidade)
+        # Verifica se a cidade existe no documento ou se é uma agregação
+        if ',' in cidade:
+            dados_cidade = agregar_cidades(doc, cidade, 'ativas')
+            dados_processados = processar_dados_cidade(dados_cidade)
+        else:
+            if cidade not in doc:
+                return (
+                    jsonify({"error": f"Cidade {cidade} não encontrada no documento"}),
+                    404,
+                )
+            dados_cidade = doc[cidade]
+            dados_processados = processar_dados_cidade(dados_cidade)
         
         return jsonify({
             "id": doc_id, 
