@@ -37,10 +37,10 @@ export default function ListaAtivas({ onCidadeSelecionada }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const id =
-          onCidadeSelecionada.id.length > 6
-            ? onCidadeSelecionada.id.split("-")[1]
-            : onCidadeSelecionada.id;
+        const strId = String(onCidadeSelecionada.id || "");
+        const id = strId.includes("-")
+          ? strId.split("-")[1]
+          : strId;
 
         // setLoading(true);
         // setError(null);

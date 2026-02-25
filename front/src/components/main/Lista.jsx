@@ -52,10 +52,10 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const id =
-          onCidadeSelecionada.id.length > 6
-            ? onCidadeSelecionada.id.split("-")[1]
-            : onCidadeSelecionada.id;
+        const strId = String(onCidadeSelecionada.id || "");
+        const id = strId.includes("-")
+          ? strId.split("-")[1]
+          : strId;
         const numero_mes = meses[mes];
 
         // Chamada existente para 'empresas_abertas'
@@ -237,49 +237,51 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
           tipo="abertas"
         />
 
-        <Accordion type="single" collapsible className="border rounded-lg">
-          <AccordionItem value="tempos" className="border-none">
-            <AccordionTrigger className="text-decorflex w-full items-center gap-3 p-4 text-left hover:bg-gray-50 text-[#231f20]">
-              <Clock className="h-5 w-5 shrink-0 text-[#034ea2]" />
-              <div className="w-full flex flex-col justify-between">
-                <span className="font-medium">Tempos de Análise (no mês)</span>
-                <p className="text-sm font-normal text-gray-500">
-                  Correspondente apenas aos processos de abertura
-                </p>
-              </div>
-            </AccordionTrigger>
+        {!municipio.startsWith("Território:") && (
+          <Accordion type="single" collapsible className="border rounded-lg">
+            <AccordionItem value="tempos" className="border-none">
+              <AccordionTrigger className="text-decorflex w-full items-center gap-3 p-4 text-left hover:bg-gray-50 text-[#231f20]">
+                <Clock className="h-5 w-5 shrink-0 text-[#034ea2]" />
+                <div className="w-full flex flex-col justify-between">
+                  <span className="font-medium">Tempos de Análise (no mês)</span>
+                  <p className="text-sm font-normal text-gray-500">
+                    Correspondente apenas aos processos de abertura
+                  </p>
+                </div>
+              </AccordionTrigger>
 
-            <AccordionContent className="p-4 pt-0">
-              {dados?.tempos ? (
-                <ul className="space-y-2">
-                  {Object.entries(dados.tempos)
-                    .filter(([key]) => key in labels)
-                    .sort(([, tempoA], [, tempoB]) => {
-                      const toSeconds = (t) => {
-                        if (!t) return Infinity;
-                        const [h, m, s] = t.split(":").map(Number);
-                        return (h ?? 0) * 3600 + (m ?? 0) * 60 + (s ?? 0);
-                      };
-                      return toSeconds(tempoA) - toSeconds(tempoB);
-                    })
-                    .map(([doc, tempo]) => (
-                      <li
-                        key={doc}
-                        className="flex justify-between py-2 border-b last:border-b-0"
-                      >
-                        <span className="font-medium">{labels[doc]}</span>
-                        <span className="text-[#034ea2] font-mono">
-                          {tempo ? formatTime(tempo) : "-"}
-                        </span>
-                      </li>
-                    ))}
-                </ul>
-              ) : (
-                <p className="text-gray-500">Sem dados</p>
-              )}
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
+              <AccordionContent className="p-4 pt-0">
+                {dados?.tempos ? (
+                  <ul className="space-y-2">
+                    {Object.entries(dados.tempos)
+                      .filter(([key]) => key in labels)
+                      .sort(([, tempoA], [, tempoB]) => {
+                        const toSeconds = (t) => {
+                          if (!t) return Infinity;
+                          const [h, m, s] = t.split(":").map(Number);
+                          return (h ?? 0) * 3600 + (m ?? 0) * 60 + (s ?? 0);
+                        };
+                        return toSeconds(tempoA) - toSeconds(tempoB);
+                      })
+                      .map(([doc, tempo]) => (
+                        <li
+                          key={doc}
+                          className="flex justify-between py-2 border-b last:border-b-0"
+                        >
+                          <span className="font-medium">{labels[doc]}</span>
+                          <span className="text-[#034ea2] font-mono">
+                            {tempo ? formatTime(tempo) : "-"}
+                          </span>
+                        </li>
+                      ))}
+                  </ul>
+                ) : (
+                  <p className="text-gray-500">Sem dados</p>
+                )}
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        )}
 
         <Accordion type="single" collapsible className="border rounded-lg">
           <AccordionItem value="piecharts" className="border-none">
@@ -314,12 +316,12 @@ export default function Lista({ onCidadeSelecionada, mes, ano }) {
             <AccordionContent className="p-4 pt-0">
 
               <div className="space-y-4">
-                              <HierarchicalTreeMap
-                                secoesData={secoesClassificacaoData}
-                                title="EMPRESAS ATIVAS POR ATIVIDADE E POR SETOR"
-                              />
-              
-                            </div>
+                <HierarchicalTreeMap
+                  secoesData={secoesClassificacaoData}
+                  title="EMPRESAS ATIVAS POR ATIVIDADE E POR SETOR"
+                />
+
+              </div>
 
               {!dados ? (
                 <p className="text-gray-500 text-center py-4">Sem dados</p>

@@ -73,10 +73,10 @@ export default function ListaRanking({ onCidadeSelecionada, mes, ano }) {
 
         // Se uma cidade foi selecionada
         if (onCidadeSelecionada?.id) {
-          const id =
-            onCidadeSelecionada.id.length > 6
-              ? onCidadeSelecionada.id.split("-")[1]
-              : onCidadeSelecionada.id;
+          const strId = String(onCidadeSelecionada.id || "");
+          const id = strId.includes("-")
+            ? strId.split("-")[1]
+            : strId;
 
           const url = `${apiUrl}/empresas_abertas?cidade=${id}&mes=${numero_mes}&ano=${ano}`;
           const response = await fetch(url, {
@@ -134,7 +134,7 @@ export default function ListaRanking({ onCidadeSelecionada, mes, ano }) {
 
   const municipio =
     onCidadeSelecionada?.nome &&
-    onCidadeSelecionada.nome !== "Selecione uma localidade"
+      onCidadeSelecionada.nome !== "Selecione uma localidade"
       ? onCidadeSelecionada.nome
       : primeiroCidade || "Carregando...";
 
@@ -281,7 +281,7 @@ export default function ListaRanking({ onCidadeSelecionada, mes, ano }) {
           </a>{" "}
           para ver os municípios mais céleres na abertura de empresas
         </div>
-        
+
         {/* Documentos Habilitados - Accordion */}
         <Accordion type="single" collapsible className="border rounded-lg">
           <AccordionItem value="documentos" className="border-none">
@@ -300,14 +300,12 @@ export default function ListaRanking({ onCidadeSelecionada, mes, ano }) {
                       return (
                         <li key={doc} className="flex items-center gap-3">
                           <div
-                            className={`w-5 h-5 rounded-full flex items-center justify-center ${
-                              isEnabled ? "bg-green-100" : "bg-red-100"
-                            }`}
+                            className={`w-5 h-5 rounded-full flex items-center justify-center ${isEnabled ? "bg-green-100" : "bg-red-100"
+                              }`}
                           >
                             <div
-                              className={`w-3 h-3 rounded-full ${
-                                isEnabled ? "bg-green-500" : "bg-red-500"
-                              }`}
+                              className={`w-3 h-3 rounded-full ${isEnabled ? "bg-green-500" : "bg-red-500"
+                                }`}
                             />
                           </div>
                           <span className="font-medium">
@@ -353,9 +351,8 @@ export default function ListaRanking({ onCidadeSelecionada, mes, ano }) {
                 <div
                   className="bg-[#034ea2] h-3 rounded-full transition-all duration-500"
                   style={{
-                    width: `${
-                      dados.indice_atendimentos.percentual_atendimento * 100
-                    }%`,
+                    width: `${dados.indice_atendimentos.percentual_atendimento * 100
+                      }%`,
                   }}
                 />
               </div>

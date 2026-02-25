@@ -7,9 +7,11 @@ export default function Abas({
   cidadeSelecionada,
   mes,
   ano,
+  activeTab,
+  setActiveTab
 }) {
   return (
-    <Tabs className="w-full pr-6" defaultValue="ativas">
+    <Tabs className="w-full px-2 lg:px-0 lg:pr-6" value={activeTab} onValueChange={setActiveTab}>
       <TabsList className="
         w-full
         place-items-center
@@ -22,21 +24,21 @@ export default function Abas({
         gap-2
         sm:gap-2
       ">
-        <TabsTrigger 
+        <TabsTrigger
           value="ativas"
           className="text-xs  w-full sm:text-sm py-2 sm:py-3"
         >
           <span className="hidden sm:inline">Empresas Ativas</span>
           <span className="sm:hidden">Ativas</span>
         </TabsTrigger>
-        <TabsTrigger 
+        <TabsTrigger
           value="abertas"
           className="text-xs sm:text-sm w-full py-2 sm:py-3"
         >
           <span className="hidden sm:inline">Abertura de Empresas</span>
           <span className="sm:hidden">Abertas</span>
         </TabsTrigger>
-        <TabsTrigger 
+        <TabsTrigger
           value="ranking"
           className="text-xs sm:text-sm py-2 w-full sm:py-3"
         >

@@ -21,7 +21,7 @@ export function ComboboxCidades({ onCidadeSelect, cidadeSelecionada }) {
   const [open, setOpen] = useState(false);
   const [cidades, setCidades] = useState([]);
   const [value, setValue] = useState("");
-  
+
   const apiUrl = import.meta.env.VITE_URL_API;
   const apiToken = import.meta.env.VITE_API_TOKEN;
 
@@ -37,7 +37,6 @@ export function ComboboxCidades({ onCidadeSelect, cidadeSelecionada }) {
           },
         });
         const data = await response.json();
-        
         setCidades(data);
       } catch (error) {
         console.error("Erro ao buscar dados do CouchDB:", error);
@@ -46,6 +45,14 @@ export function ComboboxCidades({ onCidadeSelect, cidadeSelecionada }) {
 
     fetchData();
   }, []);
+
+  useEffect(() => {
+    if (cidadeSelecionada?.nome?.startsWith("Território:") || cidadeSelecionada?.nome === "Selecione uma localidade") {
+      setValue("");
+    } else if (cidadeSelecionada?.nome) {
+      setValue(cidadeSelecionada.nome);
+    }
+  }, [cidadeSelecionada]);
 
   const highlightCityOnMap = (cidade) => {
     const svg = d3.select("#map");
@@ -67,6 +74,17 @@ export function ComboboxCidades({ onCidadeSelect, cidadeSelecionada }) {
     }
   };
 
+  const clearHighlightOnMap = () => {
+    const svg = d3.select("#map");
+    // Clear d3 selection logic, leaflet will handle the map itself primarily
+    svg
+      .selectAll(".city")
+      .classed("selected", false)
+      .classed("no-selected", true)
+      .transition()
+      .duration(300);
+  };
+
   const handleSelect = (cidade) => {
     setValue(cidade.nome);
     setOpen(false);
@@ -83,7 +101,7 @@ export function ComboboxCidades({ onCidadeSelect, cidadeSelecionada }) {
           aria-expanded={open}
           className="w-[250px] justify-between"
         >
-          {cidadeSelecionada.nome || value}
+          {value || "Selecione uma localidade"}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>

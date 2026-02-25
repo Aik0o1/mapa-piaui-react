@@ -9,9 +9,10 @@ import Filtros from './components/main/Filtros';
 
 function MainContent() {
   const [cidade, setCidade] = useState({ nome: 'Selecione uma localidade', id: '' });
-  const [mes, setMes] = useState(""); 
-  const [ano, setAno] = useState(""); 
+  const [mes, setMes] = useState("");
+  const [ano, setAno] = useState("");
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState("ativas");
 
   const apiUrl = import.meta.env.VITE_URL_API;
   const apiToken = import.meta.env.VITE_API_TOKEN
@@ -20,8 +21,8 @@ function MainContent() {
     const fetchData = async () => {
       try {
         const response = await fetch(`${apiUrl}/data_recente`, {
-          method : "GET",
-          headers : {
+          method: "GET",
+          headers: {
             'Authorization': `Bearer ${apiToken}`
           }
         });
@@ -47,6 +48,13 @@ function MainContent() {
 
     fetchData();
   }, []);
+
+  useEffect(() => {
+    // If we switch to the ranking tab and a region is currently selected, clear it
+    if (activeTab === "ranking" && cidade?.nome?.startsWith("Território:")) {
+      setCidade({ nome: 'Selecione uma localidade', id: '' });
+    }
+  }, [activeTab, cidade]);
 
   if (loading) {
     return <div>Carregando...</div>; // Exibe uma mensagem de carregamento enquanto os dados não chegam
@@ -75,10 +83,21 @@ function MainContent() {
         selectedMonth={mes}
         selectedYear={ano}
         cidadeSelecionada={cidade}
+        activeTab={activeTab}
       />
       <div className="conteudo">
-        <PiauiMapa onCidadeSelecionada={handleCidade} /> 
-        <Abas cidadeSelecionada={cidade} mes={mes} ano={ano} />
+        <PiauiMapa
+          onCidadeSelecionada={handleCidade}
+          cidadeSelecionada={cidade}
+        />
+
+        <Abas
+          cidadeSelecionada={cidade}
+          mes={mes}
+          ano={ano}
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+        />
 
       </div>
 

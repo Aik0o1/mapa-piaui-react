@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import * as d3 from "d3";
 import { ComboboxCidades } from "../ui/combobox";
+import { ComboboxRegiao } from "../ui/combobox_regiao";
 import {
   Select,
   SelectContent,
@@ -50,6 +51,10 @@ export default function Filtros(props) {
     props.onCidadeSelecionada(cidade);
   };
 
+  const handleRegiaoSelect = (regiao) => {
+    props.onCidadeSelecionada(regiao);
+  };
+
   const handleMesSelect = (mes) => {
     setSelectedMes(mes);
     props.onMesSelecionado(mes);
@@ -72,7 +77,7 @@ export default function Filtros(props) {
       const mesRecente = mesesDict[dataRecente.mes];
       setSelectedMes(mesRecente);
       setSelectedAno(dataRecente.ano);
-      
+
       props.onMesSelecionado(mesRecente);
       props.onAnoSelecionado(dataRecente.ano);
       props.onCidadeSelecionada({ nome: "Selecione uma localidade", id: "" });
@@ -81,30 +86,52 @@ export default function Filtros(props) {
   };
 
   return (
-    <div className="filtros text-[#034ea2] p-4">
+    <div className="filtros text-[#034ea2] p-4 relative z-[1000]">
 
-      <div className="flex flex-wrap items-center  gap-6  justify-center ">
-        
-        <div className="flex w-full flex-col items-center gap-2 md:w-auto md:flex-row md:items-center md:gap-3">
-          <p className="whitespace-nowrap text-sm font-medium lg:text-base">
-            Selecione uma localidade
-          </p>
-          <div className="w-full md:min-w-[250px] text-center">
-            <ComboboxCidades
-              onCidadeSelect={handleCidadeSelect}
-              cidadeSelecionada={props.cidadeSelecionada}
-            />
+      <div className="flex flex-col xl:flex-row items-center gap-6 justify-center w-full">
+
+        <div className="flex w-full flex-col items-center gap-4 xl:w-auto xl:flex-row xl:items-center xl:gap-3">
+          <div className="flex w-full flex-col xl:flex-row text-center gap-3 justify-center items-center">
+            <p className="whitespace-nowrap text-sm font-medium lg:text-base">
+              Selecione uma localidade
+            </p>
+            <div className="w-full xl:w-auto xl:flex-1 flex justify-center">
+              <ComboboxCidades
+                onCidadeSelect={(cidade) => {
+                  if (cidade.nome === "Piauí") {
+                    handleCidadeSelect({ ...cidade, id: "" });
+                  } else {
+                    handleCidadeSelect(cidade);
+                  }
+                }}
+                cidadeSelecionada={props.cidadeSelecionada}
+              />
+            </div>
+
+            {props.activeTab !== "ranking" && (
+              <>
+                <p className="whitespace-nowrap text-sm font-medium lg:text-base xl:ml-4">
+                  Selecione um território
+                </p>
+                <div className="w-full xl:w-auto xl:flex-1 flex justify-center">
+                  <ComboboxRegiao
+                    onRegiaoSelect={handleRegiaoSelect}
+                    regiaoSelecionada={props.cidadeSelecionada}
+                  />
+                </div>
+              </>
+            )}
           </div>
         </div>
 
-        <div className="flex w-full flex-col items-start gap-2 md:w-auto md:flex-row md:items-center md:gap-3">
+        <div className="flex w-full flex-col items-center xl:w-auto xl:flex-row xl:items-center xl:gap-3 gap-3">
           <p className="whitespace-nowrap text-sm font-medium lg:text-base legendaPeriodo">
             Selecione o período
           </p>
-          
-          <div className="flex w-full gap-2 md:w-auto ">
+
+          <div className="flex w-full gap-2 xl:w-auto justify-center">
             <Select className="anoEscolha" onValueChange={handleAnoSelect} value={selectedAno}>
-              <SelectTrigger className="flex-1 md:w-[140px] lg:w-[160px] anoEscolha">
+              <SelectTrigger className="flex-1 xl:w-[140px] anoEscolha">
                 <SelectValue placeholder="Ano" />
               </SelectTrigger>
               <SelectContent>
@@ -132,7 +159,7 @@ export default function Filtros(props) {
               </SelectContent>
             </Select>
           </div>
-          
+
           {/* Botão de Limpar Filtros */}
           <Button
             className="w-full md:w-[120px] lg:w-[140px] text-xs lg:text-sm limpar-filtros"
