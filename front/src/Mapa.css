@@ -340,4 +340,12 @@
     opacity: 0.7; 
   }
 
-  
+  .leaflet-interactive:focus { outline: none; }
+
+.leaflet-container .leaflet-interactive:focus {
+}
+path.leaflet-interactive:focus {
+}
+svg.leaflet-zoom-animated > g > path:focus {
+}
+
