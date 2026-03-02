@@ -591,8 +591,9 @@ def buscar_ranking_completo():
             quantidade_total_piaui = sum(valor.get("abertas", {}).get("portes", {}).values())
             continue  
 
-        # Filtra apenas o que for município (ignora campos de sistema do CouchDB)
-        if isinstance(valor, dict) and "ranking" in valor:
+        # Verifica se é um objeto de município válido
+        if isinstance(valor, dict) and "nome" in valor and valor["nome"].lower() != "piauí":
+            # Soma as aberturas por porte
             quantidade = sum(valor.get("abertas", {}).get("portes", {}).values())
             ranking.append({
                 "municipio": valor.get("nome"),
