@@ -104,7 +104,7 @@ export default function ListaRanking({ onCidadeSelecionada, mes, ano }) {
 
           if (!response.ok) {
             setDados(null);
-            setPrimeiroCidade("Erro ao buscar");
+            setPrimeiroCidade("Sem dados");
           } else {
             // ATUALIZA OS DOIS ESTADOS COM UMA ÚNICA CHAMADA
             setPrimeiroCidade(data.municipio || "Sem dados");
