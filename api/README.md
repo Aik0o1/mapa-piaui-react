@@ -1,60 +1,39 @@
 # API Painel Empresarial v3
 
-API desenvolvida em FastAPI para consulta de estatísticas (aberturas, ativas) e rankings empresariais, integrada com CouchDB.
+API desenvolvida em FastAPI para consulta de estatísticas (aberturas, ativas) e rankings empresariais do estado do Piauí.
 
 ## 🚀 Como Rodar
 
-Esta API utiliza o [uv](https://github.com/astral-sh/uv) para gerenciamento de dependências e execução, garantindo velocidade e reprodutibilidade.
-
-### Requisitos
-- Python 3.10+
-- [uv](https://github.com/astral-sh/uv) instalado
-- CouchDB rodando (local ou remoto)
-
-### Instalação e Execução
-
-1. **Clone o repositório** (se aplicável):
+### Modo Local (Desenvolvimento)
+1. **Requisitos:** Python 3.9+ 
+2. **Ambiente:**
    ```bash
-   git clone <repo-url>
-   cd api-tratamento-mapa-empresarial
+   python -m venv venv
+   source venv/bin/activate
+   pip install -r requirements.txt
    ```
-
-2. **Crie o ambiente virtual e instale as dependências**:
+3. **Execução:**
    ```bash
-   uv venv
-   source .venv/bin/activate  # No Windows: .venv\Scripts\activate
-   uv pip install -r requirements.txt
+   python main.py
    ```
+A API estará em `http://localhost:8003`.
 
-3. **Inicie a API**:
-   ```bash
-   uv run python main.py
-   ```
-   *Ou use o uvicorn diretamente:*
-   ```bash
-   uv run uvicorn main:app --reload
-   ```
-
-A API estará disponível em `http://localhost:8000`.
+### Modo Docker (Produção/Staging)
+A API é orquestrada via Docker Compose na raiz do projeto. 
+- **Porta Externa:** `5050`
+- **Porta Interna:** `8003`
 
 ## 📚 Documentação (Swagger)
+- **Endpoint:** `/docs`
+- **URL Docker:** [http://localhost:5050/docs](http://localhost:5050/docs)
 
-Acesse a documentação interativa em:
-👉 [http://localhost:8000/docs](http://localhost:8000/docs)
+## ⚙️ Configuração (.env)
+O arquivo `api/.env` deve conter:
+- `SENHA`: Senha do CouchDB.
+- `COUCHDB_URL`: URL completa (ex: `http://admin:senha@ip:5984`).
+- `API_TOKEN`: Token para autenticação (Bearer) nos endpoints protegidos.
 
-Lá você encontrará:
-- Explicação detalhada de cada endpoint.
-- Exemplos de entrada e saída.
-- Possibilidade de testar as requisições diretamente pelo navegador.
-
-## 🛠 Estrutura do Projeto
-
-- `main.py`: Ponto de entrada e definição dos endpoints.
-- `database.py`: Lógica de conexão com CouchDB e criação de índices.
-- `schemas.py`: Modelos de dados Pydantic V2 para validação e documentação.
-
-## 🗄 Configuração do Banco de Dados
-
-A API espera um CouchDB rodando. Você pode configurar a URL e as credenciais via variáveis de ambiente no `database.py`:
-- `COUCHDB_URL`: URL base (ex: `http://admin:password@localhost:5984`)
-- `DB_NAME`: Nome do banco de dados (padrão: `teste_ativas`)
+## 🛠 Estrutura
+- `main.py`: Endpoints e lógica principal.
+- `database.py`: Conexão com CouchDB e carregamento de variáveis (`python-dotenv`).
+- `schemas.py`: Modelos Pydantic para validação.
