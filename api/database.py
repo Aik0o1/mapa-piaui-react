@@ -1,10 +1,14 @@
 import httpx
 import os
+from dotenv import load_dotenv
+
+# Carrega as variáveis do arquivo .env
+load_dotenv()
 
 # Configurações do CouchDB (Podem ser movidas para variáveis de ambiente)
 COUCHDB_URL = os.getenv("COUCHDB_URL", "http://admin:password@localhost:5984")
 DB_NAME = os.getenv("DB_NAME", "painel_empresarial")
-AUTH = ("admin", "password")
+AUTH = ("admin", os.getenv("SENHA", "password"))
 
 async def setup_indexes():
     """Cria índices para permitir buscas por data e código IBGE."""

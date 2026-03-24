@@ -3,9 +3,13 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials, APIKeyHea
 from typing import Optional, List
 import httpx
 import os
+from dotenv import load_dotenv
 from contextlib import asynccontextmanager
 from database import get_db_client, setup_indexes
 from schemas import EstatisticaBase, RespostaClassificacao, CidadeInfo
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Configuração de Segurança
 API_TOKEN = os.getenv("API_TOKEN", "seu_token_aqui")
@@ -96,8 +100,24 @@ async def listar_municipios(client: httpx.AsyncClient = Depends(get_db_client)):
 
 @router.get("/data_recente", summary="Obter período mais recente disponível")
 async def obter_data_recente(client: httpx.AsyncClient = Depends(get_db_client)):
-    # Busca o registro mais recente (geral)
-    return await obter_data_recente_por_tipo(None, client)
+    # Busca o registro mais recente geral (o maior ano/mês entre todos os tipos)
+    tipos = ["aberturas", "ativas", "ranking"]
+    docs_recentes = []
+    
+    for t in tipos:
+        try:
+            doc = await obter_data_recente_por_tipo(t, client)
+            docs_recentes.append(doc)
+        except HTTPException:
+            continue
+            
+    if not docs_recentes:
+        raise HTTPException(status_code=404, detail="Nenhum dado encontrado para determinar a data recente.")
+    
+    # Ordena pelo maior ano e depois pelo maior mês
+    docs_recentes.sort(key=lambda x: (int(x["ano"]), int(x["mes"])), reverse=True)
+    
+    return docs_recentes[0]
 
 async def obter_data_recente_por_tipo(tipo: Optional[str], client: httpx.AsyncClient):
     # Se um tipo específico foi solicitado, busca apenas para ele
