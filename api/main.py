@@ -160,7 +160,7 @@ async def obter_primeiro_ranking(
             "tipo": "ranking",
             "ano": ano_str,
             "mes": mes_str,
-            "metricas.posicao": 1
+            "metricas.posicao": {"$in": [1, "1"]}
         },
         "limit": 1
     }
@@ -205,20 +205,24 @@ async def obter_classificacao_municipios(
     if total_estado == 0:
         pass
 
-    # 2. Buscar TODOS os municípios (Lista Mestra)
-    # Buscamos de qualquer período para garantir que temos todos os nomes/códigos
-    query_master = {
-        "selector": {"nivel": "municipio"},
-        "fields": ["codigo_ibge", "localidade"],
-        "limit": 1000
-    }
-    res_master = await client.post("/_find", json=query_master)
-    all_mun_docs = res_master.json().get("docs", [])
-    
-    # Deduplicar municípios
+    # 2. Buscar TODOS os municípios (Lista Mestra) a partir do banco 'filtros' (mais confiável)
+    base_url_str = str(client.base_url).rstrip('/')
+    server_url = "/".join(base_url_str.split('/')[:-1])
+    url_filtros = f"{server_url}/filtros"
+
+    async with httpx.AsyncClient(auth=client.auth) as c:
+        query_master = {
+            "selector": {"type": "municipio"},
+            "fields": ["cod_ibge", "nome"],
+            "limit": 1000
+        }
+        res_master = await c.post(f"{url_filtros}/_find", json=query_master)
+        
     municipios_master = {}
-    for d in all_mun_docs:
-        municipios_master[d["codigo_ibge"]] = d["localidade"]
+    if res_master.status_code == 200:
+        for d in res_master.json().get("docs", []):
+            # Normaliza o código para string para bater com o banco principal
+            municipios_master[str(d["cod_ibge"])] = d["nome"]
 
     # 3. Buscar dados de municípios para o período específico
     query_periodo = {
@@ -251,8 +255,8 @@ async def obter_classificacao_municipios(
             "percentual": round(percentual, 2)
         })
 
-    # Ordenar por valor decrescente
-    itens.sort(key=lambda x: (x["total"], x["localidade"]), reverse=True)
+    # Ordenar por valor decrescente e nome crescente em caso de empate
+    itens.sort(key=lambda x: (-x["total"], x["localidade"]))
     
     # Adicionar posição
     for i, item in enumerate(itens):
