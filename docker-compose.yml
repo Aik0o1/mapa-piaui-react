@@ -1,20 +1,18 @@
 services:
-  frontend:
-    container_name: front-painel-empresarial
+  app:
+    container_name: front-mapa
     image: front-painel-empresarial:1.0
     build:
-      context: ./front  # Ajustado de ./frontend para ./front
+      context: ./front
     ports:
       - "5173:80"
     depends_on:
-      - api
+      - backend
     restart: unless-stopped
 
-  api:
-    container_name: api-painel-empresarial
+  backend:
+    container_name: api-mapa
     image: api-painel-empresarial:1.0
     build:
-      context: ./api    # Ajustado de ./backend para ./api
-    ports:
-      - "5050:8003"
+      context: ./api
     restart: unless-stopped
