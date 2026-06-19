@@ -18,9 +18,9 @@ const Footer = () => {
       <div className="content mx-auto p-8">
         <div className="footer-container flex gap-10 justify-center">
           {/* Logo Section */}
-          {/* <div>
-            <img src={logo} alt="Governo do Piaui" className="h-20" />
-          </div> */}
+          <div>
+            <img src="/imgs/brasao-pi.png" alt="Governo do Piaui" className="h-20" />
+          </div>
 
           {/* Orgão Section */}
           <div>
