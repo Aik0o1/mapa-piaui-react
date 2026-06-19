@@ -47,9 +47,9 @@ export default function Header() {
     <header className="header bg-white shadow-md py-4 px-6 flex items-center justify-between md:flex-row flex-col">
       <div className="flex items-center justify-center gap-4">
         <img
-          src="https://portal.pi.gov.br/jucepi/wp-content/uploads/sites/47/2023/03/jucepi_logo-768x177.jpg"
+          src="/imgs/Logo-governo-do-piaui.png"
           alt="JUCEPI Logo"
-          className="h-16 object-contain"
+          className="h-20 object-contain"
         />
         <h1 className="text-[#034ea2] text-2xl font-semibold">
           Dados Empresariais
