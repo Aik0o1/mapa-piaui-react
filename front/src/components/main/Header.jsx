@@ -47,7 +47,7 @@ export default function Header() {
     <header className="header bg-white shadow-md py-4 px-6 flex items-center justify-between md:flex-row flex-col">
       <div className="flex items-center justify-center gap-4">
         <img
-          src="/imgs/Logo-governo-do-piaui.png"
+          src="/imgs/jucepi.png"
           alt="JUCEPI Logo"
           className="h-20 object-contain"
         />
