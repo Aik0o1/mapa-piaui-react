@@ -377,7 +377,7 @@ export default function ListaRanking({ onCidadeSelecionada, mes, ano }) {
                 <span className="text-2xl font-bold text-[#034ea2]">
                   {(
                     dados.indice_atendimentos.percentual_atendimento * 100
-                  ).toFixed(0)}
+                  ).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   %
                 </span>
                 <span className="text-sm text-gray-600 ml-2">
