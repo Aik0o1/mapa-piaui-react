@@ -15,34 +15,24 @@ export default function Abas({
       <TabsList className="
         w-full
         place-items-center
-        text-center        
-        grid 
-        grid-cols-1 
-        sm:grid-cols-3 
-        h-auto 
-        p-1 
+        text-center
+        grid
+        grid-cols-3
+        h-auto
+        p-1
         gap-2
-        sm:gap-2
       ">
-        <TabsTrigger
-          value="ativas"
-          className="text-xs  w-full sm:text-sm py-2 sm:py-3"
-        >
+        <TabsTrigger value="ativas" className="text-xs w-full sm:text-sm py-2 sm:py-3 whitespace-normal text-center leading-tight">
           <span className="hidden sm:inline">Empresas Ativas</span>
           <span className="sm:hidden">Ativas</span>
         </TabsTrigger>
-        <TabsTrigger
-          value="abertas"
-          className="text-xs sm:text-sm w-full py-2 sm:py-3"
-        >
+        <TabsTrigger value="abertas" className="text-xs sm:text-sm w-full py-2 sm:py-3 whitespace-normal text-center leading-tight">
           <span className="hidden sm:inline">Abertura de Empresas</span>
           <span className="sm:hidden">Abertas</span>
         </TabsTrigger>
-        <TabsTrigger
-          value="ranking"
-          className="text-xs sm:text-sm py-2 w-full sm:py-3"
-        >
-          Ranking Municipal
+        <TabsTrigger value="ranking" className="text-xs sm:text-sm py-2 w-full sm:py-3 whitespace-normal text-center leading-tight">
+          <span className="hidden sm:inline">Ranking Municipal</span>
+          <span className="sm:hidden">Ranking</span>
         </TabsTrigger>
       </TabsList>
 
